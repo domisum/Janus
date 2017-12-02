@@ -1,0 +1,12 @@
+*.classpath
+*.project
+*.iml
+*.log
+
+.settings/
+.idea/
+target/
+
+TestLauncher.java
+hibernate.cfg.xml
+logback.xml
