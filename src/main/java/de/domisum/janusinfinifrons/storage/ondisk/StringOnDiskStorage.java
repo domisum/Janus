@@ -20,6 +20,7 @@ public class StringOnDiskStorage implements Storage<String>
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 
+	// SETTINGS
 	private final OnDiskSettings onDiskSettings;
 
 
@@ -39,20 +40,28 @@ public class StringOnDiskStorage implements Storage<String>
 		List<File> files = FileUtil.listFilesRecursively(onDiskSettings.getDirectory(), false);
 		for(File f : files)
 		{
-			String extension = FilenameUtils.getExtension(f.getName());
-			if(!Objects.equals(onDiskSettings.getFileExtension(), extension))
-			{
-				logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}",
-						onDiskSettings.getFileExtension(), f.getName());
-				continue;
-			}
+			String fileContent = loadFile(f);
 
-			String string = FileUtil.readFileToString(f);
-			strings.add(string);
+			if(fileContent != null)
+				strings.add(fileContent);
 		}
 
 		return strings;
 	}
+
+	private String loadFile(File file)
+	{
+		String extension = FilenameUtils.getExtension(file.getName());
+		if(!Objects.equals(onDiskSettings.getFileExtension(), extension))
+		{
+			logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}",
+					onDiskSettings.getFileExtension(), file.getName());
+			return null;
+		}
+
+		return FileUtil.readFileToString(file);
+	}
+
 
 	@Override public void store(String item)
 	{
