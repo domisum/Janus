@@ -27,12 +27,12 @@ public class ComponentSerializer implements ToStringSerializer<JanusComponent>
 
 
 	// SERIALIZE
-	public String serialize(JanusComponent component)
+	@Override public String serialize(JanusComponent component)
 	{
 		return gsonWithTypeAdapterFactory.toJson(component);
 	}
 
-	public JanusComponent deserialize(String componentString)
+	@Override public JanusComponent deserialize(String componentString)
 	{
 		return gsonWithTypeAdapterFactory.fromJson(componentString, JanusComponent.class);
 	}
