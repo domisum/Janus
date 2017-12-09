@@ -2,26 +2,19 @@ package de.domisum.janusinfinifrons.storage.ondisk;
 
 import de.domisum.janusinfinifrons.storage.Storage;
 import de.domisum.janusinfinifrons.storage.ToStringSerializer;
+import lombok.RequiredArgsConstructor;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ObjectOnDiskStorage<StorageItemT> implements Storage<StorageItemT>
+@RequiredArgsConstructor
+public class SerializedObjectStorage<StorageItemT> implements Storage<StorageItemT>
 {
 
 	// REFERENCES
-	private ToStringSerializer<StorageItemT> serializer;
-	private Storage<String> stringStorage;
-
-
-	// INIT
-	public ObjectOnDiskStorage(ToStringSerializer<StorageItemT> serializer, File objectDirectory, String fileExtension)
-	{
-		this.serializer = serializer;
-		stringStorage = new StringOnDiskStorage(objectDirectory, fileExtension);
-	}
+	private final ToStringSerializer<StorageItemT> serializer;
+	private final Storage<String> stringStorage;
 
 
 	// STORAGE
