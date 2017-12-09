@@ -1,13 +1,41 @@
 package de.domisum.janusinfinifrons.component;
 
-public interface JanusComponent
+import de.domisum.janusinfinifrons.storage.Identifyable;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.io.File;
+
+@RequiredArgsConstructor
+@EqualsAndHashCode(of = "id")
+public abstract class JanusComponent implements Identifyable
 {
 
-	void checkForUpdates();
+	// PROPERTIES
+	@Getter protected final String id;
 
-	boolean isUpdateAvailable();
+	// REFERENCES
+	@Getter(value = AccessLevel.PROTECTED) private transient File helperDirectory;
 
 
+	// INIT
+	protected final void setHelperDirectory(File helperDirectory)
+	{
+		if(this.helperDirectory != null)
+			throw new IllegalStateException("helperDirectory already set, can't be changed after that");
 
+		this.helperDirectory = helperDirectory;
+	}
+
+	// GETTERS
+	public abstract String getVersion();
+
+	// UPDATE
+	protected abstract void update();
+
+	// BUILD
+	protected abstract void addToBuild(File buildDir);
 
 }
