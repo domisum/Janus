@@ -10,6 +10,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,9 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 
 	// REFERENCES
 	private transient Credential credential;
+
+	// TEMP
+	private transient String latestCommitHash = null;
 
 
 	// INIT
@@ -54,7 +58,10 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 	// GETTERS
 	@Override public String getVersion()
 	{
-		return null;
+		if(latestCommitHash == null)
+			throw new IllegalStateException("can't get version before first call to #update()");
+
+		return latestCommitHash;
 	}
 
 
@@ -63,8 +70,8 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 	{
 		if(FileUtil.isDirectoryEmpty(getHelperDirectory()))
 			gitClone();
-		else
-			gitPull();
+
+		gitPull();
 	}
 
 	@Override protected void addToBuild(File buildDir)
@@ -110,6 +117,8 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		{
 			e.printStackTrace();
 		}
+
+		latestCommitHash = getLatestCommitHash();
 	}
 
 	private void injectCredentialsProviderIntoCommand(TransportCommand transportCommand)
@@ -119,6 +128,23 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 
 		transportCommand.setCredentialsProvider(
 				new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword()));
+	}
+
+	private String getLatestCommitHash()
+	{
+		try(Git git = Git.open(getHelperDirectory()))
+		{
+			Ref branchRef = git.getRepository().findRef(branch);
+			if(branchRef == null)
+				throw new IllegalArgumentException("git repository does not contain branch '"+branch+"'");
+
+			return branchRef.getObjectId().getName();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
