@@ -1,5 +1,6 @@
-package de.domisum.janusinfinifrons.storage;
+package de.domisum.janusinfinifrons.storage.ondisk;
 
+import de.domisum.janusinfinifrons.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;

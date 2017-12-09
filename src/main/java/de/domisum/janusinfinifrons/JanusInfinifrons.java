@@ -1,10 +1,11 @@
 package de.domisum.janusinfinifrons;
 
-import de.domisum.janusinfinifrons.component.ComponentOnDiskStorage;
+import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
-import de.domisum.janusinfinifrons.credential.CredentialOnDiskStorage;
+import de.domisum.janusinfinifrons.credential.CredentialSerializer;
 import de.domisum.janusinfinifrons.storage.InMemoryStorage;
+import de.domisum.janusinfinifrons.storage.ondisk.ObjectOnDiskStorage;
 
 import java.io.File;
 
@@ -35,10 +36,12 @@ public class JanusInfinifrons
 	// STORAGE
 	private void initStorage()
 	{
-		credentialStorage = new InMemoryStorage<>(new CredentialOnDiskStorage(CREDENTIALS_DIR));
+		credentialStorage = new InMemoryStorage<>(
+				new ObjectOnDiskStorage<>(new CredentialSerializer(), CREDENTIALS_DIR, "jns_cred"));
 		credentialStorage.loadFromSource();
 
-		componentStorage = new InMemoryStorage<>(new ComponentOnDiskStorage(COMPONENTS_DIR));
+		componentStorage = new InMemoryStorage<>(
+				new ObjectOnDiskStorage<>(new ComponentSerializer(), COMPONENTS_DIR, "jns_comp"));
 		componentStorage.loadFromSource();
 	}
 

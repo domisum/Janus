@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.credential;
 
 import de.domisum.janusinfinifrons.storage.Storage;
-import de.domisum.janusinfinifrons.storage.StringOnDiskStorage;
+import de.domisum.janusinfinifrons.storage.ondisk.StringOnDiskStorage;
 import de.domisum.lib.auxilium.util.json.GsonUtil;
 
 import java.io.File;
