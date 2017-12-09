@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InMemoryStorage<StorageItemT extends Identifyable> implements Storage<StorageItemT>
+public class InMemoryCopyStorage<StorageItemT extends Identifyable> implements Storage<StorageItemT>
 {
 
 	// REFERENCES
@@ -16,7 +16,7 @@ public class InMemoryStorage<StorageItemT extends Identifyable> implements Stora
 
 
 	// INIT
-	public InMemoryStorage(Storage<StorageItemT> source)
+	public InMemoryCopyStorage(Storage<StorageItemT> source)
 	{
 		this.source = source;
 	}
