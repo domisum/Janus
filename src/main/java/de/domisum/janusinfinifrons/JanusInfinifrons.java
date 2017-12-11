@@ -6,7 +6,7 @@ import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
 import de.domisum.janusinfinifrons.storage.InMemoryCopyStorage;
 import de.domisum.janusinfinifrons.storage.ondisk.OnDiskSettings;
-import de.domisum.janusinfinifrons.storage.ondisk.SerializedObjectStorage;
+import de.domisum.janusinfinifrons.storage.ondisk.StringSerializedObjectStorage;
 import de.domisum.janusinfinifrons.storage.ondisk.StringOnDiskStorage;
 
 import java.io.File;
@@ -41,10 +41,10 @@ public class JanusInfinifrons
 	private void initStorage()
 	{
 		credentialStorage = new InMemoryCopyStorage<>(
-				new SerializedObjectStorage<>(new CredentialSerializer(), new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
+				new StringSerializedObjectStorage<>(new CredentialSerializer(), new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
 
 		componentStorage = new InMemoryCopyStorage<>(
-				new SerializedObjectStorage<>(new ComponentSerializer(), new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
+				new StringSerializedObjectStorage<>(new ComponentSerializer(), new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
 	}
 
 	private void loadSettings()

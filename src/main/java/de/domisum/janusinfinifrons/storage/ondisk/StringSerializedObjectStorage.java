@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class SerializedObjectStorage<StorageItemT> implements Storage<StorageItemT>
+public class StringSerializedObjectStorage<StorageItemT> implements Storage<StorageItemT>
 {
 
 	// REFERENCES
