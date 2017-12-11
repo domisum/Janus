@@ -1,5 +1,6 @@
 package de.domisum.janusinfinifrons.component.components;
 
+import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.lib.auxilium.data.container.AbstractURL;
 import de.domisum.lib.auxilium.util.PHR;
@@ -69,7 +70,7 @@ public class NexusArtifactComponent extends JanusComponent
 			downloadJar();
 	}
 
-	@Override protected void addToBuild(File buildDir)
+	@Override public void addToBuild(ProjectBuild build)
 	{
 
 	}

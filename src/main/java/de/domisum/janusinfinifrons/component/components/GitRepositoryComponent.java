@@ -1,5 +1,6 @@
 package de.domisum.janusinfinifrons.component.components;
 
+import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
@@ -15,7 +16,6 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 
 public class GitRepositoryComponent extends JanusComponent implements CredentialComponent
@@ -74,7 +74,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		gitPull();
 	}
 
-	@Override protected void addToBuild(File buildDir)
+	@Override public void addToBuild(ProjectBuild build)
 	{
 
 	}

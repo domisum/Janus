@@ -1,5 +1,6 @@
 package de.domisum.janusinfinifrons.component;
 
+import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.storage.Identifyable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -36,6 +37,6 @@ public abstract class JanusComponent implements Identifyable
 	protected abstract void update();
 
 	// BUILD
-	protected abstract void addToBuild(File buildDir);
+	public abstract void addToBuild(ProjectBuild build);
 
 }
