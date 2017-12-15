@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.domisum.janusinfinifrons.component.components.GitRepositoryComponent;
 import de.domisum.janusinfinifrons.component.components.NexusArtifactComponent;
-import de.domisum.janusinfinifrons.storage.ToStringSerializer;
+import de.domisum.lib.auxilium.contracts.ToStringSerializer;
 import de.domisum.lib.auxilium.util.json.RuntimeTypeAdapterFactory;
 
 public class ComponentSerializer implements ToStringSerializer<JanusComponent>
@@ -34,7 +34,12 @@ public class ComponentSerializer implements ToStringSerializer<JanusComponent>
 
 	@Override public JanusComponent deserialize(String componentString)
 	{
-		return gsonWithTypeAdapterFactory.fromJson(componentString, JanusComponent.class);
+		JanusComponent component = gsonWithTypeAdapterFactory.fromJson(componentString, JanusComponent.class);
+
+		if(component == null)
+			throw new RuntimeException("got empty string to deserialize");
+
+		return component;
 	}
 
 }

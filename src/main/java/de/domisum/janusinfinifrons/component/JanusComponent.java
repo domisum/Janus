@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.janusinfinifrons.storage.Identifyable;
+import de.domisum.lib.auxilium.contracts.Identifyable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

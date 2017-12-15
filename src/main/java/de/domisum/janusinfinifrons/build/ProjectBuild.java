@@ -3,6 +3,7 @@ package de.domisum.janusinfinifrons.build;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.util.FileUtil;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -16,7 +17,7 @@ public class ProjectBuild
 	private final JanusProject project;
 	private final Instant time;
 
-	private final File directory;
+	@Getter private final File directory;
 
 
 	// FILES

@@ -1,6 +1,6 @@
 package de.domisum.janusinfinifrons.credential;
 
-import de.domisum.janusinfinifrons.storage.ToStringSerializer;
+import de.domisum.lib.auxilium.contracts.ToStringSerializer;
 import de.domisum.lib.auxilium.util.json.GsonUtil;
 
 public class CredentialSerializer implements ToStringSerializer<Credential>

@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.storage.ondisk;
 
-import de.domisum.janusinfinifrons.storage.Storage;
-import de.domisum.janusinfinifrons.storage.ToStringSerializer;
+import de.domisum.lib.auxilium.contracts.storage.Storage;
+import de.domisum.lib.auxilium.contracts.ToStringSerializer;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

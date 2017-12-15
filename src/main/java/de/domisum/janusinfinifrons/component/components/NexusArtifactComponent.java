@@ -3,6 +3,7 @@ package de.domisum.janusinfinifrons.component.components;
 import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.lib.auxilium.data.container.AbstractURL;
+import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.PHR;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -72,7 +73,7 @@ public class NexusArtifactComponent extends JanusComponent
 
 	@Override public void addToBuild(ProjectBuild build)
 	{
-
+		FileUtil.copyFile(getJarFile(), build.getDirectory());
 	}
 
 
@@ -100,18 +101,16 @@ public class NexusArtifactComponent extends JanusComponent
 
 	private void downloadJar()
 	{
-		AbstractURL jarUrl = getUrl("jar");
-		File downloadTo = new File(getHelperDirectory(), artifactId+".jar");
-
 		try
 		{
-			FileUtils.copyURLToFile(jarUrl.toNet(), downloadTo, 5*1000, 60*1000);
+			FileUtils.copyURLToFile(getUrl("jar").toNet(), getJarFile(), 5*1000, 60*1000);
 		}
 		catch(IOException e)
 		{
 			throw new UncheckedIOException(e);
 		}
 	}
+
 
 	private AbstractURL getUrl(String artifactType)
 	{
@@ -121,6 +120,11 @@ public class NexusArtifactComponent extends JanusComponent
 		String extension = "service/local/artifact/maven/redirect"+params;
 
 		return new AbstractURL(abstractServerUrl, extension);
+	}
+
+	private File getJarFile()
+	{
+		return new File(getHelperDirectory(), artifactId+".jar");
 	}
 
 }

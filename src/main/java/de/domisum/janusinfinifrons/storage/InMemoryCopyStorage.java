@@ -1,5 +1,8 @@
 package de.domisum.janusinfinifrons.storage;
 
+import de.domisum.lib.auxilium.contracts.Identifyable;
+import de.domisum.lib.auxilium.contracts.storage.Storage;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

@@ -2,7 +2,7 @@ package de.domisum.janusinfinifrons.build;
 
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.janusinfinifrons.storage.Source;
+import de.domisum.lib.auxilium.contracts.storage.Source;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

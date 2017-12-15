@@ -76,7 +76,10 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 
 	@Override public void addToBuild(ProjectBuild build)
 	{
+		FileUtil.FilePathFilter filter = new FileUtil.FilePathFilter();
+		filter.addContains(".git");
 
+		FileUtil.copyDirectory(getHelperDirectory(), build.getDirectory(), filter);
 	}
 
 
