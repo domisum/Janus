@@ -4,14 +4,14 @@ import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
-import de.domisum.janusinfinifrons.storage.InMemoryCopyStorage;
 import de.domisum.janusinfinifrons.storage.ondisk.OnDiskSettings;
-import de.domisum.janusinfinifrons.storage.ondisk.StringSerializedObjectStorage;
 import de.domisum.janusinfinifrons.storage.ondisk.StringOnDiskStorage;
+import de.domisum.janusinfinifrons.storage.ondisk.StringSerializedObjectStorage;
+import de.domisum.lib.auxilium.contracts.storage.InMemoryCopyStorage;
 
 import java.io.File;
 
-public class JanusInfinifrons
+public final class JanusInfinifrons
 {
 
 	// CONSTANTS
@@ -20,8 +20,8 @@ public class JanusInfinifrons
 	private static final OnDiskSettings COMPONENTS_ON_DISK_SETTINGS = new OnDiskSettings(new File("components"), "jns_comp");
 
 	// STORAGE
-	private InMemoryCopyStorage<Credential> credentialStorage;
-	private InMemoryCopyStorage<JanusComponent> componentStorage;
+	private InMemoryCopyStorage<String, Credential> credentialStorage;
+	private InMemoryCopyStorage<String, JanusComponent> componentStorage;
 
 
 	// INIT
@@ -40,17 +40,17 @@ public class JanusInfinifrons
 	// STORAGE
 	private void initStorage()
 	{
-		credentialStorage = new InMemoryCopyStorage<>(
-				new StringSerializedObjectStorage<>(new CredentialSerializer(), new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
+		credentialStorage = new InMemoryCopyStorage<>(new StringSerializedObjectStorage<>(new CredentialSerializer(),
+				new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
 
-		componentStorage = new InMemoryCopyStorage<>(
-				new StringSerializedObjectStorage<>(new ComponentSerializer(), new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
+		componentStorage = new InMemoryCopyStorage<>(new StringSerializedObjectStorage<>(new ComponentSerializer(),
+				new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
 	}
 
 	private void loadSettings()
 	{
-		credentialStorage.loadFromSource();
-		componentStorage.loadFromSource();
+		credentialStorage.fetchAllToMemory();
+		componentStorage.fetchAllToMemory();
 	}
 
 }

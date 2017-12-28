@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.lib.auxilium.contracts.Identifyable;
+import de.domisum.lib.auxilium.contracts.storage.InMemoryCopyStorage;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.io.File;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-public abstract class JanusComponent implements Identifyable
+public abstract class JanusComponent implements InMemoryCopyStorage.Keyable<String>
 {
 
 	// PROPERTIES
@@ -30,11 +30,19 @@ public abstract class JanusComponent implements Identifyable
 		this.helperDirectory = helperDirectory;
 	}
 
+
 	// GETTERS
 	public abstract String getVersion();
 
+	@Override public String getKey()
+	{
+		return id;
+	}
+
+
 	// UPDATE
 	protected abstract void update();
+
 
 	// BUILD
 	public abstract void addToBuild(ProjectBuild build);

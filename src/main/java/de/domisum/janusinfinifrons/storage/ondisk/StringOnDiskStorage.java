@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
-public class StringOnDiskStorage implements Storage<String>
+public class StringOnDiskStorage implements Storage<String, String>
 {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -25,19 +26,19 @@ public class StringOnDiskStorage implements Storage<String>
 
 
 	// STORAGE
-	@Override public String fetch(String id)
+	@Override public Optional<String> fetch(String id)
 	{
 		File file = new File(onDiskSettings.getDirectory(), id+"."+onDiskSettings.getFileExtension());
 		if(!file.exists())
-			return null;
+			return Optional.empty();
 
-		return FileUtil.readFileToString(file);
+		return Optional.of(FileUtil.readString(file));
 	}
 
 	@Override public Collection<String> fetchAll()
 	{
 		List<String> strings = new ArrayList<>();
-		List<File> files = FileUtil.listFilesRecursively(onDiskSettings.getDirectory(), false);
+		Collection<File> files = FileUtil.getDirectoryContents(onDiskSettings.getDirectory());
 		for(File f : files)
 		{
 			String fileContent = loadFile(f);
@@ -54,12 +55,14 @@ public class StringOnDiskStorage implements Storage<String>
 		String extension = FilenameUtils.getExtension(file.getName());
 		if(!Objects.equals(onDiskSettings.getFileExtension(), extension))
 		{
-			logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}",
-					onDiskSettings.getFileExtension(), file.getName());
+			logger.warn(
+					"Storage directory contains file with invalid extension ({}), skipping: {}",
+					onDiskSettings.getFileExtension(),
+					file.getName());
 			return null;
 		}
 
-		return FileUtil.readFileToString(file);
+		return FileUtil.readString(file);
 	}
 
 

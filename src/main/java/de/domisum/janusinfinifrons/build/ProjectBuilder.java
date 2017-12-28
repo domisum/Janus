@@ -2,7 +2,7 @@ package de.domisum.janusinfinifrons.build;
 
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.lib.auxilium.contracts.storage.Source;
+import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class ProjectBuilder
 {
 
 	private final File baseDirectory;
-	private final Source<JanusComponent> componentSource;
+	private final FiniteSource<String, JanusComponent> componentSource;
 
 
 	// BUILD
@@ -46,7 +46,7 @@ public class ProjectBuilder
 		List<JanusComponent> components = new ArrayList<>();
 		for(String componentId : project.getComponentIds())
 		{
-			JanusComponent component = this.componentSource.fetch(componentId);
+			JanusComponent component = this.componentSource.fetchOrException(componentId);
 			components.add(component);
 		}
 
