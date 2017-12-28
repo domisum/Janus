@@ -7,7 +7,7 @@ import de.domisum.janusinfinifrons.credential.CredentialSerializer;
 import de.domisum.janusinfinifrons.storage.ondisk.OnDiskSettings;
 import de.domisum.janusinfinifrons.storage.ondisk.StringOnDiskStorage;
 import de.domisum.janusinfinifrons.storage.ondisk.StringSerializedObjectStorage;
-import de.domisum.lib.auxilium.contracts.storage.InMemoryCopyStorage;
+import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 
 import java.io.File;
 
@@ -20,8 +20,8 @@ public final class JanusInfinifrons
 	private static final OnDiskSettings COMPONENTS_ON_DISK_SETTINGS = new OnDiskSettings(new File("components"), "jns_comp");
 
 	// STORAGE
-	private InMemoryCopyStorage<String, Credential> credentialStorage;
-	private InMemoryCopyStorage<String, JanusComponent> componentStorage;
+	private InMemoryProxyStorage<String, Credential> credentialStorage;
+	private InMemoryProxyStorage<String, JanusComponent> componentStorage;
 
 
 	// INIT
@@ -40,10 +40,10 @@ public final class JanusInfinifrons
 	// STORAGE
 	private void initStorage()
 	{
-		credentialStorage = new InMemoryCopyStorage<>(new StringSerializedObjectStorage<>(new CredentialSerializer(),
+		credentialStorage = new InMemoryProxyStorage<>(new StringSerializedObjectStorage<>(new CredentialSerializer(),
 				new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
 
-		componentStorage = new InMemoryCopyStorage<>(new StringSerializedObjectStorage<>(new ComponentSerializer(),
+		componentStorage = new InMemoryProxyStorage<>(new StringSerializedObjectStorage<>(new ComponentSerializer(),
 				new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
 	}
 

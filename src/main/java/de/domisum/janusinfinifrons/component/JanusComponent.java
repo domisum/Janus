@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.lib.auxilium.contracts.storage.InMemoryCopyStorage;
+import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.io.File;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-public abstract class JanusComponent implements InMemoryCopyStorage.Keyable<String>
+public abstract class JanusComponent implements InMemoryProxyStorage.Keyable<String>
 {
 
 	// PROPERTIES
