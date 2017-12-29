@@ -1,5 +1,6 @@
 package de.domisum.janusinfinifrons;
 
+import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
@@ -10,6 +11,8 @@ import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.serialization.BasicToStringSerializer;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
+import de.domisum.lib.auxilium.contracts.storage.InMemoryStorage;
+import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.ThreadUtil;
 import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
@@ -34,6 +37,8 @@ public final class JanusInfinifrons
 	private FiniteSource<String, Credential> credentialSource;
 	private FiniteSource<String, JanusComponent> componentSource;
 	private FiniteSource<String, JanusProject> projectSource;
+
+	private Storage<JanusProject, ProjectBuild> latestBuilds = new InMemoryStorage<>();
 
 	// REFERENCES
 	private UpdateTicker ticker;
@@ -170,8 +175,8 @@ public final class JanusInfinifrons
 		ticker = new UpdateTicker(
 				componentSource,
 				projectSource,
-				new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource)
-		);
+				new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource),
+		latestBuilds);
 		// @formatter:on
 	}
 

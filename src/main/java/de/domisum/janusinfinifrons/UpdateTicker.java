@@ -6,6 +6,7 @@ import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.ticker.Ticker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,9 @@ public final class UpdateTicker extends Ticker
 	// REFERENCES
 	private final FiniteSource<String, JanusComponent> componentSource;
 	private final FiniteSource<String, JanusProject> projectSource;
+
 	private final ProjectBuilder projectBuilder;
+	private final Storage<JanusProject, ProjectBuild> latestBuilds;
 
 	// STATUS
 	private final Map<String, String> lastComponentVersions = new HashMap<>();
@@ -40,12 +43,15 @@ public final class UpdateTicker extends Ticker
 	public UpdateTicker(
 			FiniteSource<String, JanusComponent> componentSource,
 			FiniteSource<String, JanusProject> projectSource,
-			ProjectBuilder projectBuilder)
+			ProjectBuilder projectBuilder,
+			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{
 		super(TICK_INTERVAL);
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
+
 		this.projectBuilder = projectBuilder;
+		this.latestBuilds = latestBuilds;
 
 		logger.info("Starting ticker...");
 		start();
@@ -59,7 +65,7 @@ public final class UpdateTicker extends Ticker
 		Collection<JanusProject> changedProjects = getChangedProjects(changedComponents);
 
 		for(JanusProject jp : changedProjects)
-			buildProject(jp);
+			buildAndExportProject(jp);
 	}
 
 	private Collection<JanusComponent> updateComponents()
@@ -81,10 +87,20 @@ public final class UpdateTicker extends Ticker
 		return changedComponents;
 	}
 
-	private void buildProject(JanusProject project)
+	private void buildAndExportProject(JanusProject project)
 	{
 		logger.info("Starting build of project '{}'...", project.getId());
 		ProjectBuild build = projectBuilder.build(project);
+
+		exportProjectBuild(build);
+		latestBuilds.store(build);
+	}
+
+	private void exportProjectBuild(ProjectBuild build)
+	{
+		logger.info("Exporting build {}...", build);
+
+
 	}
 
 
