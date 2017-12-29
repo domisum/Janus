@@ -40,7 +40,7 @@ public class ProjectBuilder
 			component.addToBuild(build);
 		}
 
-		logger.info("Build done\n");
+		logger.info("Build done");
 		return build;
 	}
 

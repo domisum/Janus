@@ -82,7 +82,7 @@ public final class UpdateTicker extends Ticker
 
 		Collection<JanusComponent> changedComponents = getCurrentlyChangedComponents();
 		if(!changedComponents.isEmpty())
-			logger.info("Changed components: {}", Identifyable.getIdList(changedComponents));
+			logger.info("Detected change in components: {}", Identifyable.getIdList(changedComponents));
 
 		// update last version
 		for(JanusComponent c : componentSource.fetchAll())
@@ -104,7 +104,13 @@ public final class UpdateTicker extends Ticker
 	{
 		logger.info("Exporting build {}...", build);
 
+		Collection<JanusProjectInstance> projectInstances = new ArrayList<>(projectInstanceSource.fetchAll());
+		projectInstances.removeIf(i->!Objects.equals(i.getProjectId(), build.getProject().getId()));
 
+		for(JanusProjectInstance instance : projectInstances)
+			build.exportTo(instance);
+
+		logger.info("Exporting build done");
 	}
 
 
@@ -132,7 +138,7 @@ public final class UpdateTicker extends Ticker
 				}
 
 		if(!changedProjects.isEmpty())
-			logger.info("Changed projects: {}", Identifyable.getIdList(changedProjects));
+			logger.info("Projects with changed components: {}", Identifyable.getIdList(changedProjects));
 
 		return changedProjects;
 	}

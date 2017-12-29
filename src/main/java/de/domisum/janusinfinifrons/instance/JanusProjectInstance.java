@@ -1,6 +1,11 @@
 package de.domisum.janusinfinifrons.instance;
 
+import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
+import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.util.FileUtil;
+import de.domisum.lib.auxilium.util.PHR;
+import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +23,26 @@ public class JanusProjectInstance implements Identifyable
 	private final String rootDirectory;
 
 
+	// INIT
+	public void validate(FiniteSource<String, JanusProject> projectSource)
+	{
+		if(!projectSource.contains(projectId))
+			throw new InvalidConfigurationException(PHR.r("instance '{}' specifies unknown project: {}", id, projectId));
+	}
+
+
 	// GETTERS
 	public File getRootDirectory()
 	{
 		return new File(rootDirectory);
+	}
+
+
+	// FILE
+	public void writeLatestBuildId(String buildId)
+	{
+		File latestMarkerFile = new File(getRootDirectory(), "latest");
+		FileUtil.writeString(latestMarkerFile, buildId);
 	}
 
 }

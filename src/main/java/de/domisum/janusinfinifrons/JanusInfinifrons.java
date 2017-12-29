@@ -122,6 +122,7 @@ public final class JanusInfinifrons
 		initCredentials();
 		initComponents();
 		initProjects();
+		initProjectInstances();
 	}
 
 	private void initCredentials()
@@ -176,6 +177,14 @@ public final class JanusInfinifrons
 		logger.info("Loaded {} project(s): {}",
 				projectSource.fetchAll().size(),
 				Identifyable.getIdList(projectSource.fetchAll()));
+	}
+
+	private void initProjectInstances()
+	{
+		projectInstanceSource.fetchAll().forEach(p->p.validate(projectSource));
+		logger.info("Loaded {} project instance(s): {}",
+				projectInstanceSource.fetchAll().size(),
+				Identifyable.getIdList(projectInstanceSource.fetchAll()));
 	}
 
 

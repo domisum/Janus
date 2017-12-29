@@ -58,7 +58,7 @@ public class GitRepositoryComponent extends JanusComponent
 
 	@Override public void addToBuild(ProjectBuild build)
 	{
-		FileUtil.coypDirectory(getHelperDirectory(), build.getDirectory(), new FilterOutDirectory(".git/"));
+		FileUtil.copyDirectory(getHelperDirectory(), build.getDirectory(), new FilterOutDirectory(".git/"));
 	}
 
 
