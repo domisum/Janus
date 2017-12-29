@@ -33,7 +33,7 @@ public final class UpdateTicker extends Ticker
 	// INIT
 	public UpdateTicker(FiniteSource<String, JanusComponent> componentSource)
 	{
-		super(TICK_INTERVAL, "updateTicker");
+		super(TICK_INTERVAL);
 		this.componentSource = componentSource;
 
 		start();
@@ -50,12 +50,14 @@ public final class UpdateTicker extends Ticker
 	{
 		for(JanusComponent component : componentSource.fetchAll())
 		{
-			logger.info("Updating component '{}'", component.getId());
+			logger.debug("Updating component '{}'", component.getId());
 			component.update();
 		}
 
 		Collection<JanusComponent> changedComponents = getCurrentlyChangedComponents();
-		logger.info("Changed components: {}", Identifyable.getIdList(changedComponents));
+		logger.debug("Changed components: {}", Identifyable.getIdList(changedComponents));
+		for(JanusComponent cc : changedComponents)
+			logger.info("Component changed: {}", cc.getId());
 
 		// update last version
 		for(JanusComponent c : componentSource.fetchAll())

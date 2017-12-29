@@ -4,7 +4,6 @@ import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public class StringOnDiskStorage implements Storage<String, String>
 	// STORAGE
 	@Override public Optional<String> fetch(String id)
 	{
-		File file = new File(directory, id+"."+fileExtension);
+		File file = new File(directory, id+getFileExtension());
 		if(!file.exists())
 			return Optional.empty();
 
@@ -49,12 +48,10 @@ public class StringOnDiskStorage implements Storage<String, String>
 
 	private Optional<String> loadFile(File file)
 	{
-		String extension = FilenameUtils.getExtension(file.getName());
-		if(!Objects.equals(fileExtension, extension))
+		String extension = FileUtil.getExtendedFileExtension(file);
+		if(!Objects.equals(getFileExtension(), extension))
 		{
-			logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}",
-					fileExtension,
-					file.getName());
+			logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}", extension, file.getName());
 			return Optional.empty();
 		}
 
@@ -75,6 +72,16 @@ public class StringOnDiskStorage implements Storage<String, String>
 	@Override public void remove(String id)
 	{
 		throw new UnsupportedOperationException();
+	}
+
+
+	// UTIL
+	private String getFileExtension()
+	{
+		if(fileExtension.startsWith("."))
+			return fileExtension;
+
+		return "."+fileExtension;
 	}
 
 }
