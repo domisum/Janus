@@ -110,7 +110,7 @@ public final class UpdateTicker extends Ticker
 		for(JanusProjectInstance instance : projectInstances)
 			build.exportTo(instance);
 
-		logger.info("Exporting build done");
+		logger.info("Exporting build done\n");
 	}
 
 

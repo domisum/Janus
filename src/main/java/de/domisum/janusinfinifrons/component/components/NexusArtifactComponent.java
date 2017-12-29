@@ -80,6 +80,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 			fetchString.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
 
 		Optional<String> jarMd5Optional = fetchString.fetch();
+		logger.debug("jarMd5: {}", jarMd5Optional);
 		jarMd5Optional.ifPresent(s->currentJarMd5 = s);
 	}
 
@@ -91,7 +92,8 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 		if(getCredential() != null)
 			httpFetchToFile.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
 
-		httpFetchToFile.fetch();
+		Optional<File> result = httpFetchToFile.fetch();
+		logger.debug("download jar success: {}", result.isPresent());
 	}
 
 
