@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.domisum.janusinfinifrons.component.components.GitRepositoryComponent;
 import de.domisum.janusinfinifrons.component.components.NexusArtifactComponent;
-import de.domisum.lib.auxilium.contracts.ToStringSerializer;
+import de.domisum.lib.auxilium.contracts.serialization.ToStringSerializer;
 import de.domisum.lib.auxilium.util.json.RuntimeTypeAdapterFactory;
 
 public class ComponentSerializer implements ToStringSerializer<JanusComponent>

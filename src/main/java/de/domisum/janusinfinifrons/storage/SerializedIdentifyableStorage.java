@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.storage;
 
 import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.ToStringSerializer;
+import de.domisum.lib.auxilium.contracts.serialization.ToStringSerializer;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.FileUtil.FileType;
