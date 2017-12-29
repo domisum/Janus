@@ -1,67 +1,113 @@
 package de.domisum.janusinfinifrons;
 
 import de.domisum.janusinfinifrons.component.ComponentSerializer;
+import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
-import de.domisum.janusinfinifrons.storage.StorageSettings;
 import de.domisum.janusinfinifrons.storage.StringOnDiskStorage;
 import de.domisum.janusinfinifrons.storage.StringSerializedObjectStorage;
+import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
+import de.domisum.lib.auxilium.util.PHR;
+import de.domisum.lib.auxilium.util.java.ThreadUtil;
+import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
 
 import java.io.File;
+import java.util.Optional;
 
 public final class JanusInfinifrons
 {
 
-	// CONSTANTS
-	private static final StorageSettings CREDENTIALS_STORAGE_SETTINGS = new StorageSettings(new File("credentials"), "jns_cred");
-	private static final StorageSettings COMPONENTS_STORAGE_SETTINGS = new StorageSettings(new File("components"), "jns_comp");
-
 	// STORAGE
-	private InMemoryProxyStorage<String, Credential> credentialStorage;
-	private InMemoryProxyStorage<String, JanusComponent> componentStorage;
+	private FiniteSource<String, Credential> credentialStorage;
+	private FiniteSource<String, JanusComponent> componentStorage;
+
+	// REFERENCES
+	private UpdateTicker ticker;
 
 
 	// INIT
 	public static void main(String[] args)
 	{
+		ThreadUtil.logUncaughtExceptions(Thread.currentThread());
 		new JanusInfinifrons();
+	}
+
+	public void shutdown()
+	{
+		onShutdown();
 	}
 
 	private JanusInfinifrons()
 	{
-		initStorage();
-		loadSettings();
+		ThreadUtil.registerShutdownHook(this::onShutdown);
+
+		initSources();
+		validateSettings();
+		initTicker();
+	}
+
+	private void onShutdown()
+	{
+		ticker.stop();
 	}
 
 
 	// STORAGE
-	private void initStorage()
+	private void initSources()
 	{
 		// @formatter:off
-		credentialStorage = new InMemoryProxyStorage<>(
+		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
 				new StringSerializedObjectStorage<>(
 						new CredentialSerializer(),
-						new StringOnDiskStorage(CREDENTIALS_STORAGE_SETTINGS)
+						new StringOnDiskStorage(new File("config/credentials"), "jns_cred.json")
 				)
 		);
-		componentStorage = new InMemoryProxyStorage<>(
+		credentialStorage.fetchAllToMemory();
+		this.credentialStorage = credentialStorage;
+
+		InMemoryProxyStorage<String, JanusComponent> componentStorage = new InMemoryProxyStorage<>(
 				new StringSerializedObjectStorage<>(
 						new ComponentSerializer(),
-						new StringOnDiskStorage(COMPONENTS_STORAGE_SETTINGS)
+						new StringOnDiskStorage(new File("config/components"), "jns_comp.json")
 				)
 		);
+		componentStorage.fetchAllToMemory();
+		this.componentStorage = componentStorage;
 		// @formatter:on
 	}
 
-	private void loadSettings()
+	private void validateSettings()
 	{
-		credentialStorage.fetchAllToMemory();
 		credentialStorage.fetchAll().forEach(Credential::validate);
+		validateComponents();
+	}
 
-		componentStorage.fetchAllToMemory();
+	private void validateComponents()
+	{
 		componentStorage.fetchAll().forEach(JanusComponent::validate);
+
+		for(JanusComponent janusComponent : componentStorage.fetchAll())
+			if(janusComponent instanceof CredentialComponent)
+			{
+				CredentialComponent credentialComponent = (CredentialComponent) janusComponent;
+				Optional<Credential> credentialOptional = credentialStorage.fetch(credentialComponent.getCredentialId());
+				if(!credentialOptional.isPresent())
+					throw new InvalidConfigurationException(PHR.r(
+							"unknown credential id '{}' in component '{}'",
+							credentialComponent.getCredentialId(),
+							janusComponent.getId()));
+
+				credentialComponent.injectCredential(credentialOptional.get());
+			}
+	}
+
+
+	// TICKER
+	private void initTicker()
+	{
+		ticker = new UpdateTicker(componentStorage);
 	}
 
 }

@@ -23,13 +23,14 @@ public class StringOnDiskStorage implements Storage<String, String>
 
 
 	// SETTINGS
-	private final StorageSettings storageSettings;
+	private final File directory;
+	private final String fileExtension;
 
 
 	// STORAGE
 	@Override public Optional<String> fetch(String id)
 	{
-		File file = new File(storageSettings.getDirectory(), id+"."+storageSettings.getFileExtension());
+		File file = new File(directory, id+"."+fileExtension);
 		if(!file.exists())
 			return Optional.empty();
 
@@ -39,7 +40,7 @@ public class StringOnDiskStorage implements Storage<String, String>
 	@Override public Collection<String> fetchAll()
 	{
 		List<String> strings = new ArrayList<>();
-		Collection<File> files = FileUtil.listFiles(storageSettings.getDirectory(), FileType.FILE);
+		Collection<File> files = FileUtil.listFiles(directory, FileType.FILE);
 		for(File f : files)
 			loadFile(f).ifPresent(strings::add);
 
@@ -49,11 +50,10 @@ public class StringOnDiskStorage implements Storage<String, String>
 	private Optional<String> loadFile(File file)
 	{
 		String extension = FilenameUtils.getExtension(file.getName());
-		if(!Objects.equals(storageSettings.getFileExtension(), extension))
+		if(!Objects.equals(fileExtension, extension))
 		{
-			logger.warn(
-					"Storage directory contains file with invalid extension ({}), skipping: {}",
-					storageSettings.getFileExtension(),
+			logger.warn("Storage directory contains file with invalid extension ({}), skipping: {}",
+					fileExtension,
 					file.getName());
 			return Optional.empty();
 		}
