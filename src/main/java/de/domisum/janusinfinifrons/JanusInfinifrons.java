@@ -4,8 +4,7 @@ import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
-import de.domisum.janusinfinifrons.storage.StringOnDiskStorage;
-import de.domisum.janusinfinifrons.storage.StringSerializedObjectStorage;
+import de.domisum.janusinfinifrons.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
@@ -68,18 +67,18 @@ public final class JanusInfinifrons
 	{
 		// @formatter:off
 		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
-				new StringSerializedObjectStorage<>(
-						new CredentialSerializer(),
-						new StringOnDiskStorage(new File("config/credentials"), "jns_cred.json")
+				new SerializedIdentifyableStorage<>(
+						new File("config/credentials"), "jns_cred.json",
+						new CredentialSerializer()
 				)
 		);
 		credentialStorage.fetchAllToMemory();
 		credentialSource = credentialStorage;
 
 		InMemoryProxyStorage<String, JanusComponent> componentStorage = new InMemoryProxyStorage<>(
-				new StringSerializedObjectStorage<>(
-						new ComponentSerializer(),
-						new StringOnDiskStorage(new File("config/components"), "jns_comp.json")
+				new SerializedIdentifyableStorage<>(
+						new File("config/components"), "jns_comp.json",
+						new ComponentSerializer()
 				)
 		);
 		componentStorage.fetchAllToMemory();
