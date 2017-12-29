@@ -55,6 +55,8 @@ public final class JanusInfinifrons
 
 		initSources();
 		initConfigObjects();
+
+		logger.info("Startup complete\n");
 		initTicker();
 	}
 
@@ -162,7 +164,7 @@ public final class JanusInfinifrons
 	// TICKER
 	private void initTicker()
 	{
-		ticker = new UpdateTicker(componentSource);
+		ticker = new UpdateTicker(componentSource, projectSource);
 	}
 
 }

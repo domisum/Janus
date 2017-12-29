@@ -1,6 +1,7 @@
 package de.domisum.janusinfinifrons;
 
 import de.domisum.janusinfinifrons.component.JanusComponent;
+import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.util.ticker.Ticker;
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,17 +27,21 @@ public final class UpdateTicker extends Ticker
 
 	// STORAGE
 	private final FiniteSource<String, JanusComponent> componentSource;
+	private final FiniteSource<String, JanusProject> projectSource;
 
 	// STATUS
 	private final Map<String, String> lastComponentVersions = new HashMap<>();
 
 
 	// INIT
-	public UpdateTicker(FiniteSource<String, JanusComponent> componentSource)
+	public UpdateTicker(
+			FiniteSource<String, JanusComponent> componentSource, FiniteSource<String, JanusProject> projectSource)
 	{
 		super(TICK_INTERVAL);
 		this.componentSource = componentSource;
+		this.projectSource = projectSource;
 
+		logger.info("Starting ticker...");
 		start();
 	}
 
@@ -44,6 +50,10 @@ public final class UpdateTicker extends Ticker
 	@Override protected void tick()
 	{
 		Collection<JanusComponent> changedComponents = updateComponents();
+		Collection<JanusProject> changedProjects = getChangedProjects(changedComponents);
+
+		for(JanusProject jp : changedProjects)
+			buildProject(jp);
 	}
 
 	private Collection<JanusComponent> updateComponents()
@@ -55,15 +65,19 @@ public final class UpdateTicker extends Ticker
 		}
 
 		Collection<JanusComponent> changedComponents = getCurrentlyChangedComponents();
-		logger.debug("Changed components: {}", Identifyable.getIdList(changedComponents));
-		for(JanusComponent cc : changedComponents)
-			logger.info("Component changed: {}", cc.getId());
+		if(!changedComponents.isEmpty())
+			logger.info("Changed components: {}", Identifyable.getIdList(changedComponents));
 
 		// update last version
 		for(JanusComponent c : componentSource.fetchAll())
 			lastComponentVersions.put(c.getId(), c.getVersion());
 
 		return changedComponents;
+	}
+
+	private void buildProject(JanusProject project)
+	{
+		logger.info("Starting build of project '{}'...", project.getId());
 	}
 
 
@@ -77,6 +91,23 @@ public final class UpdateTicker extends Ticker
 				changedComponents.add(c);
 
 		return changedComponents;
+	}
+
+	private Collection<JanusProject> getChangedProjects(Collection<JanusComponent> changedComponents)
+	{
+		Collection<JanusProject> changedProjects = new HashSet<>();
+		for(JanusComponent jc : changedComponents)
+			for(JanusProject jp : projectSource.fetchAll())
+				if(jp.getComponentIds().contains(jc.getId()))
+				{
+					changedProjects.add(jp);
+					break;
+				}
+
+		if(!changedProjects.isEmpty())
+			logger.info("Changed projects: {}", Identifyable.getIdList(changedProjects));
+
+		return changedProjects;
 	}
 
 }
