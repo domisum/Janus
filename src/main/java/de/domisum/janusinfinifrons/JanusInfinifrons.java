@@ -5,6 +5,7 @@ import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
+import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.janusinfinifrons.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.Identifyable;
@@ -37,8 +38,9 @@ public final class JanusInfinifrons
 	private FiniteSource<String, Credential> credentialSource;
 	private FiniteSource<String, JanusComponent> componentSource;
 	private FiniteSource<String, JanusProject> projectSource;
+	private FiniteSource<String, JanusProjectInstance> projectInstanceSource;
 
-	private Storage<JanusProject, ProjectBuild> latestBuilds = new InMemoryStorage<>();
+	private final Storage<JanusProject, ProjectBuild> latestBuilds = new InMemoryStorage<>();
 
 	// REFERENCES
 	private UpdateTicker ticker;
@@ -60,7 +62,7 @@ public final class JanusInfinifrons
 	{
 		ThreadUtil.registerShutdownHook(this::onShutdown);
 
-		initSources();
+		initConfigSources();
 		initConfigObjects();
 
 		logger.info("Startup complete\n");
@@ -74,7 +76,7 @@ public final class JanusInfinifrons
 
 
 	// STORAGE
-	private void initSources()
+	private void initConfigSources()
 	{
 		// @formatter:off
 		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
@@ -103,6 +105,15 @@ public final class JanusInfinifrons
 		);
 		projectStorage.fetchAllToMemory();
 		projectSource = projectStorage;
+
+		InMemoryProxyStorage<String, JanusProjectInstance> projectInstanceStorage = new InMemoryProxyStorage<>(
+				new SerializedIdentifyableStorage<>(
+						new File("config/instances"), ".jns_inst.json",
+						new BasicToStringSerializer<>(JanusProjectInstance.class)
+				)
+		);
+		projectInstanceStorage.fetchAllToMemory();
+		projectInstanceSource = projectInstanceStorage;
 		// @formatter:on
 	}
 
@@ -175,7 +186,7 @@ public final class JanusInfinifrons
 		ticker = new UpdateTicker(
 				componentSource,
 				projectSource,
-				new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource),
+				projectInstanceSource, new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource),
 		latestBuilds);
 		// @formatter:on
 	}

@@ -9,11 +9,12 @@ import java.io.File;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class ProjectInstance implements Identifyable
+public class JanusProjectInstance implements Identifyable
 {
 
 	@Getter private final String id;
 	@Getter private final String projectId;
+
 	private final String rootDirectory;
 
 

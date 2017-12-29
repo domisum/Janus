@@ -3,6 +3,7 @@ package de.domisum.janusinfinifrons;
 import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.JanusComponent;
+import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
@@ -31,6 +32,7 @@ public final class UpdateTicker extends Ticker
 	// REFERENCES
 	private final FiniteSource<String, JanusComponent> componentSource;
 	private final FiniteSource<String, JanusProject> projectSource;
+	private final FiniteSource<String, JanusProjectInstance> projectInstanceSource;
 
 	private final ProjectBuilder projectBuilder;
 	private final Storage<JanusProject, ProjectBuild> latestBuilds;
@@ -43,12 +45,14 @@ public final class UpdateTicker extends Ticker
 	public UpdateTicker(
 			FiniteSource<String, JanusComponent> componentSource,
 			FiniteSource<String, JanusProject> projectSource,
+			FiniteSource<String, JanusProjectInstance> projectInstanceSource,
 			ProjectBuilder projectBuilder,
 			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{
 		super(TICK_INTERVAL);
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
+		this.projectInstanceSource = projectInstanceSource;
 
 		this.projectBuilder = projectBuilder;
 		this.latestBuilds = latestBuilds;
