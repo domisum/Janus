@@ -7,15 +7,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
-import java.time.Instant;
 
 @RequiredArgsConstructor
-@EqualsAndHashCode(of = {"project", "time"})
+@EqualsAndHashCode(of = {"project", "buildId"})
 public class ProjectBuild
 {
 
 	private final JanusProject project;
-	private final Instant time;
+	private final String buildId;
 
 	@Getter private final File directory;
 

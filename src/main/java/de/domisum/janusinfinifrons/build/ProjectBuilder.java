@@ -30,7 +30,8 @@ public class ProjectBuilder
 	public ProjectBuild build(JanusProject project)
 	{
 		Instant now = Instant.now();
-		ProjectBuild build = new ProjectBuild(project, now, createBuildDirectory(project, now));
+		String buildName = getBuildName(now);
+		ProjectBuild build = new ProjectBuild(project, buildName, createBuildDirectory(project, buildName));
 
 		List<JanusComponent> components = getProjectComponents(project);
 		for(JanusComponent component : components)
@@ -43,15 +44,13 @@ public class ProjectBuilder
 		return build;
 	}
 
-	private File createBuildDirectory(JanusProject project, Instant time)
+	private File createBuildDirectory(JanusProject project, String buildName)
 	{
 		File projectBuildDirectory = new File(baseDirectory, project.getId());
-		String buildName = getBuildName(time);
-
 		File buildDirectory = new File(projectBuildDirectory, buildName);
+
 		buildDirectory.mkdir();
 		logger.info("Building into '{}'", buildDirectory);
-
 		return buildDirectory;
 	}
 
@@ -60,7 +59,7 @@ public class ProjectBuilder
 		List<JanusComponent> components = new ArrayList<>();
 		for(String componentId : project.getComponentIds())
 		{
-			JanusComponent component = this.componentSource.fetchOrException(componentId);
+			JanusComponent component = componentSource.fetchOrException(componentId);
 			components.add(component);
 		}
 
