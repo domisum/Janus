@@ -53,7 +53,7 @@ public final class JanusInfinifrons
 		ThreadUtil.registerShutdownHook(this::onShutdown);
 
 		initSources();
-		validateSettings();
+		initConfigObjects();
 		initTicker();
 	}
 
@@ -87,7 +87,7 @@ public final class JanusInfinifrons
 		// @formatter:on
 	}
 
-	private void validateSettings()
+	private void initConfigObjects()
 	{
 		credentialSource.fetchAll().forEach(Credential::validate);
 		logger.info(
@@ -95,18 +95,18 @@ public final class JanusInfinifrons
 				credentialSource.fetchAll().size(),
 				Identifyable.getIdList(credentialSource.fetchAll()));
 
-		validateComponents();
+		initComponents();
 	}
 
-	private void validateComponents()
+	private void initComponents()
 	{
 		componentSource.fetchAll().forEach(JanusComponent::validate);
 
 		for(JanusComponent janusComponent : componentSource.fetchAll())
-			validateComponenent(janusComponent);
+			initComponenent(janusComponent);
 	}
 
-	private void validateComponenent(JanusComponent component)
+	private void initComponenent(JanusComponent component)
 	{
 		component.setHelperDirectory(new File(COMPONENT_BASE_DIRECTORY, component.getId()));
 
