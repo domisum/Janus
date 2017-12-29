@@ -1,4 +1,4 @@
-package de.domisum.janusinfinifrons.storage.ondisk;
+package de.domisum.janusinfinifrons.storage;
 
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;

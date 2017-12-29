@@ -1,4 +1,4 @@
-package de.domisum.janusinfinifrons.storage.ondisk;
+package de.domisum.janusinfinifrons.storage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
