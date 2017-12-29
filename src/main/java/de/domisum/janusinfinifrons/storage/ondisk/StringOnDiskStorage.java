@@ -2,6 +2,7 @@ package de.domisum.janusinfinifrons.storage.ondisk;
 
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;
+import de.domisum.lib.auxilium.util.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class StringOnDiskStorage implements Storage<String, String>
 {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
 	// SETTINGS
@@ -38,19 +39,14 @@ public class StringOnDiskStorage implements Storage<String, String>
 	@Override public Collection<String> fetchAll()
 	{
 		List<String> strings = new ArrayList<>();
-		Collection<File> files = FileUtil.getDirectoryContents(onDiskSettings.getDirectory());
+		Collection<File> files = FileUtil.listFiles(onDiskSettings.getDirectory(), FileType.FILE);
 		for(File f : files)
-		{
-			String fileContent = loadFile(f);
-
-			if(fileContent != null)
-				strings.add(fileContent);
-		}
+			loadFile(f).ifPresent(strings::add);
 
 		return strings;
 	}
 
-	private String loadFile(File file)
+	private Optional<String> loadFile(File file)
 	{
 		String extension = FilenameUtils.getExtension(file.getName());
 		if(!Objects.equals(onDiskSettings.getFileExtension(), extension))
@@ -59,10 +55,10 @@ public class StringOnDiskStorage implements Storage<String, String>
 					"Storage directory contains file with invalid extension ({}), skipping: {}",
 					onDiskSettings.getFileExtension(),
 					file.getName());
-			return null;
+			return Optional.empty();
 		}
 
-		return FileUtil.readString(file);
+		return Optional.of(FileUtil.readString(file));
 	}
 
 
