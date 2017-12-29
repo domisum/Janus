@@ -7,8 +7,9 @@
 .idea/
 target/
 
-components/
 config/
+components/
+builds/
 
 TestLauncher.java
 hibernate.cfg.xml

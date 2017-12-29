@@ -1,5 +1,7 @@
 package de.domisum.janusinfinifrons;
 
+import de.domisum.janusinfinifrons.build.ProjectBuild;
+import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
@@ -25,9 +27,10 @@ public final class UpdateTicker extends Ticker
 	// CONSTANTS
 	private static final Duration TICK_INTERVAL = Duration.ofSeconds(10);
 
-	// STORAGE
+	// REFERENCES
 	private final FiniteSource<String, JanusComponent> componentSource;
 	private final FiniteSource<String, JanusProject> projectSource;
+	private final ProjectBuilder projectBuilder;
 
 	// STATUS
 	private final Map<String, String> lastComponentVersions = new HashMap<>();
@@ -35,11 +38,14 @@ public final class UpdateTicker extends Ticker
 
 	// INIT
 	public UpdateTicker(
-			FiniteSource<String, JanusComponent> componentSource, FiniteSource<String, JanusProject> projectSource)
+			FiniteSource<String, JanusComponent> componentSource,
+			FiniteSource<String, JanusProject> projectSource,
+			ProjectBuilder projectBuilder)
 	{
 		super(TICK_INTERVAL);
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
+		this.projectBuilder = projectBuilder;
 
 		logger.info("Starting ticker...");
 		start();
@@ -78,6 +84,7 @@ public final class UpdateTicker extends Ticker
 	private void buildProject(JanusProject project)
 	{
 		logger.info("Starting build of project '{}'...", project.getId());
+		ProjectBuild build = projectBuilder.build(project);
 	}
 
 

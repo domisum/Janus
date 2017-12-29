@@ -1,5 +1,6 @@
 package de.domisum.janusinfinifrons;
 
+import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
@@ -27,6 +28,7 @@ public final class JanusInfinifrons
 
 	// CONSTANTS
 	private static final File COMPONENT_BASE_DIRECTORY = new File("components/");
+	private static final File BUILDS_BASE_DIRECTORY = new File("builds/");
 
 	// STORAGE
 	private FiniteSource<String, Credential> credentialSource;
@@ -164,7 +166,13 @@ public final class JanusInfinifrons
 	// TICKER
 	private void initTicker()
 	{
-		ticker = new UpdateTicker(componentSource, projectSource);
+		// @formatter:off
+		ticker = new UpdateTicker(
+				componentSource,
+				projectSource,
+				new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource)
+		);
+		// @formatter:on
 	}
 
 }
