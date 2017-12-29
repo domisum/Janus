@@ -15,13 +15,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.Objects;
 
 public class NexusArtifactComponent extends JanusComponent
 {
 
-	private static Logger logger = LoggerFactory.getLogger(NexusArtifactComponent.class);
+	private static final Logger logger = LoggerFactory.getLogger(NexusArtifactComponent.class);
 
+
+	// CONSTANTS
+	private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(5);
+	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofSeconds(60);
 
 	// SETTINGS
 	private final String serverUrl;
@@ -36,8 +41,8 @@ public class NexusArtifactComponent extends JanusComponent
 
 
 	// INIT
-	public NexusArtifactComponent(String id, String serverUrl, String repositoryName, String groupId, String artifactId,
-			String version)
+	public NexusArtifactComponent(
+			String id, String serverUrl, String repositoryName, String groupId, String artifactId, String version)
 	{
 		super(id);
 
@@ -47,6 +52,12 @@ public class NexusArtifactComponent extends JanusComponent
 		this.groupId = groupId;
 		this.artifactId = artifactId;
 		this.version = version;
+	}
+
+
+	@Override public void validate()
+	{
+		// nothing to validate yet
 	}
 
 
@@ -88,8 +99,12 @@ public class NexusArtifactComponent extends JanusComponent
 		}
 		catch(FileNotFoundException e)
 		{
-			logger.error("Could not find artifact '{}.{}:{}' in repository '{}'@'{}'", groupId, artifactId, version,
-					repositoryName, serverUrl);
+			logger.error("Could not find artifact '{}.{}:{}' in repository '{}'@'{}'",
+					groupId,
+					artifactId,
+					version,
+					repositoryName,
+					serverUrl);
 
 			throw new UncheckedIOException(e);
 		}
@@ -103,7 +118,10 @@ public class NexusArtifactComponent extends JanusComponent
 	{
 		try
 		{
-			FileUtils.copyURLToFile(getUrl("jar").toNet(), getJarFile(), 5*1000, 60*1000);
+			FileUtils.copyURLToFile(getUrl("jar").toNet(),
+					getJarFile(),
+					(int) CONNECT_TIMEOUT.toMillis(),
+					(int) DOWNLOAD_TIMEOUT.toMillis());
 		}
 		catch(IOException e)
 		{

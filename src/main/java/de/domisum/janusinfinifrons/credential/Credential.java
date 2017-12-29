@@ -21,4 +21,10 @@ public class Credential implements InMemoryProxyStorage.Keyable<String>
 		return id;
 	}
 
+
+	public void validate()
+	{
+
+	}
+
 }

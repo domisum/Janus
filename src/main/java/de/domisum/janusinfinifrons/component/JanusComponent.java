@@ -30,6 +30,8 @@ public abstract class JanusComponent implements InMemoryProxyStorage.Keyable<Str
 		this.helperDirectory = helperDirectory;
 	}
 
+	public abstract void validate();
+
 
 	// GETTERS
 	public abstract String getVersion();

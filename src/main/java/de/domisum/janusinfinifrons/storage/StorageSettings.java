@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 
 @RequiredArgsConstructor
-public class OnDiskSettings
+public class StorageSettings
 {
 
 	@Getter private final File directory;

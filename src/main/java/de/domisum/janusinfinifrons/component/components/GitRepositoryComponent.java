@@ -48,6 +48,11 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		this.credentialId = credentialId;
 	}
 
+	@Override public void validate()
+	{
+		// nothing to validate yet
+	}
+
 	@Override public void injectCredential(Credential credential)
 	{
 		if(this.credential != null)

@@ -4,7 +4,7 @@ import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
-import de.domisum.janusinfinifrons.storage.OnDiskSettings;
+import de.domisum.janusinfinifrons.storage.StorageSettings;
 import de.domisum.janusinfinifrons.storage.StringOnDiskStorage;
 import de.domisum.janusinfinifrons.storage.StringSerializedObjectStorage;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
@@ -15,9 +15,8 @@ public final class JanusInfinifrons
 {
 
 	// CONSTANTS
-	private static final OnDiskSettings CREDENTIALS_ON_DISK_SETTINGS = new OnDiskSettings(new File("credentials"), "jns_cred");
-
-	private static final OnDiskSettings COMPONENTS_ON_DISK_SETTINGS = new OnDiskSettings(new File("components"), "jns_comp");
+	private static final StorageSettings CREDENTIALS_STORAGE_SETTINGS = new StorageSettings(new File("credentials"), "jns_cred");
+	private static final StorageSettings COMPONENTS_STORAGE_SETTINGS = new StorageSettings(new File("components"), "jns_comp");
 
 	// STORAGE
 	private InMemoryProxyStorage<String, Credential> credentialStorage;
@@ -40,17 +39,29 @@ public final class JanusInfinifrons
 	// STORAGE
 	private void initStorage()
 	{
-		credentialStorage = new InMemoryProxyStorage<>(new StringSerializedObjectStorage<>(new CredentialSerializer(),
-				new StringOnDiskStorage(CREDENTIALS_ON_DISK_SETTINGS)));
-
-		componentStorage = new InMemoryProxyStorage<>(new StringSerializedObjectStorage<>(new ComponentSerializer(),
-				new StringOnDiskStorage(COMPONENTS_ON_DISK_SETTINGS)));
+		// @formatter:off
+		credentialStorage = new InMemoryProxyStorage<>(
+				new StringSerializedObjectStorage<>(
+						new CredentialSerializer(),
+						new StringOnDiskStorage(CREDENTIALS_STORAGE_SETTINGS)
+				)
+		);
+		componentStorage = new InMemoryProxyStorage<>(
+				new StringSerializedObjectStorage<>(
+						new ComponentSerializer(),
+						new StringOnDiskStorage(COMPONENTS_STORAGE_SETTINGS)
+				)
+		);
+		// @formatter:on
 	}
 
 	private void loadSettings()
 	{
 		credentialStorage.fetchAllToMemory();
+		credentialStorage.fetchAll().forEach(Credential::validate);
+
 		componentStorage.fetchAllToMemory();
+		componentStorage.fetchAll().forEach(JanusComponent::validate);
 	}
 
 }
