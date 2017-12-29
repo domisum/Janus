@@ -5,6 +5,8 @@ import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.lib.auxilium.util.FileUtil;
+import de.domisum.lib.auxilium.util.FileUtil.FileType;
+import de.domisum.lib.auxilium.util.file.filter.FilterOutDirectory;
 import lombok.Getter;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -21,7 +23,7 @@ import java.io.IOException;
 public class GitRepositoryComponent extends JanusComponent implements CredentialComponent
 {
 
-	private static Logger logger = LoggerFactory.getLogger(GitRepositoryComponent.class);
+	private static final Logger logger = LoggerFactory.getLogger(GitRepositoryComponent.class);
 
 
 	// SETTINGS
@@ -68,7 +70,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 	// UPDATE
 	@Override public void update()
 	{
-		if(FileUtil.isDirectoryEmpty(getHelperDirectory()))
+		if(FileUtil.listFiles(getHelperDirectory(), FileType.FILE_AND_DIRECTORY).isEmpty())
 			gitClone();
 
 		gitPull();
@@ -76,10 +78,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 
 	@Override public void addToBuild(ProjectBuild build)
 	{
-		FileUtil.FilePathFilter filter = new FileUtil.FilePathFilter();
-		filter.addContains(".git");
-
-		FileUtil.copyDirectory(getHelperDirectory(), build.getDirectory(), filter);
+		FileUtil.coypDirectory(getHelperDirectory(), build.getDirectory(), new FilterOutDirectory(".git/"));
 	}
 
 
@@ -101,7 +100,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		}
 		catch(GitAPIException e)
 		{
-			e.printStackTrace();
+			logger.error("error cloning repository", e);
 		}
 
 		logger.info("Cloning done");
@@ -118,19 +117,19 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		}
 		catch(IOException|GitAPIException e)
 		{
-			e.printStackTrace();
+			logger.error("error pulling changes from git repositor", e);
 		}
 
 		latestCommitHash = getLatestCommitHash();
 	}
 
-	private void injectCredentialsProviderIntoCommand(TransportCommand transportCommand)
+	private void injectCredentialsProviderIntoCommand(TransportCommand<?, ?> transportCommand)
 	{
 		if(credential == null)
 			return;
 
-		transportCommand.setCredentialsProvider(
-				new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword()));
+		transportCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(credential.getUsername(),
+				credential.getPassword()));
 	}
 
 	private String getLatestCommitHash()
@@ -145,7 +144,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("error reading latest commit hash", e);
 			return null;
 		}
 	}
