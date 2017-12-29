@@ -19,6 +19,9 @@ import java.util.Optional;
 public final class JanusInfinifrons
 {
 
+	// CONSTANTS
+	private static final File COMPONENT_BASE_DIRECTORY = new File("components/");
+
 	// STORAGE
 	private FiniteSource<String, Credential> credentialStorage;
 	private FiniteSource<String, JanusComponent> componentStorage;
@@ -89,18 +92,25 @@ public final class JanusInfinifrons
 		componentStorage.fetchAll().forEach(JanusComponent::validate);
 
 		for(JanusComponent janusComponent : componentStorage.fetchAll())
-			if(janusComponent instanceof CredentialComponent)
-			{
-				CredentialComponent credentialComponent = (CredentialComponent) janusComponent;
-				Optional<Credential> credentialOptional = credentialStorage.fetch(credentialComponent.getCredentialId());
-				if(!credentialOptional.isPresent())
-					throw new InvalidConfigurationException(PHR.r(
-							"unknown credential id '{}' in component '{}'",
-							credentialComponent.getCredentialId(),
-							janusComponent.getId()));
+			validateComponenent(janusComponent);
+	}
 
-				credentialComponent.injectCredential(credentialOptional.get());
-			}
+	private void validateComponenent(JanusComponent component)
+	{
+		component.setHelperDirectory(new File(COMPONENT_BASE_DIRECTORY, component.getId()));
+
+		if(component instanceof CredentialComponent)
+		{
+			CredentialComponent credentialComponent = (CredentialComponent) component;
+			Optional<Credential> credentialOptional = credentialStorage.fetch(credentialComponent.getCredentialId());
+			if(!credentialOptional.isPresent())
+				throw new InvalidConfigurationException(PHR.r(
+						"unknown credential id '{}' in component '{}'",
+						credentialComponent.getCredentialId(),
+						component.getId()));
+
+			credentialComponent.injectCredential(credentialOptional.get());
+		}
 	}
 
 

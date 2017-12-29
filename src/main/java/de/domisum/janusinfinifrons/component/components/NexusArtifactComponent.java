@@ -72,7 +72,7 @@ public class NexusArtifactComponent extends JanusComponent
 
 
 	// UPDATE
-	@Override protected void update()
+	@Override public void update()
 	{
 		String lastJarMd5 = currentJarMd5;
 		currentJarMd5 = fetchJarMd5();

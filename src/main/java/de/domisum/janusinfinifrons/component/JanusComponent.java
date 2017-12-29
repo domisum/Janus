@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
+import de.domisum.lib.auxilium.contracts.Identifyable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.io.File;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-public abstract class JanusComponent implements InMemoryProxyStorage.Keyable<String>
+public abstract class JanusComponent implements Identifyable
 {
 
 	// PROPERTIES
@@ -22,7 +22,7 @@ public abstract class JanusComponent implements InMemoryProxyStorage.Keyable<Str
 
 
 	// INIT
-	protected final void setHelperDirectory(File helperDirectory)
+	public final void setHelperDirectory(File helperDirectory)
 	{
 		if(this.helperDirectory != null)
 			throw new IllegalStateException("helperDirectory already set, can't be changed after that");
@@ -36,14 +36,9 @@ public abstract class JanusComponent implements InMemoryProxyStorage.Keyable<Str
 	// GETTERS
 	public abstract String getVersion();
 
-	@Override public String getKey()
-	{
-		return id;
-	}
-
 
 	// UPDATE
-	protected abstract void update();
+	public abstract void update();
 
 
 	// BUILD
