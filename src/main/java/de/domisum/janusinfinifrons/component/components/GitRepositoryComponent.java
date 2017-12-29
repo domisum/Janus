@@ -52,8 +52,8 @@ public class GitRepositoryComponent extends JanusComponent
 	{
 		if(FileUtil.listFiles(getHelperDirectory(), FileType.FILE_AND_DIRECTORY).isEmpty())
 			gitClone();
-
-		gitPull();
+		else
+			gitPull();
 	}
 
 	@Override public void addToBuild(ProjectBuild build)
@@ -77,6 +77,7 @@ public class GitRepositoryComponent extends JanusComponent
 		{
 			Git git = cloneCommand.call();
 			git.close();
+			updateLatestCommitHash();
 		}
 		catch(GitAPIException e)
 		{
@@ -94,13 +95,12 @@ public class GitRepositoryComponent extends JanusComponent
 			injectCredentialsProviderIntoCommand(pullCommand);
 
 			pullCommand.call();
+			updateLatestCommitHash();
 		}
 		catch(IOException|GitAPIException e)
 		{
 			logger.error("error pulling changes from git repositor", e);
 		}
-
-		latestCommitHash = getLatestCommitHash();
 	}
 
 	private void injectCredentialsProviderIntoCommand(TransportCommand<?, ?> transportCommand)
@@ -112,7 +112,7 @@ public class GitRepositoryComponent extends JanusComponent
 				getCredential().getPassword()));
 	}
 
-	private String getLatestCommitHash()
+	private void updateLatestCommitHash()
 	{
 		try(Git git = Git.open(getHelperDirectory()))
 		{
@@ -120,12 +120,11 @@ public class GitRepositoryComponent extends JanusComponent
 			if(branchRef == null)
 				throw new IllegalArgumentException("git repository does not contain branch '"+branch+"'");
 
-			return branchRef.getObjectId().getName();
+			latestCommitHash = branchRef.getObjectId().getName();
 		}
 		catch(IOException e)
 		{
 			logger.error("error reading latest commit hash", e);
-			return null;
 		}
 	}
 
