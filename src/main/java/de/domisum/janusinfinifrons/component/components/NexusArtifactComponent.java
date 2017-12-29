@@ -9,17 +9,13 @@ import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.http.HttpCredentials;
 import de.domisum.lib.auxilium.util.http.HttpFetch;
 import de.domisum.lib.auxilium.util.http.specific.HttpFetchString;
+import de.domisum.lib.auxilium.util.http.specific.HttpFetchToFile;
 import de.domisum.lib.auxilium.util.java.annotations.InitByDeserialization;
 import lombok.NoArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,10 +25,6 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 	private static final Logger logger = LoggerFactory.getLogger(NexusArtifactComponent.class);
 
-
-	// CONSTANTS
-	private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(5);
-	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofSeconds(60);
 
 	// SETTINGS
 	@InitByDeserialization private String serverUrl;
@@ -65,7 +57,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	@Override public void update()
 	{
 		String lastJarMd5 = currentJarMd5;
-		currentJarMd5 = fetchJarMd5();
+		fetchJarMd5();
 
 		boolean md5Changed = !Objects.equals(lastJarMd5, currentJarMd5);
 		if(md5Changed)
@@ -79,7 +71,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 
 	// FETCH
-	private String fetchJarMd5()
+	private void fetchJarMd5()
 	{
 		AbstractURL url = getUrl("jar.md5");
 
@@ -87,27 +79,19 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 		if(getCredential() != null)
 			fetchString.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
 
-
 		Optional<String> jarMd5Optional = fetchString.fetch();
-		if(!jarMd5Optional.isPresent())
-			throw new UncheckedIOException(new FileNotFoundException(url.toString()));
-
-		return jarMd5Optional.get();
+		jarMd5Optional.ifPresent(s->currentJarMd5 = s);
 	}
 
 	private void downloadJar()
 	{
-		try
-		{
-			FileUtils.copyURLToFile(getUrl("jar").toNet(),
-					getJarFile(),
-					(int) CONNECT_TIMEOUT.toMillis(),
-					(int) DOWNLOAD_TIMEOUT.toMillis());
-		}
-		catch(IOException e)
-		{
-			throw new UncheckedIOException(e);
-		}
+		AbstractURL url = getUrl("jar");
+		HttpFetch<File> httpFetchToFile = new HttpFetchToFile(url, getJarFile()).onFail(e->logger.error("failed to download jar",
+				e));
+		if(getCredential() != null)
+			httpFetchToFile.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
+
+		httpFetchToFile.fetch();
 	}
 
 

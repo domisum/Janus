@@ -130,7 +130,7 @@ public final class JanusInfinifrons
 					component.getId()));
 
 		component.injectCredential(credentialOptional.get());
-		logger.info("Injected credential '{}' into component '{}'", credentialOptional.get(), component.getId());
+		logger.info("Injected credential '{}' into component '{}'", credentialOptional.get().getId(), component.getId());
 	}
 
 
