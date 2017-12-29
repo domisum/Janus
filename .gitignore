@@ -7,6 +7,9 @@
 .idea/
 target/
 
+components/
+config/
+
 TestLauncher.java
 hibernate.cfg.xml
 logback.xml
