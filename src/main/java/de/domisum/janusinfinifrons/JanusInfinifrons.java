@@ -1,7 +1,6 @@
 package de.domisum.janusinfinifrons;
 
 import de.domisum.janusinfinifrons.component.ComponentSerializer;
-import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.credential.CredentialSerializer;
@@ -13,6 +12,7 @@ import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.ThreadUtil;
 import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,8 +90,7 @@ public final class JanusInfinifrons
 	private void initConfigObjects()
 	{
 		credentialSource.fetchAll().forEach(Credential::validate);
-		logger.info(
-				"Loaded {} credential(s): {}",
+		logger.info("Loaded {} credential(s): {}",
 				credentialSource.fetchAll().size(),
 				Identifyable.getIdList(credentialSource.fetchAll()));
 
@@ -101,6 +100,9 @@ public final class JanusInfinifrons
 	private void initComponents()
 	{
 		componentSource.fetchAll().forEach(JanusComponent::validate);
+		logger.info("Loaded {} component(s): {}",
+				componentSource.fetchAll().size(),
+				Identifyable.getIdList(componentSource.fetchAll()));
 
 		for(JanusComponent janusComponent : componentSource.fetchAll())
 			initComponenent(janusComponent);
@@ -108,25 +110,28 @@ public final class JanusInfinifrons
 
 	private void initComponenent(JanusComponent component)
 	{
+		Validate.notNull(component.getId(), "component id was null: "+component);
+
 		component.setHelperDirectory(new File(COMPONENT_BASE_DIRECTORY, component.getId()));
+		injectComponentCredential(component);
+	}
 
-		if(component instanceof CredentialComponent)
+	private void injectComponentCredential(JanusComponent component)
+	{
+		if(component.getCredentialId() == null)
 		{
-			CredentialComponent credentialComponent = (CredentialComponent) component;
-			Optional<Credential> credentialOptional = credentialSource.fetch(credentialComponent.getCredentialId());
-			if(!credentialOptional.isPresent())
-				throw new InvalidConfigurationException(PHR.r(
-						"unknown credential id '{}' in component '{}'",
-						credentialComponent.getCredentialId(),
-						component.getId()));
-
-			credentialComponent.injectCredential(credentialOptional.get());
+			logger.info("Did not inject credential into componenent: {}", component.getId());
+			return;
 		}
 
-		logger.info(
-				"Loaded {} component(s): {}",
-				componentSource.fetchAll().size(),
-				Identifyable.getIdList(componentSource.fetchAll()));
+		Optional<Credential> credentialOptional = credentialSource.fetch(component.getCredentialId());
+		if(!credentialOptional.isPresent())
+			throw new InvalidConfigurationException(PHR.r("unknown credential id '{}' in component '{}'",
+					component.getCredentialId(),
+					component.getId()));
+
+		component.injectCredential(credentialOptional.get());
+		logger.info("Injected credential '{}' into component '{}'", credentialOptional.get(), component.getId());
 	}
 
 

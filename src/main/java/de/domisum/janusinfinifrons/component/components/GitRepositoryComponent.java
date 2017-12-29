@@ -1,13 +1,11 @@
 package de.domisum.janusinfinifrons.component.components;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
-import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.FileUtil.FileType;
 import de.domisum.lib.auxilium.util.file.filter.FilterOutDirectory;
-import lombok.Getter;
+import de.domisum.lib.auxilium.util.java.annotations.InitByDeserialization;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -20,49 +18,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class GitRepositoryComponent extends JanusComponent implements CredentialComponent
+public class GitRepositoryComponent extends JanusComponent
 {
 
 	private static final Logger logger = LoggerFactory.getLogger(GitRepositoryComponent.class);
 
 
 	// SETTINGS
-	private final String repositoryUrl;
-	private final String branch;
-	@Getter private final String credentialId;
+	@InitByDeserialization private String repositoryUrl;
+	@InitByDeserialization private String branch;
 
-	// REFERENCES
-	private transient Credential credential;
-
-	// TEMP
+	// STATUS
 	private transient String latestCommitHash = null;
 
 
 	// INIT
-	public GitRepositoryComponent(String id, String repositoryUrl, String branch, String credentialId)
-	{
-		super(id);
-
-		this.repositoryUrl = repositoryUrl;
-		this.branch = branch;
-		this.credentialId = credentialId;
-	}
-
 	@Override public void validate()
 	{
 		// nothing to validate yet
 	}
 
-	@Override public void injectCredential(Credential credential)
-	{
-		if(this.credential != null)
-			throw new IllegalStateException("credential is already set, can't change after that");
 
-		this.credential = credential;
-	}
-
-
-	// GETTERS
+	// COMPONENT
 	@Override public String getVersion()
 	{
 		if(latestCommitHash == null)
@@ -71,8 +48,6 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 		return latestCommitHash;
 	}
 
-
-	// UPDATE
 	@Override public void update()
 	{
 		if(FileUtil.listFiles(getHelperDirectory(), FileType.FILE_AND_DIRECTORY).isEmpty())
@@ -90,7 +65,7 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 	// GIT
 	private void gitClone()
 	{
-		logger.info("Cloning git repository '{}' at '{}:{}'", id, repositoryUrl, branch);
+		logger.info("Cloning git repository '{}' at '{}:{}'", getId(), repositoryUrl, branch);
 
 		CloneCommand cloneCommand = Git.cloneRepository();
 		cloneCommand.setURI(repositoryUrl);
@@ -130,11 +105,11 @@ public class GitRepositoryComponent extends JanusComponent implements Credential
 
 	private void injectCredentialsProviderIntoCommand(TransportCommand<?, ?> transportCommand)
 	{
-		if(credential == null)
+		if(getCredential() == null)
 			return;
 
-		transportCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(credential.getUsername(),
-				credential.getPassword()));
+		transportCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(getCredential().getUsername(),
+				getCredential().getPassword()));
 	}
 
 	private String getLatestCommitHash()

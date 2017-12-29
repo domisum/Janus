@@ -1,12 +1,17 @@
 package de.domisum.janusinfinifrons.component.components;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
+import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.lib.auxilium.data.container.AbstractURL;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.PHR;
+import de.domisum.lib.auxilium.util.http.HttpCredentials;
+import de.domisum.lib.auxilium.util.http.HttpFetch;
+import de.domisum.lib.auxilium.util.http.specific.HttpFetchString;
+import de.domisum.lib.auxilium.util.java.annotations.InitByDeserialization;
+import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +19,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 
-public class NexusArtifactComponent extends JanusComponent
+@NoArgsConstructor
+public class NexusArtifactComponent extends JanusComponent implements CredentialComponent
 {
 
 	private static final Logger logger = LoggerFactory.getLogger(NexusArtifactComponent.class);
@@ -29,39 +35,25 @@ public class NexusArtifactComponent extends JanusComponent
 	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofSeconds(60);
 
 	// SETTINGS
-	private final String serverUrl;
-	private final String repositoryName;
+	@InitByDeserialization private String serverUrl;
+	@InitByDeserialization private String repositoryName;
 
-	private final String groupId;
-	private final String artifactId;
-	private final String version;
+	@InitByDeserialization private String groupId;
+	@InitByDeserialization private String artifactId;
+	@InitByDeserialization private String version;
 
-	// TEMP
+	// STATUS
 	private transient String currentJarMd5 = null;
 
 
 	// INIT
-	public NexusArtifactComponent(
-			String id, String serverUrl, String repositoryName, String groupId, String artifactId, String version)
-	{
-		super(id);
-
-		this.serverUrl = serverUrl;
-		this.repositoryName = repositoryName;
-
-		this.groupId = groupId;
-		this.artifactId = artifactId;
-		this.version = version;
-	}
-
-
 	@Override public void validate()
 	{
 		// nothing to validate yet
 	}
 
 
-	// GETTERS
+	// COMPONENT
 	@Override public String getVersion()
 	{
 		if(currentJarMd5 == null)
@@ -70,8 +62,6 @@ public class NexusArtifactComponent extends JanusComponent
 		return currentJarMd5;
 	}
 
-
-	// UPDATE
 	@Override public void update()
 	{
 		String lastJarMd5 = currentJarMd5;
@@ -91,27 +81,18 @@ public class NexusArtifactComponent extends JanusComponent
 	// FETCH
 	private String fetchJarMd5()
 	{
-		AbstractURL jarMd5Url = getUrl("jar.md5");
+		AbstractURL url = getUrl("jar.md5");
 
-		try
-		{
-			return IOUtils.toString(jarMd5Url.toNet(), Charset.forName("UTF-8"));
-		}
-		catch(FileNotFoundException e)
-		{
-			logger.error("Could not find artifact '{}.{}:{}' in repository '{}'@'{}'",
-					groupId,
-					artifactId,
-					version,
-					repositoryName,
-					serverUrl);
+		HttpFetch<String> fetchString = new HttpFetchString(url).onFail(e->logger.error("failed to fetch jar md5", e));
+		if(getCredential() != null)
+			fetchString.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
 
-			throw new UncheckedIOException(e);
-		}
-		catch(IOException e)
-		{
-			throw new UncheckedIOException(e);
-		}
+
+		Optional<String> jarMd5Optional = fetchString.fetch();
+		if(!jarMd5Optional.isPresent())
+			throw new UncheckedIOException(new FileNotFoundException(url.toString()));
+
+		return jarMd5Optional.get();
 	}
 
 	private void downloadJar()

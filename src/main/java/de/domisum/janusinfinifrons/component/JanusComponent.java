@@ -1,27 +1,38 @@
 package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
+import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
-@RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
 public abstract class JanusComponent implements Identifyable
 {
 
 	// PROPERTIES
-	@Getter protected final String id;
+	@Getter private String id;
+	@Getter private String credentialId;
 
 	// REFERENCES
-	@Getter(value = AccessLevel.PROTECTED) private transient File helperDirectory;
+	@Getter(AccessLevel.PROTECTED) private transient Credential credential;
+	@Getter(AccessLevel.PROTECTED) private transient File helperDirectory;
 
 
 	// INIT
+	public abstract void validate();
+
+	public void injectCredential(Credential credential)
+	{
+		if(this.credential != null)
+			throw new IllegalStateException("credential is already set, can't change after that");
+
+		this.credential = credential;
+	}
+
 	public final void setHelperDirectory(File helperDirectory)
 	{
 		if(this.helperDirectory != null)
@@ -30,18 +41,12 @@ public abstract class JanusComponent implements Identifyable
 		this.helperDirectory = helperDirectory;
 	}
 
-	public abstract void validate();
 
-
-	// GETTERS
+	// COMPONENT
 	public abstract String getVersion();
 
-
-	// UPDATE
 	public abstract void update();
 
-
-	// BUILD
 	public abstract void addToBuild(ProjectBuild build);
 
 }
