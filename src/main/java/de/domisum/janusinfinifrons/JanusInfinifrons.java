@@ -7,6 +7,7 @@ import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.intercom.IntercomServer;
+import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import de.domisum.janusinfinifrons.intercom.undertow.UndertowIntercomServer;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.janusinfinifrons.storage.SerializedIdentifyableStorage;
@@ -213,10 +214,27 @@ public final class JanusInfinifrons
 		logger.info("Initiating intercom server...");
 
 		// @formatter:off
-		intercomServer = new UndertowIntercomServer(INTERCOM_SERVER_PORT);
+		IntercomServerInteractionFacade interactionFacade = this::getLatestBuild;
+
+		intercomServer = new UndertowIntercomServer(interactionFacade, INTERCOM_SERVER_PORT);
 		// @formatter:on
 
 		intercomServer.start();
+	}
+
+
+	// UTIL
+	private ProjectBuild getLatestBuild(String projectName)
+	{
+		Optional<JanusProject> projectOptional = projectSource.fetch(projectName);
+		if(!projectOptional.isPresent())
+			throw new IllegalArgumentException("unknown project: "+projectName);
+
+		Optional<ProjectBuild> latestBuild = latestBuilds.fetch(projectOptional.get());
+		if(!latestBuild.isPresent())
+			throw new IllegalArgumentException("no build for project "+projectName);
+
+		return latestBuild.get();
 	}
 
 }

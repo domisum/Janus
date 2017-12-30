@@ -1,15 +1,20 @@
 package de.domisum.janusinfinifrons.intercom.handler;
 
+import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import de.domisum.janusinfinifrons.intercom.ResponseSender;
 import de.domisum.janusinfinifrons.intercom.ServerRequest;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class RequestHandler
 {
 
-	protected ServerRequest request;
-	protected final ResponseSender responseSender;
+	@Getter(AccessLevel.PROTECTED) private final IntercomServerInteractionFacade interactionFacade;
+
+	@Getter(AccessLevel.PROTECTED) private final ServerRequest request;
+	@Getter(AccessLevel.PROTECTED) private final ResponseSender responseSender;
 
 
 	// REQUEST

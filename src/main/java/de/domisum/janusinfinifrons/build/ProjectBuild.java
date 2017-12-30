@@ -30,7 +30,7 @@ public class ProjectBuild implements Keyable<JanusProject>
 	// OBJECT
 	@Override public String toString()
 	{
-		return project.getId()+"-#-"+buildId;
+		return buildId;
 	}
 
 

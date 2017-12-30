@@ -1,12 +1,12 @@
 package de.domisum.janusinfinifrons.intercom.undertow;
 
 import de.domisum.janusinfinifrons.intercom.IntercomServer;
+import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import de.domisum.janusinfinifrons.intercom.ResponseSender;
 import de.domisum.janusinfinifrons.intercom.ServerRequest;
 import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
 import io.undertow.server.HttpServerExchange;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-@RequiredArgsConstructor
 public class UndertowIntercomServer extends IntercomServer
 {
 
@@ -30,6 +29,14 @@ public class UndertowIntercomServer extends IntercomServer
 
 	// SERVER
 	private Undertow server;
+
+
+	// INIT
+	public UndertowIntercomServer(IntercomServerInteractionFacade interactionFacade, int port)
+	{
+		super(interactionFacade);
+		this.port = port;
+	}
 
 
 	@Override public void start()

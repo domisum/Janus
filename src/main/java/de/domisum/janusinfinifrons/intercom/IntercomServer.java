@@ -1,14 +1,20 @@
 package de.domisum.janusinfinifrons.intercom;
 
 import de.domisum.janusinfinifrons.intercom.handler.RequestHandler;
-import de.domisum.janusinfinifrons.intercom.handler.RequestHandlerFactory;
+import de.domisum.janusinfinifrons.intercom.handler.handlers.UpdateAvailableRequestHandler;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@RequiredArgsConstructor
 public abstract class IntercomServer
 {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+
+	// REFERENCES
+	private final IntercomServerInteractionFacade interactionFacade;
 
 
 	// START STOP
@@ -20,11 +26,17 @@ public abstract class IntercomServer
 	// REQUESTS
 	protected synchronized void handleRequest(ServerRequest request, ResponseSender responseSender)
 	{
-		logger.info("Received request: {}", request);
+		logger.debug("Received request: {}", request);
 
-		RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(responseSender);
-		RequestHandler requestHandler = requestHandlerFactory.fromRequestPath(request);
-		requestHandler.handleRequest();
+		constructHandler(request, responseSender).handleRequest();
+	}
+
+	private RequestHandler constructHandler(ServerRequest serverRequest, ResponseSender responseSender)
+	{
+		if("/updateAvailable".equalsIgnoreCase(serverRequest.getPath()))
+			return new UpdateAvailableRequestHandler(interactionFacade, serverRequest, responseSender);
+
+		throw new IllegalArgumentException("invalid request: "+serverRequest);
 	}
 
 }

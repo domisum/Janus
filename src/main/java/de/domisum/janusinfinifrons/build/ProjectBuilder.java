@@ -29,8 +29,7 @@ public class ProjectBuilder
 	// BUILD
 	public ProjectBuild build(JanusProject project)
 	{
-		Instant now = Instant.now();
-		String buildName = getBuildName(now);
+		String buildName = getBuildName(project);
 		ProjectBuild build = new ProjectBuild(project, buildName, createBuildDirectory(project, buildName));
 
 		List<JanusComponent> components = getProjectComponents(project);
@@ -68,10 +67,12 @@ public class ProjectBuilder
 
 
 	// UTIL
-	private static String getBuildName(Instant time)
+	private static String getBuildName(JanusProject project)
 	{
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'-HH-mm-ss.SSS'Z'").withZone(ZoneId.of("UTC"));
-		return formatter.format(time);
+		String timestamp = formatter.format(Instant.now());
+
+		return project.getId()+"#"+timestamp;
 	}
 
 }
