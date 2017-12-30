@@ -1,7 +1,7 @@
 package de.domisum.janusinfinifrons.intercom;
 
-import de.domisum.janusinfinifrons.intercom.responder.RequestResponder;
-import de.domisum.janusinfinifrons.intercom.responder.RequestResponderFactory;
+import de.domisum.janusinfinifrons.intercom.handler.RequestHandler;
+import de.domisum.janusinfinifrons.intercom.handler.RequestHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +22,9 @@ public abstract class IntercomServer
 	{
 		logger.info("Received request: {}", request);
 
-		RequestResponderFactory requestResponderFactory = new RequestResponderFactory(responseSender);
-		RequestResponder requestResponder = requestResponderFactory.fromRequestPath(request);
-		requestResponder.handleRequest();
+		RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(responseSender);
+		RequestHandler requestHandler = requestHandlerFactory.fromRequestPath(request);
+		requestHandler.handleRequest();
 	}
 
 }
