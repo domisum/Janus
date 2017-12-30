@@ -6,6 +6,8 @@ import de.domisum.janusinfinifrons.component.ComponentSerializer;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
+import de.domisum.janusinfinifrons.intercom.IntercomServer;
+import de.domisum.janusinfinifrons.intercom.undertow.UndertowIntercomServer;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.janusinfinifrons.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.Identifyable;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public final class JanusInfinifrons
 {
 
+	private static final int INTERCOM_SERVER_PORT = 8381;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
@@ -44,6 +47,7 @@ public final class JanusInfinifrons
 
 	// REFERENCES
 	private UpdateTicker ticker;
+	private IntercomServer intercomServer;
 
 
 	// INIT
@@ -53,11 +57,6 @@ public final class JanusInfinifrons
 		new JanusInfinifrons();
 	}
 
-	public void shutdown()
-	{
-		onShutdown();
-	}
-
 	private JanusInfinifrons()
 	{
 		ThreadUtil.registerShutdownHook(this::onShutdown);
@@ -65,13 +64,20 @@ public final class JanusInfinifrons
 		initConfigSources();
 		initConfigObjects();
 
-		logger.info("Startup complete\n");
+		initIntercomServer();
 		initTicker();
+		logger.info("Startup complete\n");
+	}
+
+	public void shutdown()
+	{
+		onShutdown();
 	}
 
 	private void onShutdown()
 	{
 		ticker.stop();
+		intercomServer.stop();
 	}
 
 
@@ -188,9 +194,11 @@ public final class JanusInfinifrons
 	}
 
 
-	// TICKER
+	// OTHER COMPONENT INIT
 	private void initTicker()
 	{
+		logger.info("Initiating ticker...");
+
 		// @formatter:off
 		ticker = new UpdateTicker(
 				componentSource,
@@ -198,6 +206,17 @@ public final class JanusInfinifrons
 				projectInstanceSource, new ProjectBuilder(BUILDS_BASE_DIRECTORY, componentSource),
 		latestBuilds);
 		// @formatter:on
+	}
+
+	private void initIntercomServer()
+	{
+		logger.info("Initiating intercom server...");
+
+		// @formatter:off
+		intercomServer = new UndertowIntercomServer(INTERCOM_SERVER_PORT);
+		// @formatter:on
+
+		intercomServer.start();
 	}
 
 }
