@@ -69,7 +69,7 @@ public class ProjectBuilder
 	// UTIL
 	private static String getBuildName(JanusProject project)
 	{
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'-HH-mm-ss.SSS'Z'").withZone(ZoneId.of("UTC"));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'-HH-mm-ss.SSS'Z'").withZone(ZoneId.of("UTC"));
 		String timestamp = formatter.format(Instant.now());
 
 		return project.getId()+"#"+timestamp;

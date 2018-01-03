@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RequiredArgsConstructor
-public abstract class IntercomServer
+public abstract class IntercomServer // TODO refactor to use HttpButler
 {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
