@@ -10,12 +10,12 @@ import de.domisum.janusinfinifrons.intercom.IntercomServer;
 import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import de.domisum.janusinfinifrons.intercom.undertow.UndertowIntercomServer;
 import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.janusinfinifrons.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.serialization.BasicToStringSerializer;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryStorage;
+import de.domisum.lib.auxilium.contracts.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.ThreadUtil;
@@ -77,7 +77,7 @@ public final class JanusInfinifrons
 
 	private void onShutdown()
 	{
-		ticker.stop();
+		ticker.requestAndWaitForStop();
 		intercomServer.stop();
 	}
 
