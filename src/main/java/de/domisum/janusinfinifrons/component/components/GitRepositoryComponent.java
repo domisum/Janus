@@ -17,12 +17,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class GitRepositoryComponent extends JanusComponent
 {
 
 	private static final Logger logger = LoggerFactory.getLogger(GitRepositoryComponent.class);
 
+
+	// CONSTANTS
+	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofSeconds(60*5);
 
 	// SETTINGS
 	@InitByDeserialization private String repositoryUrl;
@@ -71,6 +75,7 @@ public class GitRepositoryComponent extends JanusComponent
 		cloneCommand.setURI(repositoryUrl);
 		cloneCommand.setDirectory(getHelperDirectory());
 		cloneCommand.setBranch(branch);
+		cloneCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
 		injectCredentialsProviderIntoCommand(cloneCommand);
 
 		try
@@ -92,6 +97,7 @@ public class GitRepositoryComponent extends JanusComponent
 		try(Git git = Git.open(getHelperDirectory()))
 		{
 			PullCommand pullCommand = git.pull();
+			pullCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
 			injectCredentialsProviderIntoCommand(pullCommand);
 
 			pullCommand.call();
