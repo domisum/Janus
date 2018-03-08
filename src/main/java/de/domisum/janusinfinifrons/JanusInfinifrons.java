@@ -17,6 +17,7 @@ import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryStorage;
 import de.domisum.lib.auxilium.contracts.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
+import de.domisum.lib.auxilium.run.ExecuteOnCommandLineInput;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.ThreadUtil;
 import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
@@ -60,7 +61,7 @@ public final class JanusInfinifrons
 
 	private JanusInfinifrons()
 	{
-		ThreadUtil.registerShutdownHook(this::onShutdown);
+		new ExecuteOnCommandLineInput(s->shutdown()).start();
 
 		initConfigSources();
 		initConfigObjects();
@@ -70,12 +71,7 @@ public final class JanusInfinifrons
 		logger.info("Startup complete\n");
 	}
 
-	public void shutdown()
-	{
-		onShutdown();
-	}
-
-	private void onShutdown()
+	private void shutdown()
 	{
 		ticker.requestAndWaitForStop();
 		intercomServer.stop();
@@ -137,7 +133,8 @@ public final class JanusInfinifrons
 		credentialSource.fetchAll().forEach(Credential::validate);
 		logger.info("Loaded {} credential(s): {}",
 				credentialSource.fetchAll().size(),
-				Identifyable.getIdList(credentialSource.fetchAll()));
+				Identifyable.getIdList(credentialSource.fetchAll())
+		);
 	}
 
 	private void initComponents()
@@ -145,7 +142,8 @@ public final class JanusInfinifrons
 		componentSource.fetchAll().forEach(JanusComponent::validate);
 		logger.info("Loaded {} component(s): {}",
 				componentSource.fetchAll().size(),
-				Identifyable.getIdList(componentSource.fetchAll()));
+				Identifyable.getIdList(componentSource.fetchAll())
+		);
 
 		for(JanusComponent janusComponent : componentSource.fetchAll())
 			initComponenent(janusComponent);
@@ -171,7 +169,8 @@ public final class JanusInfinifrons
 		if(!credentialOptional.isPresent())
 			throw new InvalidConfigurationException(PHR.r("unknown credential id '{}' in component '{}'",
 					component.getCredentialId(),
-					component.getId()));
+					component.getId()
+			));
 
 		component.injectCredential(credentialOptional.get());
 		logger.info("Injected credential '{}' into component '{}'", credentialOptional.get().getId(), component.getId());
@@ -183,7 +182,8 @@ public final class JanusInfinifrons
 		projectSource.fetchAll().forEach(p->p.validate(componentSource));
 		logger.info("Loaded {} project(s): {}",
 				projectSource.fetchAll().size(),
-				Identifyable.getIdList(projectSource.fetchAll()));
+				Identifyable.getIdList(projectSource.fetchAll())
+		);
 	}
 
 	private void initProjectInstances()
@@ -191,7 +191,8 @@ public final class JanusInfinifrons
 		projectInstanceSource.fetchAll().forEach(p->p.validate(projectSource));
 		logger.info("Loaded {} project instance(s): {}",
 				projectInstanceSource.fetchAll().size(),
-				Identifyable.getIdList(projectInstanceSource.fetchAll()));
+				Identifyable.getIdList(projectInstanceSource.fetchAll())
+		);
 	}
 
 
