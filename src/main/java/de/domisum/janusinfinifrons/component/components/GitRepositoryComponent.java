@@ -16,8 +16,10 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collection;
 
 public class GitRepositoryComponent extends JanusComponent
 {
@@ -54,7 +56,9 @@ public class GitRepositoryComponent extends JanusComponent
 
 	@Override public void update()
 	{
-		if(FileUtil.listFiles(getHelperDirectory(), FileType.FILE_AND_DIRECTORY).isEmpty())
+		Collection<File> filesInHelperDir = FileUtil.listFilesFlat(getHelperDirectory(), FileType.FILE_AND_DIRECTORY);
+
+		if(filesInHelperDir.isEmpty())
 			gitClone();
 		else
 			gitPull();
@@ -105,7 +109,7 @@ public class GitRepositoryComponent extends JanusComponent
 		}
 		catch(IOException|GitAPIException e)
 		{
-			logger.error("error pulling changes from git repositor", e);
+			logger.error("error pulling changes from git repository", e);
 		}
 	}
 
@@ -115,7 +119,8 @@ public class GitRepositoryComponent extends JanusComponent
 			return;
 
 		transportCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(getCredential().getUsername(),
-				getCredential().getPassword()));
+				getCredential().getPassword()
+		));
 	}
 
 	private void updateLatestCommitHash()
