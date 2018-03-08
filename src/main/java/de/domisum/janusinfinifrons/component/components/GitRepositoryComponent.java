@@ -28,7 +28,7 @@ public class GitRepositoryComponent extends JanusComponent
 
 
 	// CONSTANTS
-	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofSeconds(60*5);
+	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofMinutes(5);
 
 	// SETTINGS
 	@InitByDeserialization private String repositoryUrl;
