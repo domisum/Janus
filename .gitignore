@@ -13,4 +13,3 @@ builds/
 
 TestLauncher.java
 hibernate.cfg.xml
-logback.xml
