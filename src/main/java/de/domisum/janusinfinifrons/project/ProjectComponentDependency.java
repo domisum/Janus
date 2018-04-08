@@ -8,6 +8,16 @@ public class ProjectComponentDependency
 {
 
 	@Getter private final String componentId;
-	@Getter private final String inBuildPath = "/";
+	private final String inBuildPath;
+
+
+	// GETTERS
+	public String getInBuildPath()
+	{
+		if(inBuildPath == null)
+			return "/";
+
+		return inBuildPath;
+	}
 
 }
