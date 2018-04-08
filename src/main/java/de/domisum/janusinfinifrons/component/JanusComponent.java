@@ -2,7 +2,9 @@ package de.domisum.janusinfinifrons.component;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.credential.Credential;
+import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.contracts.Identifyable;
+import de.domisum.lib.auxilium.util.java.annotations.InitByDeserialization;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,8 +16,8 @@ public abstract class JanusComponent implements Identifyable
 {
 
 	// PROPERTIES
-	@Getter private String id;
-	@Getter private String credentialId;
+	@Getter @InitByDeserialization private String id;
+	@Getter @InitByDeserialization private String credentialId;
 
 	// REFERENCES
 	@Getter(AccessLevel.PROTECTED) private transient Credential credential;
@@ -47,6 +49,6 @@ public abstract class JanusComponent implements Identifyable
 
 	public abstract void update();
 
-	public abstract void addToBuild(ProjectBuild build);
+	public abstract void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build);
 
 }

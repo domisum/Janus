@@ -19,14 +19,17 @@ public class JanusProject implements Identifyable
 {
 
 	@Getter private final String id;
-	@Getter private final List<String> componentIds;
+	@Getter private final List<ProjectComponentDependency> componentDependencies;
 
 
 	public void validate(FiniteSource<String, JanusComponent> componentSource)
 	{
-		for(String cid : componentIds)
+		for(ProjectComponentDependency componentDependency : componentDependencies)
+		{
+			String cid = componentDependency.getComponentId();
 			if(!componentSource.contains(cid))
 				throw new InvalidConfigurationException(PHR.r("project '{}' depends on non-existant component '{}'", id, cid));
+		}
 	}
 
 }

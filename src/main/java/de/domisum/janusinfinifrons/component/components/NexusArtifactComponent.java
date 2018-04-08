@@ -3,6 +3,7 @@ package de.domisum.janusinfinifrons.component.components;
 import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.component.CredentialComponent;
 import de.domisum.janusinfinifrons.component.JanusComponent;
+import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.data.container.AbstractURL;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.PHR;
@@ -64,9 +65,12 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 			downloadJar();
 	}
 
-	@Override public void addToBuild(ProjectBuild build)
+	@Override public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
 	{
-		FileUtil.copyFile(getJarFile(), new File(build.getDirectory(), getJarFile().getName()));
+		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInProjectPath());
+		File targetFile = new File(targetDirectory, getJarFile().getName());
+
+		FileUtil.copyFile(getJarFile(), targetFile);
 	}
 
 
@@ -88,7 +92,8 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	{
 		AbstractURL url = getUrl("jar");
 		HttpFetch<File> httpFetchToFile = new HttpFetchToFile(url, getJarFile()).onFail(e->logger.error("failed to download jar",
-				e));
+				e
+		));
 		if(getCredential() != null)
 			httpFetchToFile.credentials(new HttpCredentials(getCredential().getUsername(), getCredential().getPassword()));
 

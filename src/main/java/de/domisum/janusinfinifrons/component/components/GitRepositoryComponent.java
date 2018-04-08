@@ -2,6 +2,7 @@ package de.domisum.janusinfinifrons.component.components;
 
 import de.domisum.janusinfinifrons.build.ProjectBuild;
 import de.domisum.janusinfinifrons.component.JanusComponent;
+import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.FileUtil.FileType;
 import de.domisum.lib.auxilium.util.file.filter.FilterOutDirectory;
@@ -64,9 +65,10 @@ public class GitRepositoryComponent extends JanusComponent
 			gitPull();
 	}
 
-	@Override public void addToBuild(ProjectBuild build)
+	@Override public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
 	{
-		FileUtil.copyDirectory(getHelperDirectory(), build.getDirectory(), new FilterOutDirectory(".git/"));
+		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInProjectPath());
+		FileUtil.copyDirectory(getHelperDirectory(), targetDirectory, new FilterOutDirectory(".git/"));
 	}
 
 

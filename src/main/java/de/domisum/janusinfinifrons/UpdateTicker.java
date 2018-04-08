@@ -131,7 +131,7 @@ public final class UpdateTicker extends Ticker
 		Collection<JanusProject> changedProjects = new HashSet<>();
 		for(JanusComponent jc : changedComponents)
 			for(JanusProject jp : projectSource.fetchAll())
-				if(jp.getComponentIds().contains(jc.getId()))
+				if(jp.getComponentDependencies().contains(jc.getId()))
 				{
 					changedProjects.add(jp);
 					break;

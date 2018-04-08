@@ -2,6 +2,7 @@ package de.domisum.janusinfinifrons.build;
 
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
+import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,8 +12,6 @@ import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class ProjectBuilder
@@ -31,16 +30,20 @@ public class ProjectBuilder
 	{
 		String buildName = getBuildName(project);
 		ProjectBuild build = new ProjectBuild(project, buildName, createBuildDirectory(project, buildName));
-
-		List<JanusComponent> components = getProjectComponents(project);
-		for(JanusComponent component : components)
-		{
-			logger.info("Adding component '{}' to build", component.getId());
-			component.addToBuild(build);
-		}
+		addComponentsToBuild(project, build);
 
 		logger.info("Build done");
 		return build;
+	}
+
+	private void addComponentsToBuild(JanusProject project, ProjectBuild build)
+	{
+		for(ProjectComponentDependency dependency : project.getComponentDependencies())
+		{
+			JanusComponent component = componentSource.fetchOrException(dependency.getComponentId());
+			logger.info("Adding component '{}' to build", component.getId());
+			component.addToBuildThrough(dependency, build);
+		}
 	}
 
 	private File createBuildDirectory(JanusProject project, String buildName)
@@ -51,18 +54,6 @@ public class ProjectBuilder
 		buildDirectory.mkdir();
 		logger.info("Building into '{}'", buildDirectory);
 		return buildDirectory;
-	}
-
-	private List<JanusComponent> getProjectComponents(JanusProject project)
-	{
-		List<JanusComponent> components = new ArrayList<>();
-		for(String componentId : project.getComponentIds())
-		{
-			JanusComponent component = componentSource.fetchOrException(componentId);
-			components.add(component);
-		}
-
-		return components;
 	}
 
 
