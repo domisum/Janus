@@ -5,12 +5,11 @@ import de.domisum.janusinfinifrons.build.ProjectBuilder;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.project.JanusProject;
+import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.FiniteSource;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.ticker.Ticker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -19,12 +18,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public final class UpdateTicker extends Ticker
 {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-
 
 	// CONSTANTS
 	private static final Duration TICK_INTERVAL = Duration.ofSeconds(10);
@@ -74,6 +71,8 @@ public final class UpdateTicker extends Ticker
 
 	private Collection<JanusComponent> updateComponents()
 	{
+		logger.debug("Updating components...");
+
 		for(JanusComponent component : componentSource.fetchAll())
 		{
 			logger.debug("Updating component '{}'", component.getId());
@@ -128,14 +127,15 @@ public final class UpdateTicker extends Ticker
 
 	private Collection<JanusProject> getChangedProjects(Collection<JanusComponent> changedComponents)
 	{
-		Collection<JanusProject> changedProjects = new HashSet<>();
-		for(JanusComponent jc : changedComponents)
-			for(JanusProject jp : projectSource.fetchAll())
-				if(jp.getComponentDependencies().contains(jc.getId()))
-				{
-					changedProjects.add(jp);
-					break;
-				}
+		Set<JanusProject> changedProjects = new HashSet<>();
+		for(JanusProject project : projectSource.fetchAll())
+			for(ProjectComponentDependency dependency : project.getComponentDependencies())
+				for(JanusComponent changedComponent : changedComponents)
+					if(Objects.equals(dependency.getComponentId(), changedComponent.getId()))
+					{
+						changedProjects.add(project);
+						break;
+					}
 
 		if(!changedProjects.isEmpty())
 			logger.info("Projects with changed components: {}", Identifyable.getIdList(changedProjects));
