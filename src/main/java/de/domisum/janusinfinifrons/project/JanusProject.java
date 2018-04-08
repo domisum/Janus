@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class JanusProject implements Identifyable
 
 	public void validate(FiniteSource<String, JanusComponent> componentSource)
 	{
+		Validate.notNull(componentDependencies, "componentDependencies can't be null");
+
 		for(ProjectComponentDependency componentDependency : componentDependencies)
 		{
 			String cid = componentDependency.getComponentId();
