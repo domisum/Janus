@@ -67,7 +67,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 	@Override public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
 	{
-		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInProjectPath());
+		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInBuildPath());
 		File targetFile = new File(targetDirectory, getJarFile().getName());
 
 		FileUtil.copyFile(getJarFile(), targetFile);
