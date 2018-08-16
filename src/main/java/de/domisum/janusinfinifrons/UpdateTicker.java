@@ -97,6 +97,8 @@ public final class UpdateTicker extends Ticker
 
 		exportProjectBuild(build);
 		latestBuilds.store(build);
+
+		build.delete();
 	}
 
 	private void exportProjectBuild(ProjectBuild build)
