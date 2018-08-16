@@ -11,8 +11,8 @@ import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import de.domisum.janusinfinifrons.intercom.undertow.UndertowIntercomServer;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.serialization.BasicToStringSerializer;
-import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.contracts.serialization.BasicJsonSerializer;
+import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryStorage;
 import de.domisum.lib.auxilium.contracts.storage.SerializedIdentifyableStorage;
@@ -40,10 +40,10 @@ public final class JanusInfinifrons
 	private static final File BUILDS_BASE_DIRECTORY = new File("builds/");
 
 	// STORAGE
-	private FiniteSource<String, Credential> credentialSource;
-	private FiniteSource<String, JanusComponent> componentSource;
-	private FiniteSource<String, JanusProject> projectSource;
-	private FiniteSource<String, JanusProjectInstance> projectInstanceSource;
+	private FiniteOptionalSource<String, Credential> credentialSource;
+	private FiniteOptionalSource<String, JanusComponent> componentSource;
+	private FiniteOptionalSource<String, JanusProject> projectSource;
+	private FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource;
 
 	private final Storage<JanusProject, ProjectBuild> latestBuilds = new InMemoryStorage<>();
 
@@ -85,7 +85,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/credentials"), ".jns_cred.json",
-						new BasicToStringSerializer<>(Credential.class)
+						new BasicJsonSerializer<>(Credential.class)
 				)
 		);
 		credentialStorage.fetchAllToMemory();
@@ -103,7 +103,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, JanusProject> projectStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/projects"), ".jns_proj.json",
-						new BasicToStringSerializer<>(JanusProject.class)
+						new BasicJsonSerializer<>(JanusProject.class)
 				)
 		);
 		projectStorage.fetchAllToMemory();
@@ -112,7 +112,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, JanusProjectInstance> projectInstanceStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/instances"), ".jns_inst.json",
-						new BasicToStringSerializer<>(JanusProjectInstance.class)
+						new BasicJsonSerializer<>(JanusProjectInstance.class)
 				)
 		);
 		projectInstanceStorage.fetchAllToMemory();

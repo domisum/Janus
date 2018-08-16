@@ -3,7 +3,7 @@ package de.domisum.janusinfinifrons.build;
 import de.domisum.janusinfinifrons.component.JanusComponent;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
-import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class ProjectBuilder
 
 	// REFERENCES
 	private final File baseDirectory;
-	private final FiniteSource<String, JanusComponent> componentSource;
+	private final FiniteOptionalSource<String, JanusComponent> componentSource;
 
 
 	// BUILD

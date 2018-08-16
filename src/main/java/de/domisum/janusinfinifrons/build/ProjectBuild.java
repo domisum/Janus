@@ -2,7 +2,7 @@ package de.domisum.janusinfinifrons.build;
 
 import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.lib.auxilium.contracts.storage.Keyable;
+import de.domisum.lib.auxilium.contracts.Keyable;
 import de.domisum.lib.auxilium.util.FileUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

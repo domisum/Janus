@@ -7,11 +7,13 @@ import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
+import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.ticker.Ticker;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,9 +29,9 @@ public final class UpdateTicker extends Ticker
 	private static final Duration TICK_INTERVAL = Duration.ofSeconds(10);
 
 	// REFERENCES
-	private final FiniteSource<String, JanusComponent> componentSource;
-	private final FiniteSource<String, JanusProject> projectSource;
-	private final FiniteSource<String, JanusProjectInstance> projectInstanceSource;
+	private final FiniteOptionalSource<String, JanusComponent> componentSource;
+	private final FiniteOptionalSource<String, JanusProject> projectSource;
+	private final FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource;
 
 	private final ProjectBuilder projectBuilder;
 	private final Storage<JanusProject, ProjectBuild> latestBuilds;
@@ -40,9 +42,9 @@ public final class UpdateTicker extends Ticker
 
 	// INIT
 	public UpdateTicker(
-			FiniteSource<String, JanusComponent> componentSource,
-			FiniteSource<String, JanusProject> projectSource,
-			FiniteSource<String, JanusProjectInstance> projectInstanceSource,
+			FiniteOptionalSource<String, JanusComponent> componentSource,
+			FiniteOptionalSource<String, JanusProject> projectSource,
+			FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource,
 			ProjectBuilder projectBuilder,
 			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{
@@ -67,6 +69,9 @@ public final class UpdateTicker extends Ticker
 
 		for(JanusProject jp : changedProjects)
 			buildAndExportProject(jp);
+
+		for(JanusProjectInstance projectInstance : projectInstanceSource.fetchAll())
+			deleteOldBuildsIn(projectInstance);
 	}
 
 	private Collection<JanusComponent> updateComponents()
@@ -112,6 +117,11 @@ public final class UpdateTicker extends Ticker
 			build.exportTo(instance);
 
 		logger.info("Exporting build done\n");
+	}
+
+	private void deleteOldBuildsIn(JanusProjectInstance instance)
+	{
+		Instant lastModified = FileUtil.getLastModified(instance.getRootDirectory());
 	}
 
 

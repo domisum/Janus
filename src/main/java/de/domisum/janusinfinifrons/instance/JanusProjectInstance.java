@@ -2,7 +2,7 @@ package de.domisum.janusinfinifrons.instance;
 
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.source.FiniteSource;
+import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
 import de.domisum.lib.auxilium.util.FileUtil;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
@@ -24,7 +24,7 @@ public class JanusProjectInstance implements Identifyable
 
 
 	// INIT
-	public void validate(FiniteSource<String, JanusProject> projectSource)
+	public void validate(FiniteOptionalSource<String, JanusProject> projectSource)
 	{
 		if(!projectSource.contains(projectId))
 			throw new InvalidConfigurationException(PHR.r("instance '{}' specifies unknown project: {}", id, projectId));
