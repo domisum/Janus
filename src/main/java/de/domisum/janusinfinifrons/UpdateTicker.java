@@ -10,8 +10,11 @@ import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
 import de.domisum.lib.auxilium.util.FileUtil;
+import de.domisum.lib.auxilium.util.FileUtil.FileType;
 import de.domisum.lib.auxilium.util.ticker.Ticker;
+import de.domisum.lib.auxilium.util.time.DurationUtil;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ public final class UpdateTicker extends Ticker
 
 	// CONSTANTS
 	private static final Duration TICK_INTERVAL = Duration.ofSeconds(10);
+
+	private static final Duration DELETE_INSTANCE_BUILDS_AFTER_INACTIVITY = Duration.ofDays(3);
 
 	// REFERENCES
 	private final FiniteOptionalSource<String, JanusComponent> componentSource;
@@ -121,7 +126,15 @@ public final class UpdateTicker extends Ticker
 
 	private void deleteOldBuildsIn(JanusProjectInstance instance)
 	{
-		Instant lastModified = FileUtil.getLastModified(instance.getRootDirectory());
+		for(File buildDir : FileUtil.listFilesFlat(instance.getRootDirectory(), FileType.DIRECTORY))
+		{
+			Instant lastModified = FileUtil.getLastModified(buildDir);
+			if(DurationUtil.isOlderThan(lastModified, DELETE_INSTANCE_BUILDS_AFTER_INACTIVITY))
+			{
+				logger.info("Deleting long unmodified build '{}' in instance '{}'", buildDir.getName(), instance.getId());
+				FileUtil.deleteDirectory(buildDir);
+			}
+		}
 	}
 
 
