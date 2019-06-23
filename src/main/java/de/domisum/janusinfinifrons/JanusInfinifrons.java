@@ -66,15 +66,15 @@ public final class JanusInfinifrons
 		initConfigSources();
 		initConfigObjects();
 
-		initIntercomServer();
 		initTicker();
+		initIntercomServer();
 		logger.info("Startup complete\n");
 	}
 
 	private void shutdown()
 	{
-		ticker.requestAndWaitForStop();
 		intercomServer.stop();
+		ticker.requestAndWaitForStop();
 	}
 
 
