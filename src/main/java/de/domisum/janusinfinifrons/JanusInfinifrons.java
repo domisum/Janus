@@ -232,10 +232,7 @@ public final class JanusInfinifrons
 			throw new IllegalArgumentException("unknown project: "+projectName);
 
 		Optional<ProjectBuild> latestBuild = latestBuilds.fetch(projectOptional.get());
-		if(!latestBuild.isPresent())
-			throw new IllegalArgumentException("no build for project "+projectName);
-
-		return latestBuild.get();
+		return latestBuild.orElse(null);
 	}
 
 }

@@ -22,7 +22,8 @@ public class UpdateAvailableRequestHandler extends RequestHandler
 
 
 	// RESPONDER
-	@Override public void handleRequest()
+	@Override
+	public void handleRequest()
 	{
 		File directory = new File(validateAndGetDirectoryParam());
 
@@ -30,8 +31,13 @@ public class UpdateAvailableRequestHandler extends RequestHandler
 		String projectName = getProjectNameFromBuildName(buildName);
 
 		ProjectBuild latestBuild = getInteractionFacade().getLatestBuild(projectName);
-		boolean isNewerBuildAvailable = !Objects.equals(buildName, latestBuild.getBuildId());
+		if(latestBuild == null)
+		{
+			getResponseSender().sendPlaintext("false");
+			return;
+		}
 
+		boolean isNewerBuildAvailable = !Objects.equals(buildName, latestBuild.getBuildId());
 		getResponseSender().sendPlaintext(isNewerBuildAvailable+"");
 	}
 
