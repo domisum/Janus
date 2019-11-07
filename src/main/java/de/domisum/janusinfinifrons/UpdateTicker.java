@@ -54,6 +54,8 @@ public final class UpdateTicker extends Ticker
 			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{
 		super(TICK_INTERVAL);
+		setTimeout(Duration.ofHours(1));
+
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
 		this.projectInstanceSource = projectInstanceSource;
@@ -67,7 +69,8 @@ public final class UpdateTicker extends Ticker
 
 
 	// TICK
-	@Override protected void tick()
+	@Override
+	protected void tick()
 	{
 		Collection<JanusComponent> changedComponents = updateComponents();
 		Collection<JanusProject> changedProjects = getChangedProjects(changedComponents);
