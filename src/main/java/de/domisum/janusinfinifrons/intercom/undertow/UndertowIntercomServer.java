@@ -10,14 +10,13 @@ import io.undertow.server.HttpServerExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+// TODO migrate to use httpbutler?
 public class UndertowIntercomServer extends IntercomServer
 {
 
@@ -39,7 +38,8 @@ public class UndertowIntercomServer extends IntercomServer
 	}
 
 
-	@Override public void start()
+	@Override
+	public void start()
 	{
 		if(server != null)
 			return;
@@ -52,7 +52,8 @@ public class UndertowIntercomServer extends IntercomServer
 		server.start();
 	}
 
-	@Override public void stop()
+	@Override
+	public void stop()
 	{
 		logger.info("Stopping {}...", getClass().getSimpleName());
 		server.stop();
@@ -64,7 +65,7 @@ public class UndertowIntercomServer extends IntercomServer
 	{
 		Map<String, List<String>> queryParams = new HashMap<>();
 		for(Entry<String, Deque<String>> entry : exchange.getQueryParameters().entrySet())
-			queryParams.put(entry.getKey(), Collections.unmodifiableList(new ArrayList<>(entry.getValue())));
+			queryParams.put(entry.getKey(), List.copyOf(entry.getValue()));
 		ServerRequest request = new ServerRequest(exchange.getRequestPath(), queryParams);
 
 		ResponseSender responseSender = new UndertowResponseSender(exchange);

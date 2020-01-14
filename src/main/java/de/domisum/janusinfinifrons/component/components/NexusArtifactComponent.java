@@ -28,26 +28,31 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 
 	// SETTINGS
-	@InitByDeserialization private String serverUrl;
-	@InitByDeserialization private String repositoryName;
+	@InitByDeserialization
+	private String repositoryUrl;
 
-	@InitByDeserialization private String groupId;
-	@InitByDeserialization private String artifactId;
-	@InitByDeserialization private String version;
+	@InitByDeserialization
+	private String groupId;
+	@InitByDeserialization
+	private String artifactId;
+	@InitByDeserialization
+	private String version;
 
 	// STATUS
 	private transient String currentJarMd5 = null;
 
 
 	// INIT
-	@Override public void validate()
+	@Override
+	public void validate()
 	{
 		// nothing to validate yet
 	}
 
 
 	// COMPONENT
-	@Override public String getVersion()
+	@Override
+	public String getVersion()
 	{
 		if(currentJarMd5 == null)
 			throw new IllegalStateException("can't check version before first update");
@@ -55,7 +60,8 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 		return currentJarMd5;
 	}
 
-	@Override public void update()
+	@Override
+	public void update()
 	{
 		String lastJarMd5 = currentJarMd5;
 		fetchJarMd5();
@@ -65,7 +71,8 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 			downloadJar();
 	}
 
-	@Override public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
+	@Override
+	public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
 	{
 		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInBuildPath());
 		File targetFile = new File(targetDirectory, getJarFile().getName());
