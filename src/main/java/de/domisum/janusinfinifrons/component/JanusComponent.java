@@ -16,12 +16,18 @@ public abstract class JanusComponent implements Identifyable
 {
 
 	// PROPERTIES
-	@Getter @InitByDeserialization private String id;
-	@Getter @InitByDeserialization private String credentialId;
+	@Getter
+	@InitByDeserialization
+	private String id;
+	@Getter
+	@InitByDeserialization
+	private String credentialId;
 
 	// REFERENCES
-	@Getter(AccessLevel.PROTECTED) private transient Credential credential;
-	@Getter(AccessLevel.PROTECTED) private transient File helperDirectory;
+	@Getter(AccessLevel.PROTECTED)
+	private transient Credential credential;
+	@Getter(AccessLevel.PROTECTED)
+	private transient File helperDirectory;
 
 
 	// INIT

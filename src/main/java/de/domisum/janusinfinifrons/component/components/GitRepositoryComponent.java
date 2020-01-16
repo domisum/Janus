@@ -32,22 +32,26 @@ public class GitRepositoryComponent extends JanusComponent
 	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofMinutes(5);
 
 	// SETTINGS
-	@InitByDeserialization private String repositoryUrl;
-	@InitByDeserialization private String branch;
+	@InitByDeserialization
+	private String repositoryUrl;
+	@InitByDeserialization
+	private String branch;
 
 	// STATUS
 	private transient String latestCommitHash = null;
 
 
 	// INIT
-	@Override public void validate()
+	@Override
+	public void validate()
 	{
 		// nothing to validate yet
 	}
 
 
 	// COMPONENT
-	@Override public String getVersion()
+	@Override
+	public String getVersion()
 	{
 		if(latestCommitHash == null)
 			throw new IllegalStateException("can't get version before first call to #update()");
@@ -55,7 +59,8 @@ public class GitRepositoryComponent extends JanusComponent
 		return latestCommitHash;
 	}
 
-	@Override public void update()
+	@Override
+	public void update()
 	{
 		Collection<File> filesInHelperDir = FileUtil.listFilesFlat(getHelperDirectory(), FileType.FILE_AND_DIRECTORY);
 
@@ -65,7 +70,8 @@ public class GitRepositoryComponent extends JanusComponent
 			gitPull();
 	}
 
-	@Override public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
+	@Override
+	public void addToBuildThrough(ProjectComponentDependency projectComponentDependency, ProjectBuild build)
 	{
 		File targetDirectory = new File(build.getDirectory(), projectComponentDependency.getInBuildPath());
 		FileUtil.copyDirectory(getHelperDirectory(), targetDirectory, new FilterOutDirectory(".git/"));
