@@ -51,7 +51,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	private String version;
 
 	// STATUS
-	private transient String currentJarIdentifier = null;
+	private transient String currentJarIdentifier = "";
 
 
 	// INIT
@@ -63,12 +63,14 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 
 	// COMPONENT
+	private String getArtifactDescription()
+	{
+		return groupId+"."+artifactId+"-"+version+" ("+repositoryUrl+")";
+	}
+
 	@Override
 	public String getVersion()
 	{
-		if(currentJarIdentifier == null)
-			throw new IllegalStateException("can't check version before first update");
-
 		return currentJarIdentifier;
 	}
 
@@ -84,12 +86,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 		}
 		catch(IOException e)
 		{
-			String artifactToString = groupId+"."+artifactId+"-"+version;
-			logger.error("An error occured while trying to update the nexus artifact component {} from repository {}",
-					artifactToString,
-					repositoryUrl,
-					e
-			);
+			logger.error("An error occured while trying to update the nexus artifact component {}", getArtifactDescription(), e);
 		}
 	}
 
@@ -100,7 +97,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 		String mavenMetadata = fetchString(mavenMetadataUrl);
 		String snapshotVersion = parseSnapshotVersion(mavenMetadata);
-		String jarUrl = artifactVersionDirUrl+"/"+snapshotVersion+"/"+artifactId+"-"+snapshotVersion+".jar";
+		String jarUrl = artifactVersionDirUrl+"/"+artifactId+"-"+snapshotVersion+".jar";
 		handleNewJarIdentifier(jarUrl, snapshotVersion);
 	}
 
@@ -136,7 +133,9 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	{
 		if(!Objects.equals(currentJarIdentifier, newJarIdentifier))
 		{
+			logger.info("Detected change for nexus artifact component {}, downloading jar...", getArtifactDescription());
 			File fetchedFile = fetchFile(jarUrl);
+			logger.info("Nexus artifact jar download complete");
 
 			currentJarIdentifier = newJarIdentifier; // only update this if jar download is successful
 			FileUtil.copyFile(fetchedFile, getJarFile());
