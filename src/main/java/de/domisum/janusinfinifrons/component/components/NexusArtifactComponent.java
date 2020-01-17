@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -193,6 +194,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 		EzHttpRequest request = EzHttpRequest.get(abstractURL);
 		authorizeRequest(request);
 		EzHttpRequestEnvoy<File> envoy = new EzHttpRequestEnvoy<>(request, new EzHttpWriteToTempFileBodyReader());
+		envoy.setTimeout(Duration.ofMinutes(10));
 
 		EzHttpIoResponse<File> ioResponse = envoy.send();
 		String errorMessage = "failed to fetch file from "+url;
