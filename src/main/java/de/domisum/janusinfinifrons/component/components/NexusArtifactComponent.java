@@ -95,7 +95,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 	private void updateSnapshot() throws IOException
 	{
-		String artifactVersionDirUrl = repositoryUrl+groupId.replace(".", "/")+"/"+artifactId+"/"+version;
+		String artifactVersionDirUrl = repositoryUrl+"/"+groupId.replace(".", "/")+"/"+artifactId+"/"+version;
 		String mavenMetadataUrl = artifactVersionDirUrl+"/maven-metadata.xml";
 
 		String mavenMetadata = fetchString(mavenMetadataUrl);
@@ -146,7 +146,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 	private void updateRelease() throws IOException
 	{
-		String jarUrl = repositoryUrl+groupId.replace(".", "/")+"/"+artifactId+"/"+version+"/"+artifactId+"-"+version+".jar";
+		String jarUrl = repositoryUrl+"/"+groupId.replace(".", "/")+"/"+artifactId+"/"+version+"/"+artifactId+"-"+version+".jar";
 		String jarMd5Url = jarUrl+".md5";
 
 		String jarMd5 = fetchString(jarMd5Url);
