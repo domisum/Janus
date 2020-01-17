@@ -65,7 +65,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	// COMPONENT
 	private String getArtifactDescription()
 	{
-		return groupId+"."+artifactId+"-"+version+" ("+repositoryUrl+")";
+		return groupId+":"+artifactId+":"+version+" ("+repositoryUrl+")";
 	}
 
 	@Override
