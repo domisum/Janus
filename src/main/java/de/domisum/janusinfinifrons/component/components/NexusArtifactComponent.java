@@ -52,7 +52,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	private String version;
 
 	// STATUS
-	private transient String currentJarIdentifier = "";
+	private transient String currentJarIdentifier = null;
 
 
 	// INIT
