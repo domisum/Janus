@@ -74,7 +74,7 @@ public final class JanusInfinifrons
 	private void shutdown()
 	{
 		intercomServer.stop();
-		ticker.requestAndWaitForStop();
+		ticker.stopAndWaitForCompletion();
 	}
 
 
