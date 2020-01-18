@@ -166,7 +166,7 @@ public final class JanusInfinifrons
 		}
 
 		Optional<Credential> credentialOptional = credentialSource.fetch(component.getCredentialId());
-		if(!credentialOptional.isPresent())
+		if(credentialOptional.isEmpty())
 			throw new InvalidConfigurationException(PHR.r("unknown credential id '{}' in component '{}'",
 					component.getCredentialId(),
 					component.getId()
@@ -228,7 +228,7 @@ public final class JanusInfinifrons
 	private ProjectBuild getLatestBuild(String projectName)
 	{
 		Optional<JanusProject> projectOptional = projectSource.fetch(projectName);
-		if(!projectOptional.isPresent())
+		if(projectOptional.isEmpty())
 			throw new IllegalArgumentException("unknown project: "+projectName);
 
 		Optional<ProjectBuild> latestBuild = latestBuilds.fetch(projectOptional.get());
