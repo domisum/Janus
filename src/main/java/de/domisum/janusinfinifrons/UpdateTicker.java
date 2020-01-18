@@ -53,8 +53,7 @@ public final class UpdateTicker extends Ticker
 			ProjectBuilder projectBuilder,
 			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{
-		super(TICK_INTERVAL);
-		setTimeout(Duration.ofHours(1));
+		super("updateTicker", TICK_INTERVAL, Duration.ofHours(1));
 
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
