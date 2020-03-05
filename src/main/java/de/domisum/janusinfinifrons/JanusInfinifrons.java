@@ -71,7 +71,7 @@ public final class JanusInfinifrons
 	private void shutdown() // TODO maybe use later for self update
 	{
 		intercomServer.stop();
-		ticker.stopAndWaitForCompletion();
+		ticker.stopSoft();
 	}
 
 
