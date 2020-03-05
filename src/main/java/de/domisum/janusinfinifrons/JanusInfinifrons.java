@@ -17,7 +17,6 @@ import de.domisum.lib.auxilium.contracts.storage.InMemoryProxyStorage;
 import de.domisum.lib.auxilium.contracts.storage.InMemoryStorage;
 import de.domisum.lib.auxilium.contracts.storage.SerializedIdentifyableStorage;
 import de.domisum.lib.auxilium.contracts.storage.Storage;
-import de.domisum.lib.auxilium.run.ExecuteOnCommandLineInput;
 import de.domisum.lib.auxilium.util.PHR;
 import de.domisum.lib.auxilium.util.java.ThreadUtil;
 import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
@@ -61,8 +60,6 @@ public final class JanusInfinifrons
 
 	private JanusInfinifrons()
 	{
-		new ExecuteOnCommandLineInput(s->shutdown()).start();
-
 		initConfigSources();
 		initConfigObjects();
 
@@ -71,7 +68,7 @@ public final class JanusInfinifrons
 		logger.info("Startup complete\n");
 	}
 
-	private void shutdown()
+	private void shutdown() // TODO maybe use later for self update
 	{
 		intercomServer.stop();
 		ticker.stopAndWaitForCompletion();
