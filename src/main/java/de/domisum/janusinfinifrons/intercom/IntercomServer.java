@@ -1,42 +1,21 @@
 package de.domisum.janusinfinifrons.intercom;
 
-import de.domisum.janusinfinifrons.intercom.handler.RequestHandler;
-import de.domisum.janusinfinifrons.intercom.handler.handlers.UpdateAvailableRequestHandler;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.domisum.httpbutler.HttpButlerServer;
+import de.domisum.httpbutler.request.HttpMethod;
+import de.domisum.janusinfinifrons.intercom.handlers.UpdateAvailableRequestHandler;
 
-@RequiredArgsConstructor
-public abstract class IntercomServer // TODO refactor to use HttpButler
+public class IntercomServer extends HttpButlerServer
 {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-
-
-	// REFERENCES
-	private final IntercomServerInteractionFacade interactionFacade;
-
-
-	// START STOP
-	public abstract void start();
-
-	public abstract void stop();
-
-
-	// REQUESTS
-	protected synchronized void handleRequest(ServerRequest request, ResponseSender responseSender)
+	// INIT
+	public IntercomServer(int port, IntercomServerInteractionFacade facade)
 	{
-		logger.debug("Received request: {}", request);
+		super("localhost", port);
 
-		constructHandler(request, responseSender).handleRequest();
-	}
+		setNumberOfIoThreads(1);
+		setNumberOfWorkerThreads(1);
 
-	private RequestHandler constructHandler(ServerRequest serverRequest, ResponseSender responseSender)
-	{
-		if("/updateAvailable".equalsIgnoreCase(serverRequest.getPath()))
-			return new UpdateAvailableRequestHandler(interactionFacade, serverRequest, responseSender);
-
-		throw new IllegalArgumentException("invalid request: "+serverRequest);
+		registerStaticPathRequestHandler(HttpMethod.GET, "/updateAvailable", new UpdateAvailableRequestHandler(facade));
 	}
 
 }

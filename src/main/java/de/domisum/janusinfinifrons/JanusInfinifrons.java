@@ -8,7 +8,6 @@ import de.domisum.janusinfinifrons.credential.Credential;
 import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import de.domisum.janusinfinifrons.intercom.IntercomServer;
 import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
-import de.domisum.janusinfinifrons.intercom.undertow.UndertowIntercomServer;
 import de.domisum.janusinfinifrons.project.JanusProject;
 import de.domisum.lib.auxilium.contracts.Identifyable;
 import de.domisum.lib.auxilium.contracts.serialization.BasicJsonSerializer;
@@ -211,12 +210,8 @@ public final class JanusInfinifrons
 	{
 		logger.info("Initiating intercom server...");
 
-		// @formatter:off
 		IntercomServerInteractionFacade interactionFacade = this::getLatestBuild;
-
-		intercomServer = new UndertowIntercomServer(interactionFacade, INTERCOM_SERVER_PORT);
-		// @formatter:on
-
+		intercomServer = new IntercomServer(INTERCOM_SERVER_PORT, interactionFacade);
 		intercomServer.start();
 	}
 
