@@ -3,13 +3,12 @@
 *.iml
 *.log
 
-.settings/
-.idea/
-target/
+/.settings/
+/.idea/
+/target/
 
-config/
-components/
-builds/
+/config/
+/components/
+/builds/
 
 TestLauncher.java
-hibernate.cfg.xml
