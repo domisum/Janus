@@ -1,8 +1,8 @@
-package de.domisum.janusinfinifrons.intercom;
+package io.domisum.janusinfinifrons.intercom;
 
-import de.domisum.httpbutler.HttpButlerServer;
-import de.domisum.httpbutler.request.HttpMethod;
-import de.domisum.janusinfinifrons.intercom.handlers.UpdateAvailableRequestHandler;
+import io.domisum.janusinfinifrons.intercom.handlers.UpdateAvailableRequestHandler;
+import io.domisum.lib.httpbutler.HttpButlerServer;
+import io.domisum.lib.httpbutler.request.HttpMethod;
 
 public class IntercomServer extends HttpButlerServer
 {

@@ -1,6 +1,6 @@
-package de.domisum.janusinfinifrons.credential;
+package io.domisum.janusinfinifrons.credential;
 
-import de.domisum.lib.auxilium.contracts.Identifyable;
+import io.domisum.lib.auxiliumlib.contracts.Identifyable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

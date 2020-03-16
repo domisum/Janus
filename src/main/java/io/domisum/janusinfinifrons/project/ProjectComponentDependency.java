@@ -1,4 +1,4 @@
-package de.domisum.janusinfinifrons.project;
+package io.domisum.janusinfinifrons.project;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

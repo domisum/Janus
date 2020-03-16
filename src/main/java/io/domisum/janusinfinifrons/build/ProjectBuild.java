@@ -1,9 +1,9 @@
-package de.domisum.janusinfinifrons.build;
+package io.domisum.janusinfinifrons.build;
 
-import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
-import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.lib.auxilium.contracts.Keyable;
-import de.domisum.lib.auxilium.util.FileUtil;
+import io.domisum.janusinfinifrons.instance.JanusProjectInstance;
+import io.domisum.janusinfinifrons.project.JanusProject;
+import io.domisum.lib.auxiliumlib.contracts.Keyable;
+import io.domisum.lib.auxiliumlib.file.FileUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

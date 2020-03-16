@@ -1,6 +1,6 @@
-package de.domisum.janusinfinifrons.intercom;
+package io.domisum.janusinfinifrons.intercom;
 
-import de.domisum.janusinfinifrons.build.ProjectBuild;
+import io.domisum.janusinfinifrons.build.ProjectBuild;
 
 public interface IntercomServerInteractionFacade
 {

@@ -1,9 +1,9 @@
-package de.domisum.janusinfinifrons.build;
+package io.domisum.janusinfinifrons.build;
 
-import de.domisum.janusinfinifrons.component.JanusComponent;
-import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
-import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.janusinfinifrons.component.JanusComponent;
+import io.domisum.janusinfinifrons.project.JanusProject;
+import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
+import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

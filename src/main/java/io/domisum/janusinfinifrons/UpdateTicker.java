@@ -1,18 +1,18 @@
-package de.domisum.janusinfinifrons;
+package io.domisum.janusinfinifrons;
 
-import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.janusinfinifrons.build.ProjectBuilder;
-import de.domisum.janusinfinifrons.component.JanusComponent;
-import de.domisum.janusinfinifrons.instance.JanusProjectInstance;
-import de.domisum.janusinfinifrons.project.JanusProject;
-import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
-import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
-import de.domisum.lib.auxilium.contracts.storage.Storage;
-import de.domisum.lib.auxilium.util.FileUtil;
-import de.domisum.lib.auxilium.util.FileUtil.FileType;
-import de.domisum.lib.auxilium.util.ticker.Ticker;
-import de.domisum.lib.auxilium.util.time.DurationUtil;
+import io.domisum.janusinfinifrons.build.ProjectBuild;
+import io.domisum.janusinfinifrons.build.ProjectBuilder;
+import io.domisum.janusinfinifrons.component.JanusComponent;
+import io.domisum.janusinfinifrons.instance.JanusProjectInstance;
+import io.domisum.janusinfinifrons.project.JanusProject;
+import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
+import io.domisum.lib.auxiliumlib.contracts.Identifyable;
+import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.lib.auxiliumlib.contracts.storage.Storage;
+import io.domisum.lib.auxiliumlib.file.FileUtil;
+import io.domisum.lib.auxiliumlib.file.FileUtil.FileType;
+import io.domisum.lib.auxiliumlib.util.ticker.Ticker;
+import io.domisum.lib.auxiliumlib.util.time.DurationUtil;
 
 import java.io.File;
 import java.time.Duration;

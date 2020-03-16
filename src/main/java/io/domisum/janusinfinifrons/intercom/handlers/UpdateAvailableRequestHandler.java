@@ -1,10 +1,10 @@
-package de.domisum.janusinfinifrons.intercom.handlers;
+package io.domisum.janusinfinifrons.intercom.handlers;
 
-import de.domisum.httpbutler.HttpRequestHandler;
-import de.domisum.httpbutler.HttpResponseSender;
-import de.domisum.httpbutler.exceptions.BadRequestHttpException;
-import de.domisum.httpbutler.request.HttpRequest;
-import de.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
+import io.domisum.lib.httpbutler.HttpRequestHandler;
+import io.domisum.lib.httpbutler.HttpResponseSender;
+import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
+import io.domisum.lib.httpbutler.request.HttpRequest;
+import io.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

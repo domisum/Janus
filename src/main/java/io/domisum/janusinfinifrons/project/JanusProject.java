@@ -1,10 +1,10 @@
-package de.domisum.janusinfinifrons.project;
+package io.domisum.janusinfinifrons.project;
 
-import de.domisum.janusinfinifrons.component.JanusComponent;
-import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.contracts.source.optional.FiniteOptionalSource;
-import de.domisum.lib.auxilium.util.PHR;
-import de.domisum.lib.auxilium.util.java.exceptions.InvalidConfigurationException;
+import io.domisum.janusinfinifrons.component.JanusComponent;
+import io.domisum.lib.auxiliumlib.contracts.Identifyable;
+import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.lib.auxiliumlib.util.PHR;
+import io.domisum.lib.auxiliumlib.util.java.exceptions.InvalidConfigurationException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package de.domisum.janusinfinifrons.component;
+package io.domisum.janusinfinifrons.component;
 
-import de.domisum.janusinfinifrons.credential.Credential;
+import io.domisum.janusinfinifrons.credential.Credential;
 
 public interface CredentialComponent
 {

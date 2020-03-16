@@ -1,10 +1,10 @@
-package de.domisum.janusinfinifrons.component;
+package io.domisum.janusinfinifrons.component;
 
-import de.domisum.janusinfinifrons.build.ProjectBuild;
-import de.domisum.janusinfinifrons.credential.Credential;
-import de.domisum.janusinfinifrons.project.ProjectComponentDependency;
-import de.domisum.lib.auxilium.contracts.Identifyable;
-import de.domisum.lib.auxilium.util.java.annotations.InitByDeserialization;
+import io.domisum.janusinfinifrons.build.ProjectBuild;
+import io.domisum.janusinfinifrons.credential.Credential;
+import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
+import io.domisum.lib.auxiliumlib.contracts.Identifyable;
+import io.domisum.lib.auxiliumlib.util.java.annotations.InitByDeserialization;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
