@@ -10,7 +10,7 @@ import io.domisum.janusinfinifrons.intercom.IntercomServer;
 import io.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import io.domisum.janusinfinifrons.project.JanusProject;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
-import io.domisum.lib.auxiliumlib.contracts.serialization.BasicGsonSerializer;
+import io.domisum.lib.auxiliumlib.contracts.serialization.GsonSerializer;
 import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
 import io.domisum.lib.auxiliumlib.contracts.storage.InMemoryProxyStorage;
 import io.domisum.lib.auxiliumlib.contracts.storage.InMemoryStorage;
@@ -81,7 +81,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/credentials"), "jns_cred.json",
-						new BasicGsonSerializer<>(Credential.class)
+						new GsonSerializer<>(Credential.class)
 				)
 		);
 		credentialStorage.fetchAllToMemory();
@@ -99,7 +99,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, JanusProject> projectStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/projects"), "jns_proj.json",
-						new BasicGsonSerializer<>(JanusProject.class)
+						new GsonSerializer<>(JanusProject.class)
 				)
 		);
 		projectStorage.fetchAllToMemory();
@@ -108,7 +108,7 @@ public final class JanusInfinifrons
 		InMemoryProxyStorage<String, JanusProjectInstance> projectInstanceStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
 						new File("config/instances"), "jns_inst.json",
-						new BasicGsonSerializer<>(JanusProjectInstance.class)
+						new GsonSerializer<>(JanusProjectInstance.class)
 				)
 		);
 		projectInstanceStorage.fetchAllToMemory();
