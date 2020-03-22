@@ -22,7 +22,7 @@ public class UpdateAvailableRequestHandler extends HttpRequestHandler
 	@Override
 	protected void handleRequest(HttpRequest request, HttpResponseSender responseSender) throws BadRequestHttpException
 	{
-		String directoryPath = request.getParameterValueOrError("directory");
+		String directoryPath = request.getParameterValueOrException("directory");
 		var directory = new File(directoryPath);
 
 		String buildName = directory.getName();
