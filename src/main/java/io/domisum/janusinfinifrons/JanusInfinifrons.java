@@ -80,7 +80,7 @@ public final class JanusInfinifrons
 		// @formatter:off
 		InMemoryProxyStorage<String, Credential> credentialStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
-						new File("config/credentials"), ".jns_cred.json",
+						new File("config/credentials"), "jns_cred.json",
 						new BasicGsonSerializer<>(Credential.class)
 				)
 		);
@@ -89,7 +89,7 @@ public final class JanusInfinifrons
 
 		InMemoryProxyStorage<String, JanusComponent> componentStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
-						new File("config/components"), ".jns_comp.json",
+						new File("config/components"), "jns_comp.json",
 						new ComponentSerializer()
 				)
 		);
@@ -98,7 +98,7 @@ public final class JanusInfinifrons
 
 		InMemoryProxyStorage<String, JanusProject> projectStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
-						new File("config/projects"), ".jns_proj.json",
+						new File("config/projects"), "jns_proj.json",
 						new BasicGsonSerializer<>(JanusProject.class)
 				)
 		);
@@ -107,7 +107,7 @@ public final class JanusInfinifrons
 
 		InMemoryProxyStorage<String, JanusProjectInstance> projectInstanceStorage = new InMemoryProxyStorage<>(
 				new SerializedIdentifyableStorage<>(
-						new File("config/instances"), ".jns_inst.json",
+						new File("config/instances"), "jns_inst.json",
 						new BasicGsonSerializer<>(JanusProjectInstance.class)
 				)
 		);
