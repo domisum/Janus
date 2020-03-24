@@ -9,10 +9,10 @@ import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
 import io.domisum.lib.auxiliumlib.contracts.source.FiniteSource;
 import io.domisum.lib.auxiliumlib.contracts.storage.Storage;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.DurationUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 
 import java.io.File;
 import java.time.Duration;
@@ -24,108 +24,120 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
-public final class UpdateTicker extends Ticker
+public final class UpdateTicker
+		extends Ticker
 {
-
+	
 	// CONSTANTS
 	private static final Duration TICK_INTERVAL = Duration.ofSeconds(10);
-
+	
 	private static final Duration DELETE_INSTANCE_BUILDS_AFTER_INACTIVITY = Duration.ofDays(3);
-
+	
 	// REFERENCES
-	private final FiniteSource<String, JanusComponent> componentSource;
-	private final FiniteSource<String, JanusProject> projectSource;
-	private final FiniteSource<String, JanusProjectInstance> projectInstanceSource;
-
+	private final FiniteSource<String,JanusComponent> componentSource;
+	private final FiniteSource<String,JanusProject> projectSource;
+	private final FiniteSource<String,JanusProjectInstance> projectInstanceSource;
+	
 	private final ProjectBuilder projectBuilder;
-	private final Storage<JanusProject, ProjectBuild> latestBuilds;
-
+	private final Storage<JanusProject,ProjectBuild> latestBuilds;
+	
 	// STATUS
-	private final Map<String, String> lastComponentVersions = new HashMap<>();
-
-
+	private final Map<String,String> lastComponentVersions = new HashMap<>();
+	
+	
 	// INIT
 	public UpdateTicker(
-			FiniteSource<String, JanusComponent> componentSource,
-			FiniteSource<String, JanusProject> projectSource,
-			FiniteSource<String, JanusProjectInstance> projectInstanceSource,
+			FiniteSource<String,JanusComponent> componentSource,
+			FiniteSource<String,JanusProject> projectSource,
+			FiniteSource<String,JanusProjectInstance> projectInstanceSource,
 			ProjectBuilder projectBuilder,
-			Storage<JanusProject, ProjectBuild> latestBuilds)
+			Storage<JanusProject,ProjectBuild> latestBuilds)
 	{
 		super("updateTicker", TICK_INTERVAL, Duration.ofHours(1));
-
+		
 		this.componentSource = componentSource;
 		this.projectSource = projectSource;
 		this.projectInstanceSource = projectInstanceSource;
-
+		
 		this.projectBuilder = projectBuilder;
 		this.latestBuilds = latestBuilds;
-
+		
 		logger.info("Starting ticker...");
 		start();
 	}
-
-
+	
+	
 	// TICK
 	@Override
-	protected void tick()
+	protected void tick(Supplier<Boolean> shouldStop)
 	{
-		Collection<JanusComponent> changedComponents = updateComponents();
-		Collection<JanusProject> changedProjects = getChangedProjects(changedComponents);
-
-		for(JanusProject jp : changedProjects)
-			buildAndExportProject(jp);
-
-		for(JanusProjectInstance projectInstance : projectInstanceSource.fetchAll())
+		var changedComponents = updateComponents();
+		var changedProjects = getChangedProjects(changedComponents);
+		
+		for(var janusProject : changedProjects)
+		{
+			if(shouldStop.get())
+				return;
+			
+			buildAndExportProject(janusProject);
+		}
+		
+		for(var projectInstance : projectInstanceSource.fetchAll())
+		{
+			if(shouldStop.get())
+				return;
+			
 			deleteOldBuildsIn(projectInstance);
+		}
 	}
-
+	
 	private Collection<JanusComponent> updateComponents()
 	{
 		logger.debug("Updating components...");
-
+		
 		for(JanusComponent component : componentSource.fetchAll())
 		{
 			logger.debug("Updating component '{}'", component.getId());
 			component.update();
 		}
-
+		
 		Collection<JanusComponent> changedComponents = getCurrentlyChangedComponents();
 		if(!changedComponents.isEmpty())
 			logger.info("Detected change in components: {}", Identifyable.getIdList(changedComponents));
-
+		
 		// update last version
 		for(JanusComponent c : componentSource.fetchAll())
 			lastComponentVersions.put(c.getId(), c.getVersion());
-
+		
 		return changedComponents;
 	}
-
+	
 	private void buildAndExportProject(JanusProject project)
 	{
 		logger.info("Starting build of project '{}'...", project.getId());
 		ProjectBuild build = projectBuilder.build(project);
-
+		
 		exportProjectBuild(build);
 		latestBuilds.store(build);
-
+		
 		build.delete();
 	}
-
+	
 	private void exportProjectBuild(ProjectBuild build)
 	{
 		logger.info("Exporting build {}...", build);
-
+		
 		Collection<JanusProjectInstance> projectInstances = new ArrayList<>(projectInstanceSource.fetchAll());
 		projectInstances.removeIf(i->!Objects.equals(i.getProjectId(), build.getProject().getId()));
-
+		
 		for(JanusProjectInstance instance : projectInstances)
 			build.exportTo(instance);
-
+		
 		logger.info("Exporting build done\n");
 	}
-
+	
 	private void deleteOldBuildsIn(JanusProjectInstance instance)
 	{
 		for(File buildDir : FileUtil.listFilesFlat(instance.getRootDirectory(), FileType.DIRECTORY))
@@ -138,20 +150,20 @@ public final class UpdateTicker extends Ticker
 			}
 		}
 	}
-
-
+	
+	
 	// UTIL
 	private Collection<JanusComponent> getCurrentlyChangedComponents()
 	{
 		Collection<JanusComponent> changedComponents = new ArrayList<>();
-
+		
 		for(JanusComponent c : componentSource.fetchAll())
 			if(!Objects.equals(lastComponentVersions.get(c.getKey()), c.getVersion()))
 				changedComponents.add(c);
-
+		
 		return changedComponents;
 	}
-
+	
 	private Collection<JanusProject> getChangedProjects(Collection<JanusComponent> changedComponents)
 	{
 		Set<JanusProject> changedProjects = new HashSet<>();
@@ -163,11 +175,11 @@ public final class UpdateTicker extends Ticker
 						changedProjects.add(project);
 						break;
 					}
-
+		
 		if(!changedProjects.isEmpty())
 			logger.info("Projects with changed components: {}", Identifyable.getIdList(changedProjects));
-
+		
 		return changedProjects;
 	}
-
+	
 }
