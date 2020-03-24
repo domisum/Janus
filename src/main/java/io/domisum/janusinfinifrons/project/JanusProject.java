@@ -2,7 +2,7 @@ package io.domisum.janusinfinifrons.project;
 
 import io.domisum.janusinfinifrons.component.JanusComponent;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
-import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.lib.auxiliumlib.contracts.source.FiniteSource;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ public class JanusProject implements Identifyable
 	@Getter private final List<ProjectComponentDependency> componentDependencies;
 
 
-	public void validate(FiniteOptionalSource<String, JanusComponent> componentSource)
+	public void validate(FiniteSource<String, JanusComponent> componentSource)
 	{
 		Validate.notNull(componentDependencies, "componentDependencies can't be null");
 

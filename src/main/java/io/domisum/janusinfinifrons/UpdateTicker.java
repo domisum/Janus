@@ -7,7 +7,7 @@ import io.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import io.domisum.janusinfinifrons.project.JanusProject;
 import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
-import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.lib.auxiliumlib.contracts.source.FiniteSource;
 import io.domisum.lib.auxiliumlib.contracts.storage.Storage;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
@@ -34,9 +34,9 @@ public final class UpdateTicker extends Ticker
 	private static final Duration DELETE_INSTANCE_BUILDS_AFTER_INACTIVITY = Duration.ofDays(3);
 
 	// REFERENCES
-	private final FiniteOptionalSource<String, JanusComponent> componentSource;
-	private final FiniteOptionalSource<String, JanusProject> projectSource;
-	private final FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource;
+	private final FiniteSource<String, JanusComponent> componentSource;
+	private final FiniteSource<String, JanusProject> projectSource;
+	private final FiniteSource<String, JanusProjectInstance> projectInstanceSource;
 
 	private final ProjectBuilder projectBuilder;
 	private final Storage<JanusProject, ProjectBuild> latestBuilds;
@@ -47,9 +47,9 @@ public final class UpdateTicker extends Ticker
 
 	// INIT
 	public UpdateTicker(
-			FiniteOptionalSource<String, JanusComponent> componentSource,
-			FiniteOptionalSource<String, JanusProject> projectSource,
-			FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource,
+			FiniteSource<String, JanusComponent> componentSource,
+			FiniteSource<String, JanusProject> projectSource,
+			FiniteSource<String, JanusProjectInstance> projectInstanceSource,
 			ProjectBuilder projectBuilder,
 			Storage<JanusProject, ProjectBuild> latestBuilds)
 	{

@@ -11,7 +11,7 @@ import io.domisum.janusinfinifrons.intercom.IntercomServerInteractionFacade;
 import io.domisum.janusinfinifrons.project.JanusProject;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
 import io.domisum.lib.auxiliumlib.contracts.serialization.json.GsonSerializer;
-import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
+import io.domisum.lib.auxiliumlib.contracts.source.FiniteSource;
 import io.domisum.lib.auxiliumlib.contracts.storage.InMemoryProxyStorage;
 import io.domisum.lib.auxiliumlib.contracts.storage.InMemoryStorage;
 import io.domisum.lib.auxiliumlib.contracts.storage.SerializedIdentifyableStorage;
@@ -38,10 +38,10 @@ public final class JanusInfinifrons
 	private static final File BUILDS_BASE_DIRECTORY = new File("builds/");
 
 	// STORAGE
-	private FiniteOptionalSource<String, Credential> credentialSource;
-	private FiniteOptionalSource<String, JanusComponent> componentSource;
-	private FiniteOptionalSource<String, JanusProject> projectSource;
-	private FiniteOptionalSource<String, JanusProjectInstance> projectInstanceSource;
+	private FiniteSource<String, Credential> credentialSource;
+	private FiniteSource<String, JanusComponent> componentSource;
+	private FiniteSource<String, JanusProject> projectSource;
+	private FiniteSource<String, JanusProjectInstance> projectInstanceSource;
 
 	private final Storage<JanusProject, ProjectBuild> latestBuilds = new InMemoryStorage<>();
 
