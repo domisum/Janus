@@ -9,10 +9,10 @@ import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
 import io.domisum.lib.auxiliumlib.contracts.source.optional.FiniteOptionalSource;
 import io.domisum.lib.auxiliumlib.contracts.storage.Storage;
-import io.domisum.lib.auxiliumlib.file.FileUtil;
-import io.domisum.lib.auxiliumlib.file.FileUtil.FileType;
-import io.domisum.lib.auxiliumlib.util.ticker.Ticker;
-import io.domisum.lib.auxiliumlib.util.time.DurationUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
+import io.domisum.lib.auxiliumlib.ticker.Ticker;
+import io.domisum.lib.auxiliumlib.util.DurationUtil;
 
 import java.io.File;
 import java.time.Duration;

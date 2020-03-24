@@ -4,7 +4,7 @@ import io.domisum.janusinfinifrons.build.ProjectBuild;
 import io.domisum.janusinfinifrons.credential.Credential;
 import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import io.domisum.lib.auxiliumlib.contracts.Identifyable;
-import io.domisum.lib.auxiliumlib.util.java.annotations.InitByDeserialization;
+import io.domisum.lib.auxiliumlib.annotations.InitByDeserialization;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

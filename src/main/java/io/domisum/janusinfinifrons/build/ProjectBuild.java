@@ -3,7 +3,7 @@ package io.domisum.janusinfinifrons.build;
 import io.domisum.janusinfinifrons.instance.JanusProjectInstance;
 import io.domisum.janusinfinifrons.project.JanusProject;
 import io.domisum.lib.auxiliumlib.contracts.Keyable;
-import io.domisum.lib.auxiliumlib.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
