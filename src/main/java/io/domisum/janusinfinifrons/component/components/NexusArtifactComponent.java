@@ -1,12 +1,5 @@
 package io.domisum.janusinfinifrons.component.components;
 
-import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
-import io.domisum.lib.ezhttp.request.BasicAuthHeaderValue;
-import io.domisum.lib.ezhttp.request.EzHttpRequest;
-import io.domisum.lib.ezhttp.response.EzHttpIoResponse;
-import io.domisum.lib.ezhttp.response.EzHttpResponse;
-import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpStringBodyReader;
-import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpWriteToTempFileBodyReader;
 import io.domisum.janusinfinifrons.build.ProjectBuild;
 import io.domisum.janusinfinifrons.component.CredentialComponent;
 import io.domisum.janusinfinifrons.component.JanusComponent;
@@ -14,6 +7,13 @@ import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
 import io.domisum.lib.auxiliumlib.datacontainers.AbstractURL;
 import io.domisum.lib.auxiliumlib.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.java.annotations.InitByDeserialization;
+import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
+import io.domisum.lib.ezhttp.header.EzHttpHeaderUsernamePasswordAuthentication;
+import io.domisum.lib.ezhttp.request.EzHttpRequest;
+import io.domisum.lib.ezhttp.response.EzHttpIoResponse;
+import io.domisum.lib.ezhttp.response.EzHttpResponse;
+import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpStringBodyReader;
+import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpWriteToTempFileBodyReader;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -206,10 +206,9 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	{
 		if(getCredential() != null)
 		{
-			BasicAuthHeaderValue headerValue = new BasicAuthHeaderValue(getCredential().getUsername(),
-					getCredential().getPassword()
-			);
-			request.addHeader("Authorization", headerValue);
+			String username = getCredential().getUsername();
+			String password = getCredential().getPassword();
+			request.addHeader(new EzHttpHeaderUsernamePasswordAuthentication(username, password));
 		}
 	}
 
