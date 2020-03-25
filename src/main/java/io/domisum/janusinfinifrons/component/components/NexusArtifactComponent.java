@@ -4,7 +4,7 @@ import io.domisum.janusinfinifrons.build.ProjectBuild;
 import io.domisum.janusinfinifrons.component.CredentialComponent;
 import io.domisum.janusinfinifrons.component.JanusComponent;
 import io.domisum.janusinfinifrons.project.ProjectComponentDependency;
-import io.domisum.lib.auxiliumlib.datacontainers.AbstractURL;
+import io.domisum.lib.auxiliumlib.datacontainers.AbstractUrl;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.annotations.InitByDeserialization;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
@@ -173,7 +173,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 	// FETCH
 	private String fetchString(String url) throws IOException
 	{
-		AbstractURL abstractURL = new AbstractURL(url);
+		AbstractUrl abstractURL = new AbstractUrl(url);
 
 		EzHttpRequest request = EzHttpRequest.get(abstractURL);
 		authorizeRequest(request);
@@ -189,7 +189,7 @@ public class NexusArtifactComponent extends JanusComponent implements Credential
 
 	private File fetchFile(String url) throws IOException
 	{
-		AbstractURL abstractURL = new AbstractURL(url);
+		AbstractUrl abstractURL = new AbstractUrl(url);
 
 		EzHttpRequest request = EzHttpRequest.get(abstractURL);
 		authorizeRequest(request);
