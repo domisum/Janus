@@ -104,7 +104,7 @@ public class JanusComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("failed to clone "+this, e);
+			throw new IOException("failed to clone repository in "+this, e);
 		}
 		logger.info("...Cloning done");
 	}
@@ -123,7 +123,7 @@ public class JanusComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("error pulling changes from git repository", e);
+			throw new IOException("failed to pull changes in "+this, e);
 		}
 	}
 	
