@@ -3,7 +3,6 @@ package io.domisum.janus.component.types;
 import io.domisum.janus.ValidationReport;
 import io.domisum.janus.component.JanusComponent;
 import io.domisum.janus.component.JanusComponentDependencies;
-import io.domisum.janus.project.JanusProjectBuild;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
@@ -51,10 +50,10 @@ public class JanusComponentMavenArtifactJar
 	// INIT
 	public JanusComponentMavenArtifactJar(
 			JanusComponentDependencies janusComponentDependencies,
-			String id, String credentialId, String directoryInBuild,
+			String id, String credentialId,
 			String repositoryUrl, String groupId, String artifactId, String version)
 	{
-		super(id, credentialId, directoryInBuild);
+		super(id, credentialId);
 		this.janusComponentDependencies = janusComponentDependencies;
 		this.repositoryUrl = repositoryUrl;
 		this.groupId = groupId;
@@ -220,9 +219,9 @@ public class JanusComponentMavenArtifactJar
 	
 	// BUILD
 	@Override
-	public void addToBuild(JanusProjectBuild build)
+	public void addToBuild(File inBuildDir)
 	{
-		var targetFile = new File(getDirectoryInBuild(build), getJarFile().getName());
+		var targetFile = new File(inBuildDir, getJarFile().getName());
 		FileUtil.copyFile(getJarFile(), targetFile);
 	}
 	

@@ -3,7 +3,6 @@ package io.domisum.janus.component.types;
 import io.domisum.janus.ValidationReport;
 import io.domisum.janus.component.JanusComponent;
 import io.domisum.janus.component.JanusComponentDependencies;
-import io.domisum.janus.project.JanusProjectBuild;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.apache.commons.lang3.Validate;
@@ -14,6 +13,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Duration;
@@ -40,10 +40,10 @@ public class JanusComponentGitRepository
 	// INIT
 	public JanusComponentGitRepository(
 			JanusComponentDependencies janusComponentDependencies,
-			String id, String credentialId, String directoryInBuild,
+			String id, String credentialId,
 			String repositoryUrl, String branch)
 	{
-		super(id, credentialId, directoryInBuild);
+		super(id, credentialId);
 		this.janusComponentDependencies = janusComponentDependencies;
 		this.repositoryUrl = repositoryUrl;
 		this.branch = branch;
@@ -152,12 +152,10 @@ public class JanusComponentGitRepository
 	
 	// BUILD
 	@Override
-	public void addToBuild(JanusProjectBuild build)
+	public void addToBuild(File inBuildDir)
 	{
 		var gitDirFilter = new FilterOutBaseDirectory(".git");
-		
-		var targetDirectory = getDirectoryInBuild(build);
-		FileUtil.copyDirectory(getDirectory(), targetDirectory, gitDirFilter);
+		FileUtil.copyDirectory(getDirectory(), inBuildDir, gitDirFilter);
 	}
 	
 }
