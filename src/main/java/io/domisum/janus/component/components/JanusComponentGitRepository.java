@@ -5,7 +5,6 @@ import io.domisum.janus.component.JanusComponent;
 import io.domisum.janus.component.JanusComponentDependencies;
 import io.domisum.janus.project.JanusProjectBuild;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.apache.commons.lang3.Validate;
 import org.eclipse.jgit.api.Git;
@@ -16,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -35,9 +35,6 @@ public class JanusComponentGitRepository
 	// SETTINGS
 	private final String repositoryUrl;
 	private final String branch;
-	
-	// STATUS
-	private transient String latestCommitHash = null;
 	
 	
 	// INIT
@@ -75,8 +72,8 @@ public class JanusComponentGitRepository
 	public boolean update()
 			throws IOException
 	{
-		var filesInComponentDirectory = FileUtil.listFilesFlat(getDirectory(), FileType.FILE_AND_DIRECTORY);
-		if(filesInComponentDirectory.isEmpty())
+		boolean componentDirectoryEmpty = Files.list(getDirectory().toPath()).findAny().isEmpty();
+		if(componentDirectoryEmpty)
 		{
 			gitClone();
 			return true;
@@ -90,22 +87,24 @@ public class JanusComponentGitRepository
 	private void gitClone()
 			throws IOException
 	{
-		var cloneCommand = Git.cloneRepository();
-		cloneCommand.setURI(repositoryUrl);
-		cloneCommand.setDirectory(getDirectory());
-		cloneCommand.setBranch(branch);
-		cloneCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
-		authorizeCommand(cloneCommand);
-		
 		logger.info("Cloning {}...", this);
-		try(var git = cloneCommand.call())
+		
+		try
 		{
-			updateLatestCommitHash(git);
+			var cloneCommand = Git.cloneRepository();
+			cloneCommand.setURI(repositoryUrl);
+			cloneCommand.setDirectory(getDirectory());
+			cloneCommand.setBranch(branch);
+			cloneCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
+			authorizeCommand(cloneCommand);
+			
+			cloneCommand.call();
 		}
 		catch(GitAPIException e)
 		{
 			throw new IOException("failed to clone repository in "+this, e);
 		}
+		
 		logger.info("...Cloning done");
 	}
 	
@@ -114,17 +113,30 @@ public class JanusComponentGitRepository
 	{
 		try(var git = Git.open(getDirectory()))
 		{
+			String latestCommitHashBefore = readLatestCommitHash(git);
+			
 			var pullCommand = git.pull();
 			pullCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
 			authorizeCommand(pullCommand);
 			pullCommand.call();
 			
-			return updateLatestCommitHash(git);
+			String latestCommitHashAfter = readLatestCommitHash(git);
+			return !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
 		}
 		catch(GitAPIException e)
 		{
 			throw new IOException("failed to pull changes in "+this, e);
 		}
+	}
+	
+	private String readLatestCommitHash(Git git)
+			throws IOException
+	{
+		var branchRef = git.getRepository().findRef(branch);
+		if(branchRef == null)
+			throw new IllegalArgumentException("git repository does not contain branch '"+branch+"'");
+		
+		return branchRef.getObjectId().getName();
 	}
 	
 	private void authorizeCommand(TransportCommand<?,?> transportCommand)
@@ -135,20 +147,6 @@ public class JanusComponentGitRepository
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}
-	}
-	
-	private boolean updateLatestCommitHash(Git git)
-			throws IOException
-	{
-		var branchRef = git.getRepository().findRef(branch);
-		if(branchRef == null)
-			throw new IllegalArgumentException("git repository does not contain branch '"+branch+"'");
-		
-		String newLatestCommitHash = branchRef.getObjectId().getName();
-		boolean changed = !Objects.equals(latestCommitHash, newLatestCommitHash);
-		latestCommitHash = newLatestCommitHash;
-		
-		return changed;
 	}
 	
 	
