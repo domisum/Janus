@@ -1,4 +1,4 @@
-package io.domisum.janus.component.components;
+package io.domisum.janus.component.types;
 
 import io.domisum.janus.ValidationReport;
 import io.domisum.janus.component.JanusComponent;
