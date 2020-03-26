@@ -237,12 +237,12 @@ public class JanusComponentMavenArtifactJar
 		return new File(getDirectory(), "identifier.txt");
 	}
 	
-	public void writeJarIdentifier(String jarIdentifier)
+	private void writeJarIdentifier(String jarIdentifier)
 	{
 		FileUtil.writeString(getJarIdentifierFile(), jarIdentifier);
 	}
 	
-	public String readJarIdentifier()
+	private String readJarIdentifier()
 	{
 		File file = getJarIdentifierFile();
 		
