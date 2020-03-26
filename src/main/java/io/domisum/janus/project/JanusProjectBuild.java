@@ -1,4 +1,4 @@
-package io.domisum.janus;
+package io.domisum.janus.project;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 
 @RequiredArgsConstructor
-public class JanusBuild
+public class JanusProjectBuild
 {
 
 	@Getter

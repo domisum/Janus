@@ -1,9 +1,9 @@
 package io.domisum.janus.component.components;
 
-import io.domisum.janus.JanusBuild;
 import io.domisum.janus.ValidationReport;
 import io.domisum.janus.component.JanusComponent;
 import io.domisum.janus.component.JanusComponentDependencies;
+import io.domisum.janus.project.JanusProjectBuild;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
@@ -79,9 +79,9 @@ public class JanusComponentNexusJar
 	
 	// OBJECT
 	@Override
-	public String toString()
+	protected String getToStringInfos()
 	{
-		return "JanusComponentNexusJar("+getId()+" "+groupId+":"+artifactId+":"+version+" in repository '"+repositoryUrl+"')";
+		return groupId+":"+artifactId+":"+version+" in repository '"+repositoryUrl+"'";
 	}
 	
 	
@@ -223,7 +223,7 @@ public class JanusComponentNexusJar
 	
 	// BUILD
 	@Override
-	public void addToBuild(JanusBuild build)
+	public void addToBuild(JanusProjectBuild build)
 	{
 		var targetFile = new File(getDirectoryInBuild(build), getJarFile().getName());
 		FileUtil.copyFile(getJarFile(), targetFile);

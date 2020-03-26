@@ -1,7 +1,7 @@
 package io.domisum.janus.component;
 
-import io.domisum.janus.JanusBuild;
 import io.domisum.janus.ValidationReport;
+import io.domisum.janus.project.JanusProjectBuild;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
@@ -22,8 +22,18 @@ public abstract class JanusComponent
 	private final String directoryInBuild;
 	
 	
+	// OBJECT
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName()+"("+getId()+" "+getToStringInfos()+")";
+	}
+	
+	protected abstract String getToStringInfos();
+	
+	
 	// COMPONENT
-	public void validate()
+	public ValidationReport validate()
 	{
 		var validationReport = new ValidationReport();
 		
@@ -33,6 +43,7 @@ public abstract class JanusComponent
 		validateTypeSpecific(validationReport);
 		
 		validationReport.complete();
+		return validationReport;
 	}
 	
 	protected abstract void validateTypeSpecific(ValidationReport validationReport);
@@ -40,7 +51,7 @@ public abstract class JanusComponent
 	public abstract boolean update()
 			throws IOException;
 	
-	public abstract void addToBuild(JanusBuild build);
+	public abstract void addToBuild(JanusProjectBuild build);
 	
 	
 	// UTIL
@@ -49,7 +60,7 @@ public abstract class JanusComponent
 		return new File("_components/"+getId());
 	}
 	
-	protected File getDirectoryInBuild(JanusBuild build)
+	protected File getDirectoryInBuild(JanusProjectBuild build)
 	{
 		if(directoryInBuild == null)
 			return build.getDirectory();
