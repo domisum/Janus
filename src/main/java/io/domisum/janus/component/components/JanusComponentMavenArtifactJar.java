@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
-public class JanusComponentNexusJar
+public class JanusComponentMavenArtifactJar
 		extends JanusComponent
 {
 	
@@ -47,12 +47,9 @@ public class JanusComponentNexusJar
 	private final String artifactId;
 	private final String version;
 	
-	// STATUS
-	private transient String latestDownloadedJarIdentifier = null;
-	
 	
 	// INIT
-	public JanusComponentNexusJar(
+	public JanusComponentMavenArtifactJar(
 			JanusComponentDependencies janusComponentDependencies,
 			String id, String credentialId, String directoryInBuild,
 			String repositoryUrl, String groupId, String artifactId, String version)
@@ -124,19 +121,19 @@ public class JanusComponentNexusJar
 		return downloadJarIfIdentifierChanged(jarUrl, jarMd5);
 	}
 	
-	private boolean downloadJarIfIdentifierChanged(EzUrl jarUrl, String jarIdentifier)
+	private boolean downloadJarIfIdentifierChanged(EzUrl jarUrl, String newJarIdentifier)
 			throws IOException
 	{
-		boolean newJar = !Objects.equals(latestDownloadedJarIdentifier, jarIdentifier);
+		String previousJarIdentifier = readJarIdentifier();
+		boolean newJar = !Objects.equals(previousJarIdentifier, newJarIdentifier);
 		
 		if(newJar)
 		{
 			logger.info("Detected change in {}, downloading jar...", this);
 			var fetchedFile = fetchFile(jarUrl);
-			logger.info("...jar download complete");
-			
-			latestDownloadedJarIdentifier = jarIdentifier; // only update this if jar download is successful
 			FileUtil.moveFile(fetchedFile, getJarFile());
+			writeJarIdentifier(newJarIdentifier);
+			logger.info("...jar download complete");
 		}
 		
 		return newJar;
@@ -230,15 +227,36 @@ public class JanusComponentNexusJar
 	}
 	
 	
+	// FILE
+	private File getJarFile()
+	{
+		return new File(getDirectory(), artifactId+".jar");
+	}
+	
+	private File getJarIdentifierFile()
+	{
+		return new File(getDirectory(), "identifier.txt");
+	}
+	
+	public void writeJarIdentifier(String jarIdentifier)
+	{
+		FileUtil.writeString(getJarIdentifierFile(), jarIdentifier);
+	}
+	
+	public String readJarIdentifier()
+	{
+		File file = getJarIdentifierFile();
+		
+		if(!file.exists())
+			return null;
+		return FileUtil.readString(file);
+	}
+	
+	
 	// UTIL
 	private String getGroupIdUrlExtension()
 	{
 		return groupId.replace(".", "/");
-	}
-	
-	private File getJarFile()
-	{
-		return new File(getDirectory(), artifactId+".jar");
 	}
 	
 }
