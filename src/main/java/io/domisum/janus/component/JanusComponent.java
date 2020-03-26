@@ -23,7 +23,7 @@ public abstract class JanusComponent
 	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName()+"("+getId()+" "+getToStringInfos()+")";
+		return getClass().getSimpleName()+"("+getId()+": "+getToStringInfos()+")";
 	}
 	
 	protected abstract String getToStringInfos();

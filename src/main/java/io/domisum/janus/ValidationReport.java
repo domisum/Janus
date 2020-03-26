@@ -40,7 +40,7 @@ public class ValidationReport
 	public void noteFieldValue(Object value, String fieldName)
 	{
 		String contentDisplay = value == null ? "(not set)" : "'"+value.toString()+"'";
-		append("field {} is set to value {}", fieldName, contentDisplay);
+		append("{}={}", fieldName, contentDisplay);
 	}
 	
 	public void complete()

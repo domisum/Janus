@@ -1,6 +1,7 @@
 package io.domisum.janus.component;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
@@ -45,10 +46,10 @@ public class JanusComponentLoader
 		var files = FileUtil.listFilesRecursively(CONFIG_COMPONENT_DIRECTORY, FileType.FILE);
 		var components = new HashSet<JanusComponent>();
 		for(var file : files)
-			if(FILE_EXTENSION.equals(FileUtil.getExtension(file)))
+			if(FILE_EXTENSION.equals(FileUtil.getCompositeExtension(file)))
 				components.add(loadComponentFromFile(file));
 			else
-				logger.warn("Config dir of components contains file with wrong extension: {} (expected extension: {})",
+				logger.warn("Config dir of components contains file with wrong extension: '{}' (expected extension: '{}')",
 						file.getName(), FILE_EXTENSION);
 		
 		return components;
@@ -72,6 +73,7 @@ public class JanusComponentLoader
 				throw new InvalidConfigurationException(exceptionMessage);
 			}
 			
+			logger.info("Loaded component {}", component);
 			logger.info("Validated component {}: {}", component.getId(), validationReport);
 		}
 		catch(RuntimeException e)
@@ -86,7 +88,7 @@ public class JanusComponentLoader
 	// DESERIALIZATION
 	private JanusComponent deserialize(String json)
 	{
-		var jsonTree = GsonUtil.get().toJsonTree(json).getAsJsonObject();
+		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		
 		var componentClass = determineComponentClass(jsonTree);
 		var janusComponent = GsonUtil.get().fromJson(jsonTree, componentClass);

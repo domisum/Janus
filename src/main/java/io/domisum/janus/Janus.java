@@ -5,6 +5,7 @@ import io.domisum.janus.component.JanusComponent;
 import io.domisum.janus.component.JanusComponentLoader;
 import io.domisum.janus.intercom.JanusIntercomServer;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
+import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class Janus
 	// START
 	public void start()
 	{
+		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		logger.info("Starting...");
 		
 		loadConfiguration();
@@ -39,13 +41,14 @@ public class Janus
 		intercomServer.start();
 		// TODO ticker
 		
+		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
 		logger.info("Startup complete\n");
 	}
 	
 	private void loadConfiguration()
 	{
 		Set<JanusComponent> components = janusComponentLoader.load();
-		System.out.println(components);
+		System.out.println(components.size());
 	}
 	
 	
