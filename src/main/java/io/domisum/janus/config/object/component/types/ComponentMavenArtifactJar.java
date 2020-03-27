@@ -31,7 +31,7 @@ public class ComponentMavenArtifactJar
 		extends Component
 {
 	
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ComponentMavenArtifactJar.class);
 	
 	
 	// CONSTANTS
@@ -121,11 +121,11 @@ public class ComponentMavenArtifactJar
 		
 		if(newJar)
 		{
-			logger.info("Detected change in {}, downloading jar...", this);
+			LOGGER.info("Detected change in {}, downloading jar...", this);
 			var fetchedFile = fetchFile(jarUrl);
 			FileUtil.moveFile(fetchedFile, getJarFile());
 			writeJarIdentifier(newJarIdentifier);
-			logger.info("...jar download complete");
+			LOGGER.info("...jar download complete");
 		}
 		
 		return newJar;

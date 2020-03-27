@@ -23,7 +23,7 @@ public class ComponentGitRepository
 		extends Component
 {
 	
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ComponentGitRepository.class);
 	
 	
 	// CONSTANTS
@@ -80,7 +80,7 @@ public class ComponentGitRepository
 	private void gitClone()
 			throws IOException
 	{
-		logger.info("Cloning {}...", this);
+		LOGGER.info("Cloning {}...", this);
 		
 		try
 		{
@@ -98,7 +98,7 @@ public class ComponentGitRepository
 			throw new IOException("failed to clone repository in "+this, e);
 		}
 		
-		logger.info("...Cloning done");
+		LOGGER.info("...Cloning done");
 	}
 	
 	private boolean gitPull()
@@ -136,7 +136,7 @@ public class ComponentGitRepository
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = this.getComponentDependencyFacade().getCredential(getCredentialId());
+			var credential = getComponentDependencyFacade().getCredential(getCredentialId());
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}
