@@ -1,14 +1,25 @@
 package io.domisum.janus.intercom.endpoints;
 
+import com.google.inject.Inject;
+import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.lib.httpbutler.HttpResponseSender;
 import io.domisum.lib.httpbutler.endpointtypes.HttpButlerEndpointTypeStaticPath;
-import io.domisum.lib.httpbutler.exceptions.HttpException;
+import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
+import io.domisum.lib.httpbutler.exceptions.NotFoundHttpException;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
+import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
+
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class IntercomEndpointUpdateAvailable
 		extends HttpButlerEndpointTypeStaticPath
 {
+	
+	// DEPENDENCIES
+	private final LatestBuildRegistry latestBuildRegistry;
+	
 	
 	// CONSTANTS
 	@Override
@@ -27,9 +38,18 @@ public class IntercomEndpointUpdateAvailable
 	// HANDLING
 	@Override
 	protected void handleRequest(HttpRequest request, HttpResponseSender responseSender)
-			throws HttpException
+			throws BadRequestHttpException, NotFoundHttpException
 	{
-		// TODO
+		String projectId = request.getQueryParameterValue("project");
+		String buildName = request.getQueryParameterValue("build");
+		
+		var latestBuildOptional = latestBuildRegistry.get(projectId);
+		if(latestBuildOptional.isEmpty())
+			throw new NotFoundHttpException("there is no project with id '"+projectId+"'");
+		
+		String latestBuild = latestBuildOptional.get();
+		boolean updateAvailable = !Objects.equals(latestBuild, buildName);
+		responseSender.sendPlaintext(updateAvailable+"");
 	}
 	
 }
