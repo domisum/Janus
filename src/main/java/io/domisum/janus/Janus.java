@@ -1,8 +1,9 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.configobject.component.JanusComponent;
 import io.domisum.janus.configobject.component.JanusComponentLoader;
+import io.domisum.janus.configobject.credentials.JanusCredentialLoader;
+import io.domisum.janus.configobject.project.JanusProjectLoader;
 import io.domisum.janus.intercom.JanusIntercomServer;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.Set;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class Janus
@@ -26,7 +26,10 @@ public class Janus
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(5);
 	
 	// DEPENDENCIES
+	private final JanusCredentialLoader janusCredentialLoader;
 	private final JanusComponentLoader janusComponentLoader;
+	private final JanusProjectLoader janusProjectLoader;
+	
 	private final JanusIntercomServer intercomServer;
 	
 	
@@ -47,8 +50,9 @@ public class Janus
 	
 	private void loadConfiguration()
 	{
-		Set<JanusComponent> components = janusComponentLoader.load();
-		System.out.println(components.size());
+		var credentials = janusCredentialLoader.load();
+		var components = janusComponentLoader.load();
+		var projects = janusProjectLoader.load();
 	}
 	
 	
