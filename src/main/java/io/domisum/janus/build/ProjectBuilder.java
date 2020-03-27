@@ -49,7 +49,7 @@ public class ProjectBuilder
 		buildProjectTo(project, buildDirectory, configuration);
 		
 		latestBuildRegistry.set(project.getId(), buildName);
-		var latestBuildFile = new File(project.getBuildRootDirectory(), "latestBuild.txt");
+		var latestBuildFile = new File(project.getBuildRootDirectory(), Project.LATEST_BUILD_FILE_NAME);
 		FileUtil.writeString(latestBuildFile, buildName);
 	}
 	

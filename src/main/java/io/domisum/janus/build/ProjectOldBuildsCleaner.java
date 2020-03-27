@@ -90,7 +90,7 @@ public class ProjectOldBuildsCleaner
 	
 	private String readRunningBuild(Project project)
 	{
-		var runningBuildFile = new File(project.getBuildRootDirectory(), "runningBuild.txt");
+		var runningBuildFile = new File(project.getBuildRootDirectory(), Project.RUNNINTG_BUILD_FILE_NAME);
 		if(!runningBuildFile.exists())
 			return null;
 		return FileUtil.readString(runningBuildFile);

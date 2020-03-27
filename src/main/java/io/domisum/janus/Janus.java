@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
+import io.domisum.janus.config.object.project.Project;
 import io.domisum.janus.intercom.IntercomServer;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +81,12 @@ public class Janus
 			if(buildRootDirectory == null)
 				continue;
 			
-			var buildDirectories = FileUtil.listFilesFlat(buildRootDirectory, FileType.DIRECTORY);
+			var latestBuildFile = new File(buildRootDirectory, Project.LATEST_BUILD_FILE_NAME);
+			if(!latestBuildFile.exists())
+				continue;
+			
+			String latestBuildName = FileUtil.readString(latestBuildFile);
+			latestBuildRegistry.set(project.getId(), latestBuildName);
 		}
 	}
 	

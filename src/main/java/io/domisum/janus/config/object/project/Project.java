@@ -18,6 +18,10 @@ public class Project
 		implements ConfigObject
 {
 	
+	// CONSTANTS
+	public static final String LATEST_BUILD_FILE_NAME = "latestBuild.txt";
+	public static final String RUNNINTG_BUILD_FILE_NAME = "runningBuild.txt";
+	
 	// ATTRIBUTES
 	@Getter
 	private final String id;
