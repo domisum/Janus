@@ -102,7 +102,8 @@ public class JanusTicker
 			if(!shouldStop.get())
 				projectBuilder.build(project, configuration);
 		
-		logger.info("Latest builds: {}", latestBuildRegistry.getReport());
+		if(projectsToBuild.size() > 0)
+			logger.info("Latest builds: {}", latestBuildRegistry.getReport());
 	}
 	
 	private Set<Project> getProjectsToBuild(Set<String> changedComponentIds)
