@@ -103,7 +103,7 @@ public class Janus
 		janusTicker.stop();
 		intercomServer.stop();
 		
-		logger.info("Shutdown sequence complete, exiting...");
+		logger.info("...Shutdown sequence complete");
 	}
 	
 }
