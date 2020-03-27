@@ -32,7 +32,7 @@ public class LatestBuildRegistry
 		var latestBuildsKeyValuePairs = new ArrayList<String>();
 		
 		for(var latestBuildsEntry : latestBuilds.entrySet())
-			latestBuildsKeyValuePairs.add(latestBuildsEntry.getKey()+"="+latestBuildsEntry);
+			latestBuildsKeyValuePairs.add(latestBuildsEntry.getKey()+"="+latestBuildsEntry.getValue());
 		
 		return "("+StringUtil.listToString(latestBuildsKeyValuePairs, ", ")+")";
 	}
