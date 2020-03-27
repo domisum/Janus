@@ -1,7 +1,7 @@
 package io.domisum.janus.configobject.project;
 
 import io.domisum.janus.configobject.JanusConfigObject;
-import io.domisum.janus.ValidationReport;
+import io.domisum.janus.configobject.ValidationReport;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

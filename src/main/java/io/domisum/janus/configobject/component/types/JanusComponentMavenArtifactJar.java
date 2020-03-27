@@ -1,6 +1,6 @@
 package io.domisum.janus.configobject.component.types;
 
-import io.domisum.janus.ValidationReport;
+import io.domisum.janus.configobject.ValidationReport;
 import io.domisum.janus.configobject.component.JanusComponent;
 import io.domisum.janus.configobject.component.JanusComponentDependencies;
 import io.domisum.lib.auxiliumlib.PHR;

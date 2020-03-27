@@ -1,7 +1,7 @@
 package io.domisum.janus.configobject.credentials;
 
 import io.domisum.janus.configobject.JanusConfigObject;
-import io.domisum.janus.ValidationReport;
+import io.domisum.janus.configobject.ValidationReport;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
