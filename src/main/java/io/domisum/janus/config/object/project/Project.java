@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
 
+import java.io.File;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,7 +19,6 @@ public class Project
 	@Getter
 	private final String id;
 	
-	@Getter
 	private final String buildRootDirectory;
 	@Getter
 	private final String exportDirectory;
@@ -35,6 +35,8 @@ public class Project
 		
 		Validate.notNull(id, "id has to be set");
 		Validate.isTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
+		if(buildRootDirectory != null)
+			Validate.isTrue(id.equals(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
 		validationReport.noteFieldValue(buildRootDirectory, "buildRootDirectory");
 		validationReport.noteFieldValue(exportDirectory, "exportDirectory");
 		validateComponents(validationReport);
@@ -57,6 +59,15 @@ public class Project
 				throw new InvalidConfigurationException("configuration error in component at index "+i, e);
 			}
 		}
+	}
+	
+	
+	// GETTERS
+	private File getBuildRootDirectory()
+	{
+		if(buildRootDirectory == null)
+			return null;
+		return new File(buildRootDirectory);
 	}
 	
 	
