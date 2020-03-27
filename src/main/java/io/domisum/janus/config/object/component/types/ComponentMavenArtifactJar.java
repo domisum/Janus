@@ -121,7 +121,7 @@ public class ComponentMavenArtifactJar
 		
 		if(newJar)
 		{
-			LOGGER.info("Detected change in {}, downloading jar...", getId());
+			LOGGER.info("Detected change in component '{}', downloading jar...", getId());
 			var fetchedFile = fetchFile(jarUrl);
 			FileUtil.moveFile(fetchedFile, getJarFile());
 			writeJarIdentifier(newJarIdentifier);
