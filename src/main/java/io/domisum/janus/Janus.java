@@ -6,6 +6,7 @@ import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.janus.intercom.IntercomServer;
+import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
@@ -19,6 +20,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class Janus
+		implements ApplicationStopper
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -92,6 +94,7 @@ public class Janus
 	
 	
 	// STOP
+	@Override
 	public void stop()
 	{
 		ThreadUtil.scheduleEmergencyExit(EMERGENCY_EXIT_DELAY);

@@ -53,7 +53,7 @@ public class JanusTicker
 	protected void tick(Supplier<Boolean> shouldStop)
 	{
 		var updatedComponentIds = updateComponents();
-		runBuilds(updatedComponentIds);
+		runBuilds(updatedComponentIds, shouldStop);
 		
 		cleanOldBuilds();
 	}
@@ -90,11 +90,12 @@ public class JanusTicker
 	
 	
 	// BUILD
-	private void runBuilds(Set<String> changedComponentIds)
+	private void runBuilds(Set<String> changedComponentIds, Supplier<Boolean> shouldStop)
 	{
 		var projectsToBuild = getProjectsToBuild(changedComponentIds);
 		for(var project : projectsToBuild)
-			projectBuilder.build(project, configuration);
+			if(!shouldStop.get())
+				projectBuilder.build(project, configuration);
 	}
 	
 	private Set<Project> getProjectsToBuild(Set<String> changedComponentIds)

@@ -1,9 +1,13 @@
 package io.domisum.janus.build;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import io.domisum.janus.Janus;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
+import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,7 @@ public class ProjectBuilder
 	
 	// DEPENDENCIES
 	private final LatestBuildRegistry latestBuildRegistry;
+	private final ApplicationStopper applicationStopper;
 	
 	
 	// BUILD
@@ -36,7 +41,7 @@ public class ProjectBuilder
 		if(project.getBuildRootDirectory() != null)
 			buildRegular(project, configuration);
 		else
-			buildExport(project, configuration);
+			buildAndExport(project, configuration);
 		
 		logger.info("...Building project '{}' done", project.getId());
 	}
@@ -53,10 +58,67 @@ public class ProjectBuilder
 		FileUtil.writeString(latestBuildFile, buildName);
 	}
 	
-	private void buildExport(Project project, Configuration configuration)
+	private void buildAndExport(Project project, Configuration configuration)
 	{
-		// TODO
+		var tempBuildDir = FileUtil.createTemporaryDirectory();
+		buildProjectTo(project, tempBuildDir, configuration);
+		
+		if(project.isJanusJar())
+			exportJanusJar(project, tempBuildDir);
+		else if(project.isJanusConfig())
+		{
+			exportBuild(tempBuildDir, Janus.CONFIG_DIRECTORY);
+			applicationStopper.stop();
+		}
+		else
+			exportBuild(tempBuildDir, project.getExportDirectory());
 	}
+	
+	private void exportJanusJar(Project project, File tempBuildDir)
+	{
+		if(FileUtil.listFilesFlat(tempBuildDir, FileType.DIRECTORY).size() > 0)
+		{
+			failBuild(project, "build shouldn't contain any directories");
+			return;
+		}
+		
+		var buildFiles = FileUtil.listFilesFlat(tempBuildDir, FileType.FILE);
+		if(buildFiles.isEmpty())
+		{
+			failBuild(project, "build didn't contain a file");
+			return;
+		}
+		if(buildFiles.size() > 1)
+		{
+			failBuild(project, "build should not contain more than one file");
+			return;
+		}
+		
+		var buildJarFile = Iterables.getOnlyElement(buildFiles);
+		if(!"jar".equals(FileUtil.getExtension(buildJarFile)))
+		{
+			failBuild(project, "file in build is not a jar file");
+			return;
+		}
+		
+		var targetFile = new File("Updated.jar");
+		FileUtil.moveFile(buildJarFile, targetFile);
+		FileUtil.deleteDirectory(tempBuildDir);
+		applicationStopper.stop();
+	}
+	
+	private void exportBuild(File tempBuildDir, File exportDirectory)
+	{
+		FileUtil.deleteDirectoryContents(exportDirectory);
+		FileUtil.moveDirectory(tempBuildDir, exportDirectory);
+	}
+	
+	private void failBuild(Project project, String reason)
+	{
+		logger.error("Build of project '{}' failed, reason: {}", project.getId(), reason);
+		applicationStopper.stop();
+	}
+	
 	
 	private void buildProjectTo(Project project, File buildDirectory, Configuration configuration)
 	{
