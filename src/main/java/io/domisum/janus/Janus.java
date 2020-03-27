@@ -91,7 +91,7 @@ public class Janus
 			latestBuildRegistry.set(project.getId(), latestBuildName);
 		}
 		
-		logger.info("Latest builds: {}", latestBuildRegistry.getReport());
+		logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
 	}
 	
 	
