@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
 {
@@ -43,7 +42,7 @@ public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
 	
 	
 	// LOADING
-	public Set<T> load()
+	public JanusConfigObjectRegistry<T> load()
 			throws InvalidConfigurationException
 	{
 		logger.info("Loading {}...", OBJECT_NAME_PLURAL());
@@ -58,7 +57,7 @@ public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
 						OBJECT_NAME_PLURAL(), file.getName(), FILE_EXTENSION());
 		
 		logger.info("...Loading {} done", OBJECT_NAME_PLURAL());
-		return configObjects;
+		return new JanusConfigObjectRegistry<>(configObjects);
 	}
 	
 	private T loadConfigObjectFromFile(File file)
