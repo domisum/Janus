@@ -92,9 +92,9 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 			throw new InvalidConfigurationException(exceptionMessage);
 		}
 		
-		logger.info("Loaded {} {}", OBJECT_NAME(), configObject);
 		if(validationReport != null)
 			logger.info("Validated {} {}: {}", OBJECT_NAME(), configObject.getId(), validationReport);
+		logger.info("Loaded {} {}", OBJECT_NAME(), configObject);
 		
 		return configObject;
 	}
