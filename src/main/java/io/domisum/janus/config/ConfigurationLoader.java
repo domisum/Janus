@@ -8,10 +8,15 @@ import io.domisum.janus.config.object.project.ProjectDependencyFacade;
 import io.domisum.janus.config.object.project.ProjectLoader;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ConfigurationLoader
 {
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	
 	// DEPENDENCIES
 	private final CredentialLoader janusCredentialLoader;
@@ -27,6 +32,8 @@ public class ConfigurationLoader
 	public Configuration load()
 			throws InvalidConfigurationException
 	{
+		logger.info("Loading configuration...");
+		
 		var credentialRegistry = janusCredentialLoader.load();
 		
 		componentDependencyFacade.setCredentialRegistry(credentialRegistry);
@@ -35,7 +42,9 @@ public class ConfigurationLoader
 		projectDependencyFacade.setComponentRegistry(componentRegistry);
 		var projectRegistry = janusProjectLoader.load();
 		
-		return new Configuration(credentialRegistry, componentRegistry, projectRegistry);
+		var configuration = new Configuration(credentialRegistry, componentRegistry, projectRegistry);
+		logger.info("...Loading configuration done\n");
+		return configuration;
 	}
 	
 }
