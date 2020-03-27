@@ -1,10 +1,10 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.config.object.component.ComponentLoader;
-import io.domisum.janus.config.object.credentials.CredentialLoader;
-import io.domisum.janus.config.object.project.ProjectLoader;
+import io.domisum.janus.config.Configuration;
+import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.intercom.IntercomServer;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
@@ -26,21 +26,23 @@ public class Janus
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(5);
 	
 	// DEPENDENCIES
-	private final CredentialLoader janusCredentialLoader;
-	private final ComponentLoader janusComponentLoader;
-	private final ProjectLoader janusProjectLoader;
-	
+	private final ConfigurationLoader configurationLoader;
 	private final IntercomServer intercomServer;
+	
+	// CONFIGURATION
+	private Configuration configuration;
 	
 	
 	// START
 	public void start()
 	{
-		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		logger.info("Starting...");
 		
-		loadConfiguration();
+		boolean configurationValid = loadConfiguration();
+		if(!configurationValid)
+			return;
 		
+		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		intercomServer.start();
 		// TODO ticker
 		
@@ -48,11 +50,19 @@ public class Janus
 		logger.info("Startup complete\n");
 	}
 	
-	private void loadConfiguration()
+	private boolean loadConfiguration()
 	{
-		var credentials = janusCredentialLoader.load();
-		var components = janusComponentLoader.load();
-		var projects = janusProjectLoader.load();
+		try
+		{
+			configuration = configurationLoader.load();
+			return true;
+		}
+		catch(InvalidConfigurationException e)
+		{
+			logger.info("Invalid configuration, shutting down", e);
+			stop();
+			return false;
+		}
 	}
 	
 	

@@ -23,7 +23,7 @@ public abstract class Component
 	
 	// DEPENDENCIES
 	@Getter(AccessLevel.PROTECTED)
-	private final ComponentDependencies componentDependencies;
+	private final ComponentDependencyFacade componentDependencyFacade;
 	
 	
 	// INIT
@@ -34,6 +34,8 @@ public abstract class Component
 		
 		Validate.notNull(id, "id can't be null");
 		validationReport.noteFieldValue(credentialId, "credentialId");
+		if(credentialId != null)
+			componentDependencyFacade.validateCredentialExists(credentialId);
 		validateTypeSpecific(validationReport);
 		
 		return validationReport.complete();

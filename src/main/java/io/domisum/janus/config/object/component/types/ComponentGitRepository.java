@@ -2,7 +2,7 @@ package io.domisum.janus.config.object.component.types;
 
 import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
-import io.domisum.janus.config.object.component.ComponentDependencies;
+import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.apache.commons.lang3.Validate;
@@ -36,10 +36,10 @@ public class ComponentGitRepository
 	
 	// INIT
 	public ComponentGitRepository(
-			String id, String credentialId, ComponentDependencies componentDependencies,
+			String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
 			String repositoryUrl, String branch)
 	{
-		super(id, credentialId, componentDependencies);
+		super(id, credentialId, componentDependencyFacade);
 		this.repositoryUrl = repositoryUrl;
 		this.branch = branch;
 	}
@@ -136,7 +136,7 @@ public class ComponentGitRepository
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = getComponentDependencies().getCredential(getCredentialId());
+			var credential = this.getComponentDependencyFacade().getCredential(getCredentialId());
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}

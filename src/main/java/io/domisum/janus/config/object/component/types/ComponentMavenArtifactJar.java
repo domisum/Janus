@@ -2,7 +2,7 @@ package io.domisum.janus.config.object.component.types;
 
 import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
-import io.domisum.janus.config.object.component.ComponentDependencies;
+import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
@@ -46,10 +46,10 @@ public class ComponentMavenArtifactJar
 	
 	// INIT
 	public ComponentMavenArtifactJar(
-			String id, String credentialId, ComponentDependencies componentDependencies,
+			String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
 			String repositoryUrl, String groupId, String artifactId, String version)
 	{
-		super(id, credentialId, componentDependencies);
+		super(id, credentialId, componentDependencyFacade);
 		this.repositoryUrl = repositoryUrl;
 		this.groupId = groupId;
 		this.artifactId = artifactId;
@@ -203,7 +203,7 @@ public class ComponentMavenArtifactJar
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = getComponentDependencies().getCredential(getCredentialId());
+			var credential = this.getComponentDependencyFacade().getCredential(getCredentialId());
 			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
 			request.addHeader(authHeader);
 		}

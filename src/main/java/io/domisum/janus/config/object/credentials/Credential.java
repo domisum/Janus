@@ -32,4 +32,12 @@ public class Credential
 		return null;
 	}
 	
+	
+	// OBJECT
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName()+"("+id+": "+username+")";
+	}
+	
 }

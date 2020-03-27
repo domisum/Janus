@@ -20,7 +20,7 @@ public class ComponentLoader
 	
 	// DEPENDENCIES
 	private final Set<Binding> bindings;
-	private final ComponentDependencies componentDependencies;
+	private final ComponentDependencyFacade componentDependencyFacade;
 	
 	
 	// CONSTANT METHODS
@@ -69,7 +69,7 @@ public class ComponentLoader
 	@Override
 	protected Map<Class<?>,Object> getDependenciesToInject()
 	{
-		return Map.of(ComponentDependencies.class, componentDependencies);
+		return Map.of(ComponentDependencyFacade.class, componentDependencyFacade);
 	}
 	
 	

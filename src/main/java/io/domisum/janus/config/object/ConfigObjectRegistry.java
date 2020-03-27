@@ -34,6 +34,11 @@ public class ConfigObjectRegistry<T extends ConfigObject>
 		return configObject;
 	}
 	
+	public boolean contains(String id)
+	{
+		return configObjects.containsKey(id);
+	}
+	
 	public Collection<T> getAll()
 	{
 		return new ArrayList<>(configObjects.values());
