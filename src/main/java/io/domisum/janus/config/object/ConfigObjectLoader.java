@@ -56,7 +56,10 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 				logger.warn("Config subdir of {} contains file with wrong extension: '{}' (expected extension: '{}')",
 						OBJECT_NAME_PLURAL(), file.getName(), FILE_EXTENSION());
 		
-		logger.info("...Loading {} done", OBJECT_NAME_PLURAL());
+		if(configObjects.isEmpty())
+			logger.info("(there are no {})", OBJECT_NAME_PLURAL());
+		
+		logger.info("...Loading {} done, loaded {}", OBJECT_NAME_PLURAL(), configObjects.size());
 		return new ConfigObjectRegistry<>(configObjects);
 	}
 	
