@@ -7,6 +7,7 @@ import io.domisum.janus.config.Configuration;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
@@ -61,7 +62,29 @@ public class JanusTicker
 	
 	private Set<String> updateComponents()
 	{
+		try
+		{
+			return updateComponentsUncaught();
+		}
+		catch(IOException e)
+		{
+			logger.warn("Failed to update component", e);
+			return new HashSet<>(); // don't trigger builds after failed update
+		}
+	}
+	
+	private Set<String> updateComponentsUncaught()
+			throws IOException
+	{
 		var changedComponentIds = new HashSet<String>();
+		
+		var components = configuration.getComponentRegistry().getAll();
+		for(var component : components)
+		{
+			boolean changed = component.update();
+			if(changed)
+				changedComponentIds.add(component.getId());
+		}
 		
 		return changedComponentIds;
 	}

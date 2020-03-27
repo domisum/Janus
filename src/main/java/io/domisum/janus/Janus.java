@@ -57,7 +57,7 @@ public class Janus
 		}
 		catch(InvalidConfigurationException e)
 		{
-			logger.info("Invalid configuration, shutting down", e);
+			logger.error("Invalid configuration, shutting down", e);
 			stop();
 			return false;
 		}
