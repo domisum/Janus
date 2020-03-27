@@ -5,7 +5,6 @@ import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.lib.httpbutler.HttpResponseSender;
 import io.domisum.lib.httpbutler.endpointtypes.HttpButlerEndpointTypeStaticPath;
 import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
-import io.domisum.lib.httpbutler.exceptions.NotFoundHttpException;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +37,17 @@ public class IntercomEndpointUpdateAvailable
 	// HANDLING
 	@Override
 	protected void handleRequest(HttpRequest request, HttpResponseSender responseSender)
-			throws BadRequestHttpException, NotFoundHttpException
+			throws BadRequestHttpException
 	{
 		String projectId = request.getQueryParameterValue("project");
 		String buildName = request.getQueryParameterValue("build");
 		
 		var latestBuildOptional = latestBuildRegistry.get(projectId);
 		if(latestBuildOptional.isEmpty())
-			throw new NotFoundHttpException("there is no project with id '"+projectId+"'");
+		{
+			responseSender.sendPlaintext("false");
+			return;
+		}
 		
 		String latestBuild = latestBuildOptional.get();
 		boolean updateAvailable = !Objects.equals(latestBuild, buildName);
