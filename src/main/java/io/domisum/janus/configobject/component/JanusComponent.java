@@ -1,6 +1,6 @@
-package io.domisum.janus.component;
+package io.domisum.janus.configobject.component;
 
-import io.domisum.janus.JanusConfigObject;
+import io.domisum.janus.configobject.JanusConfigObject;
 import io.domisum.janus.ValidationReport;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

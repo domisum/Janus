@@ -1,8 +1,8 @@
-package io.domisum.janus.component.types;
+package io.domisum.janus.configobject.component.types;
 
 import io.domisum.janus.ValidationReport;
-import io.domisum.janus.component.JanusComponent;
-import io.domisum.janus.component.JanusComponentDependencies;
+import io.domisum.janus.configobject.component.JanusComponent;
+import io.domisum.janus.configobject.component.JanusComponentDependencies;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;

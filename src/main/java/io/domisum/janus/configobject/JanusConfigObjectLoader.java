@@ -1,5 +1,6 @@
-package io.domisum.janus;
+package io.domisum.janus.configobject;
 
+import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;

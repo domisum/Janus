@@ -1,9 +1,9 @@
 package io.domisum.janus.dependencyinjection;
 
 import com.google.inject.AbstractModule;
-import io.domisum.janus.component.JanusComponentLoader.Binding;
-import io.domisum.janus.component.types.JanusComponentGitRepository;
-import io.domisum.janus.component.types.JanusComponentMavenArtifactJar;
+import io.domisum.janus.configobject.component.JanusComponentLoader.Binding;
+import io.domisum.janus.configobject.component.types.JanusComponentGitRepository;
+import io.domisum.janus.configobject.component.types.JanusComponentMavenArtifactJar;
 import io.domisum.janus.intercom.endpoints.JanusIntercomEndpointUpdateAvailable;
 import io.domisum.lib.guiceutils.GuiceMultibinder;
 import io.domisum.lib.httpbutler.HttpButlerEndpoint;

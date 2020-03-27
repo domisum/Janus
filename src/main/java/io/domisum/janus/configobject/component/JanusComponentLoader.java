@@ -1,9 +1,9 @@
-package io.domisum.janus.component;
+package io.domisum.janus.configobject.component;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import io.domisum.janus.JanusConfigObjectLoader;
+import io.domisum.janus.configobject.JanusConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
 import lombok.EqualsAndHashCode;

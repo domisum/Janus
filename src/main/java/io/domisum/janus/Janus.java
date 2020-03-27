@@ -1,8 +1,8 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.component.JanusComponent;
-import io.domisum.janus.component.JanusComponentLoader;
+import io.domisum.janus.configobject.component.JanusComponent;
+import io.domisum.janus.configobject.component.JanusComponentLoader;
 import io.domisum.janus.intercom.JanusIntercomServer;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;

@@ -1,4 +1,4 @@
-package io.domisum.janus.project;
+package io.domisum.janus.configobject.project;
 
 import lombok.RequiredArgsConstructor;
 

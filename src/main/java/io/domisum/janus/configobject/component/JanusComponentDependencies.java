@@ -1,6 +1,6 @@
-package io.domisum.janus.component;
+package io.domisum.janus.configobject.component;
 
-import io.domisum.janus.credentials.JanusCredential;
+import io.domisum.janus.configobject.credentials.JanusCredential;
 
 public class JanusComponentDependencies
 {
