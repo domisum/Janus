@@ -2,12 +2,15 @@ package io.domisum.janus.config.object.project;
 
 import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -66,6 +69,19 @@ public class Project
 			
 			projectDependencyFacade.validateComponentExists(projectComponent.getComponentId());
 		}
+	}
+	
+	
+	// OBJECT
+	@Override
+	public String toString()
+	{
+		var componentIds = new ArrayList<>();
+		for(var component : components)
+			componentIds.add(component.getComponentId());
+		String componentDisplay = StringUtil.listToString(componentIds, ", ");
+		
+		return PHR.r("Project({}: components=({}))", id, componentDisplay);
 	}
 	
 	
