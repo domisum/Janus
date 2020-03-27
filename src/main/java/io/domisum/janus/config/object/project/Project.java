@@ -26,10 +26,14 @@ public class Project
 	// COMPONENTS
 	private final List<ProjectComponent> components;
 	
+	// DEPENDENCY
+	private final ProjectDependencyFacade projectDependencyFacade;
+	
 	
 	// INIT
 	@Override
 	public ValidationReport validate()
+			throws InvalidConfigurationException
 	{
 		var validationReport = new ValidationReport();
 		
@@ -45,19 +49,22 @@ public class Project
 	}
 	
 	private void validateComponents(ValidationReport validationReport)
+			throws InvalidConfigurationException
 	{
 		for(int i = 0; i < components.size(); i++)
 		{
-			var component = components.get(i);
+			var projectComponent = components.get(i);
 			try
 			{
-				var componentValidationReport = component.validate();
-				validationReport.addSubreport(componentValidationReport, component.getComponentId());
+				var componentValidationReport = projectComponent.validate();
+				validationReport.addSubreport(componentValidationReport, projectComponent.getComponentId());
 			}
-			catch(RuntimeException e)
+			catch(InvalidConfigurationException|IllegalArgumentException e)
 			{
-				throw new InvalidConfigurationException("configuration error in component at index "+i, e);
+				throw new InvalidConfigurationException("configuration error in projectComponent at index "+i, e);
 			}
+			
+			projectDependencyFacade.validateComponentExists(projectComponent.getComponentId());
 		}
 	}
 	

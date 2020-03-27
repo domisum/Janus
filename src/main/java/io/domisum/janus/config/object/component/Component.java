@@ -21,7 +21,7 @@ public abstract class Component
 	@Getter
 	private final String credentialId;
 	
-	// DEPENDENCIES
+	// DEPENDENCY
 	@Getter(AccessLevel.PROTECTED)
 	private final ComponentDependencyFacade componentDependencyFacade;
 	

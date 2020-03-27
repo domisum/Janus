@@ -71,7 +71,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		{
 			return createConfigObject(file, fileContent);
 		}
-		catch(RuntimeException e)
+		catch(InvalidConfigurationException|IllegalArgumentException e)
 		{
 			String message = PHR.r("invalid configuration of {} from file '{}'", OBJECT_NAME(), file.getName());
 			throw new InvalidConfigurationException(message, e);

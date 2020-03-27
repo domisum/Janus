@@ -1,13 +1,20 @@
 package io.domisum.janus.config.object.project;
 
+import com.google.inject.Inject;
 import io.domisum.janus.config.object.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectLoader
 		extends ConfigObjectLoader<Project>
 {
+	
+	// DEPENDENCIES
+	private final ProjectDependencyFacade projectDependencyFacade;
+	
 	
 	// CONSTANT METHODS
 	@Override
@@ -25,7 +32,7 @@ public class ProjectLoader
 	@Override
 	protected Map<Class<?>,Object> getDependenciesToInject()
 	{
-		return null;
+		return Map.of(ProjectDependencyFacade.class, projectDependencyFacade);
 	}
 	
 }

@@ -18,12 +18,19 @@ public class ComponentDependencyFacade
 	// CREDENTIAL
 	public void validateCredentialExists(String id)
 	{
-		Validate.isTrue(credentialRegistry.contains(id), "there is no credential with id "+id);
+		Validate.isTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
 	}
 	
 	public Credential getCredential(String id)
 	{
-		return credentialRegistry.get(id);
+		return getCredentialRegistry().get(id);
+	}
+	
+	private ConfigObjectRegistry<Credential> getCredentialRegistry()
+	{
+		if(credentialRegistry == null)
+			throw new IllegalStateException("can't get credential registry if it hasn't been set");
+		return credentialRegistry;
 	}
 	
 }
