@@ -1,7 +1,9 @@
 package io.domisum.janus.build;
 
 import com.google.inject.Singleton;
+import io.domisum.lib.auxiliumlib.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +25,16 @@ public class LatestBuildRegistry
 	public Optional<String> get(String projectId)
 	{
 		return Optional.ofNullable(latestBuilds.get(projectId));
+	}
+	
+	public String getReport()
+	{
+		var latestBuildsKeyValuePairs = new ArrayList<String>();
+		
+		for(var latestBuildsEntry : latestBuilds.entrySet())
+			latestBuildsKeyValuePairs.add(latestBuildsEntry.getKey()+"="+latestBuildsEntry);
+		
+		return "("+StringUtil.listToString(latestBuildsKeyValuePairs, ", ")+")";
 	}
 	
 }

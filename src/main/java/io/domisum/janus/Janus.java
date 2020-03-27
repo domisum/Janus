@@ -90,6 +90,8 @@ public class Janus
 			String latestBuildName = FileUtil.readString(latestBuildFile);
 			latestBuildRegistry.set(project.getId(), latestBuildName);
 		}
+		
+		logger.info("Latest builds: {}", latestBuildRegistry.getReport());
 	}
 	
 	

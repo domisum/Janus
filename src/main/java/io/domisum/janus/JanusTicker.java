@@ -2,6 +2,7 @@ package io.domisum.janus;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.janus.build.ProjectBuilder;
 import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
@@ -24,6 +25,7 @@ public class JanusTicker
 	
 	// DEPENDENCIES
 	private final ProjectBuilder projectBuilder;
+	private final LatestBuildRegistry latestBuildRegistry;
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	
 	// CONFIG
@@ -33,10 +35,12 @@ public class JanusTicker
 	
 	// INIT
 	@Inject
-	public JanusTicker(ProjectBuilder projectBuilder, ProjectOldBuildsCleaner projectOldBuildsCleaner)
+	public JanusTicker(ProjectBuilder projectBuilder, LatestBuildRegistry latestBuildRegistry, ProjectOldBuildsCleaner projectOldBuildsCleaner)
 	{
 		super("janusTicker", Duration.ofSeconds(5), Duration.ofMinutes(5));
+		
 		this.projectBuilder = projectBuilder;
+		this.latestBuildRegistry = latestBuildRegistry;
 		this.projectOldBuildsCleaner = projectOldBuildsCleaner;
 	}
 	
@@ -55,7 +59,8 @@ public class JanusTicker
 		var updatedComponentIds = updateComponents();
 		runBuilds(updatedComponentIds, shouldStop);
 		
-		cleanOldBuilds();
+		if(!shouldStop.get())
+			cleanOldBuilds();
 	}
 	
 	private void cleanOldBuilds()
@@ -96,6 +101,8 @@ public class JanusTicker
 		for(var project : projectsToBuild)
 			if(!shouldStop.get())
 				projectBuilder.build(project, configuration);
+		
+		logger.info("Latest builds: {}", latestBuildRegistry.getReport());
 	}
 	
 	private Set<Project> getProjectsToBuild(Set<String> changedComponentIds)
