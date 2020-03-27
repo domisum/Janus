@@ -1,10 +1,10 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.configobject.component.JanusComponentLoader;
-import io.domisum.janus.configobject.credentials.JanusCredentialLoader;
-import io.domisum.janus.configobject.project.JanusProjectLoader;
-import io.domisum.janus.intercom.JanusIntercomServer;
+import io.domisum.janus.config.object.component.ComponentLoader;
+import io.domisum.janus.config.object.credentials.CredentialLoader;
+import io.domisum.janus.config.object.project.ProjectLoader;
+import io.domisum.janus.intercom.IntercomServer;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ public class Janus
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(5);
 	
 	// DEPENDENCIES
-	private final JanusCredentialLoader janusCredentialLoader;
-	private final JanusComponentLoader janusComponentLoader;
-	private final JanusProjectLoader janusProjectLoader;
+	private final CredentialLoader janusCredentialLoader;
+	private final ComponentLoader janusComponentLoader;
+	private final ProjectLoader janusProjectLoader;
 	
-	private final JanusIntercomServer intercomServer;
+	private final IntercomServer intercomServer;
 	
 	
 	// START

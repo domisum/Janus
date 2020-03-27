@@ -1,4 +1,4 @@
-package io.domisum.janus.configobject;
+package io.domisum.janus.config.object;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JanusConfigObjectRegistry<T extends JanusConfigObject>
+public class ConfigObjectRegistry<T extends ConfigObject>
 {
 	
 	// REGISTRY
@@ -14,7 +14,7 @@ public class JanusConfigObjectRegistry<T extends JanusConfigObject>
 	
 	
 	// INIT
-	public JanusConfigObjectRegistry(Collection<T> configObjects)
+	public ConfigObjectRegistry(Collection<T> configObjects)
 	{
 		var configObjectsMap = new HashMap<String,T>();
 		

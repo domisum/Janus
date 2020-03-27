@@ -1,8 +1,8 @@
-package io.domisum.janus.configobject.component.types;
+package io.domisum.janus.config.object.component.types;
 
-import io.domisum.janus.configobject.ValidationReport;
-import io.domisum.janus.configobject.component.JanusComponent;
-import io.domisum.janus.configobject.component.JanusComponentDependencies;
+import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.janus.config.object.component.Component;
+import io.domisum.janus.config.object.component.ComponentDependencies;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.apache.commons.lang3.Validate;
@@ -19,8 +19,8 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Objects;
 
-public class JanusComponentGitRepository
-		extends JanusComponent
+public class ComponentGitRepository
+		extends Component
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -30,7 +30,7 @@ public class JanusComponentGitRepository
 	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofMinutes(5);
 	
 	// DEPENDENCIES
-	private final JanusComponentDependencies janusComponentDependencies;
+	private final ComponentDependencies componentDependencies;
 	
 	// SETTINGS
 	private final String repositoryUrl;
@@ -38,13 +38,13 @@ public class JanusComponentGitRepository
 	
 	
 	// INIT
-	public JanusComponentGitRepository(
-			JanusComponentDependencies janusComponentDependencies,
+	public ComponentGitRepository(
+			ComponentDependencies componentDependencies,
 			String id, String credentialId,
 			String repositoryUrl, String branch)
 	{
 		super(id, credentialId);
-		this.janusComponentDependencies = janusComponentDependencies;
+		this.componentDependencies = componentDependencies;
 		this.repositoryUrl = repositoryUrl;
 		this.branch = branch;
 	}
@@ -141,7 +141,7 @@ public class JanusComponentGitRepository
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = janusComponentDependencies.getCredential(getCredentialId());
+			var credential = componentDependencies.getCredential(getCredentialId());
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}

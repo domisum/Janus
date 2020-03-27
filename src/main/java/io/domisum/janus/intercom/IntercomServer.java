@@ -9,13 +9,13 @@ import io.domisum.lib.httpbutler.HttpButlerEndpoint;
 import java.util.Set;
 
 @Singleton
-public class JanusIntercomServer
+public class IntercomServer
 		extends HttpButlerServer
 {
 	
 	// INIT
 	@Inject
-	public JanusIntercomServer(Set<HttpButlerEndpoint> endpoints)
+	public IntercomServer(Set<HttpButlerEndpoint> endpoints)
 	{
 		super("localhost", JanusApiHttp.PORT, endpoints);
 	}

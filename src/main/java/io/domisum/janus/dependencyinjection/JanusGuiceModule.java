@@ -1,10 +1,10 @@
 package io.domisum.janus.dependencyinjection;
 
 import com.google.inject.AbstractModule;
-import io.domisum.janus.configobject.component.JanusComponentLoader.Binding;
-import io.domisum.janus.configobject.component.types.JanusComponentGitRepository;
-import io.domisum.janus.configobject.component.types.JanusComponentMavenArtifactJar;
-import io.domisum.janus.intercom.endpoints.JanusIntercomEndpointUpdateAvailable;
+import io.domisum.janus.config.object.component.ComponentLoader.Binding;
+import io.domisum.janus.config.object.component.types.ComponentGitRepository;
+import io.domisum.janus.config.object.component.types.ComponentMavenArtifactJar;
+import io.domisum.janus.intercom.endpoints.IntercomEndpointUpdateAvailable;
 import io.domisum.lib.guiceutils.GuiceMultibinder;
 import io.domisum.lib.httpbutler.HttpButlerEndpoint;
 
@@ -16,12 +16,12 @@ public class JanusGuiceModule
 	protected void configure()
 	{
 		GuiceMultibinder.multibindInstances(binder(), Binding.class,
-				new Binding("gitRepository", JanusComponentGitRepository.class),
-				new Binding("mavenArtifactJar", JanusComponentMavenArtifactJar.class)
+				new Binding("gitRepository", ComponentGitRepository.class),
+				new Binding("mavenArtifactJar", ComponentMavenArtifactJar.class)
 		);
 		
 		GuiceMultibinder.multibind(binder(), HttpButlerEndpoint.class,
-				JanusIntercomEndpointUpdateAvailable.class
+				IntercomEndpointUpdateAvailable.class
 		);
 	}
 	

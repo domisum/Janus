@@ -1,7 +1,7 @@
-package io.domisum.janus.configobject.credentials;
+package io.domisum.janus.config.object.credentials;
 
-import io.domisum.janus.configobject.JanusConfigObject;
-import io.domisum.janus.configobject.ValidationReport;
+import io.domisum.janus.config.object.ConfigObject;
+import io.domisum.janus.config.object.ValidationReport;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,8 @@ import org.apache.commons.lang3.Validate;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class JanusCredential
-		implements JanusConfigObject
+public class Credential
+		implements ConfigObject
 {
 	
 	@Getter

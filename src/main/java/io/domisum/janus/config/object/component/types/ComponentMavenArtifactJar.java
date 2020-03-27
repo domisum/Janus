@@ -1,8 +1,8 @@
-package io.domisum.janus.configobject.component.types;
+package io.domisum.janus.config.object.component.types;
 
-import io.domisum.janus.configobject.ValidationReport;
-import io.domisum.janus.configobject.component.JanusComponent;
-import io.domisum.janus.configobject.component.JanusComponentDependencies;
+import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.janus.config.object.component.Component;
+import io.domisum.janus.config.object.component.ComponentDependencies;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
@@ -27,8 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
-public class JanusComponentMavenArtifactJar
-		extends JanusComponent
+public class ComponentMavenArtifactJar
+		extends Component
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,7 +38,7 @@ public class JanusComponentMavenArtifactJar
 	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(10);
 	
 	// DEPENDENCIES
-	private final JanusComponentDependencies janusComponentDependencies;
+	private final ComponentDependencies componentDependencies;
 	
 	// SETTINGS
 	private final String repositoryUrl;
@@ -48,13 +48,13 @@ public class JanusComponentMavenArtifactJar
 	
 	
 	// INIT
-	public JanusComponentMavenArtifactJar(
-			JanusComponentDependencies janusComponentDependencies,
+	public ComponentMavenArtifactJar(
+			ComponentDependencies componentDependencies,
 			String id, String credentialId,
 			String repositoryUrl, String groupId, String artifactId, String version)
 	{
 		super(id, credentialId);
-		this.janusComponentDependencies = janusComponentDependencies;
+		this.componentDependencies = componentDependencies;
 		this.repositoryUrl = repositoryUrl;
 		this.groupId = groupId;
 		this.artifactId = artifactId;
@@ -208,7 +208,7 @@ public class JanusComponentMavenArtifactJar
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = janusComponentDependencies.getCredential(getCredentialId());
+			var credential = componentDependencies.getCredential(getCredentialId());
 			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
 			request.addHeader(authHeader);
 		}

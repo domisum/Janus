@@ -1,7 +1,7 @@
-package io.domisum.janus.configobject.project;
+package io.domisum.janus.config.object.project;
 
-import io.domisum.janus.configobject.JanusConfigObject;
-import io.domisum.janus.configobject.ValidationReport;
+import io.domisum.janus.config.object.ConfigObject;
+import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,8 @@ import org.apache.commons.lang3.Validate;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class JanusProject implements JanusConfigObject
+public class Project
+		implements ConfigObject
 {
 	
 	// ATTRIBUTES

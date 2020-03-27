@@ -1,9 +1,9 @@
-package io.domisum.janus.configobject.component;
+package io.domisum.janus.config.object.component;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import io.domisum.janus.configobject.JanusConfigObjectLoader;
+import io.domisum.janus.config.object.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
 import lombok.EqualsAndHashCode;
@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class JanusComponentLoader
-		extends JanusConfigObjectLoader<JanusComponent>
+public class ComponentLoader
+		extends ConfigObjectLoader<Component>
 {
 	
 	// DEPENDENCIES
 	private final Set<Binding> bindings;
-	private final JanusComponentDependencies janusComponentDependencies;
+	private final ComponentDependencies componentDependencies;
 	
 	
 	// CONSTANT METHODS
@@ -33,7 +33,7 @@ public class JanusComponentLoader
 	
 	// DESERIALIZATION
 	@Override
-	protected JanusComponent deserialize(String json)
+	protected Component deserialize(String json)
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
@@ -42,7 +42,7 @@ public class JanusComponentLoader
 		return janusComponent;
 	}
 	
-	private Class<? extends JanusComponent> determineComponentClass(JsonObject jsonTree)
+	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
 	{
 		String typeKey = jsonTree.get("type").getAsString();
 		
@@ -55,7 +55,7 @@ public class JanusComponentLoader
 		return componentClass;
 	}
 	
-	private Class<? extends JanusComponent> getBoundComponentClass(String typeId)
+	private Class<? extends Component> getBoundComponentClass(String typeId)
 	{
 		for(var binding : bindings)
 			if(binding.getTypeKey().equals(typeId))
@@ -69,7 +69,7 @@ public class JanusComponentLoader
 	@Override
 	protected Map<Class<?>,Object> getDependenciesToInject()
 	{
-		return Map.of(JanusComponentDependencies.class, janusComponentDependencies);
+		return Map.of(ComponentDependencies.class, componentDependencies);
 	}
 	
 	
@@ -82,7 +82,7 @@ public class JanusComponentLoader
 		@Getter
 		private final String typeKey;
 		@Getter
-		private final Class<? extends JanusComponent> componentClass;
+		private final Class<? extends Component> componentClass;
 		
 	}
 	

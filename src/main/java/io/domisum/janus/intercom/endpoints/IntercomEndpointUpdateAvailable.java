@@ -6,7 +6,7 @@ import io.domisum.lib.httpbutler.exceptions.HttpException;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
 
-public class JanusIntercomEndpointUpdateAvailable
+public class IntercomEndpointUpdateAvailable
 		extends HttpButlerEndpointTypeStaticPath
 {
 	

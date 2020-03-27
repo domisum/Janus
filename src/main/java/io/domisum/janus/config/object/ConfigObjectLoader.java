@@ -1,4 +1,4 @@
-package io.domisum.janus.configobject;
+package io.domisum.janus.config.object;
 
 import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
+public abstract class ConfigObjectLoader<T extends ConfigObject>
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -42,7 +42,7 @@ public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
 	
 	
 	// LOADING
-	public JanusConfigObjectRegistry<T> load()
+	public ConfigObjectRegistry<T> load()
 			throws InvalidConfigurationException
 	{
 		logger.info("Loading {}...", OBJECT_NAME_PLURAL());
@@ -57,7 +57,7 @@ public abstract class JanusConfigObjectLoader<T extends JanusConfigObject>
 						OBJECT_NAME_PLURAL(), file.getName(), FILE_EXTENSION());
 		
 		logger.info("...Loading {} done", OBJECT_NAME_PLURAL());
-		return new JanusConfigObjectRegistry<>(configObjects);
+		return new ConfigObjectRegistry<>(configObjects);
 	}
 	
 	private T loadConfigObjectFromFile(File file)

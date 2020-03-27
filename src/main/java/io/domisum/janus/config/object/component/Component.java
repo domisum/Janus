@@ -1,7 +1,7 @@
-package io.domisum.janus.configobject.component;
+package io.domisum.janus.config.object.component;
 
-import io.domisum.janus.configobject.JanusConfigObject;
-import io.domisum.janus.configobject.ValidationReport;
+import io.domisum.janus.config.object.ConfigObject;
+import io.domisum.janus.config.object.ValidationReport;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
@@ -10,7 +10,8 @@ import java.io.File;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public abstract class JanusComponent implements JanusConfigObject
+public abstract class Component
+		implements ConfigObject
 {
 	
 	// ATTRIBUTES

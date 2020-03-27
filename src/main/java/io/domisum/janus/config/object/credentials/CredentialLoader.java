@@ -1,13 +1,13 @@
-package io.domisum.janus.configobject.credentials;
+package io.domisum.janus.config.object.credentials;
 
-import io.domisum.janus.configobject.JanusConfigObjectLoader;
+import io.domisum.janus.config.object.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class JanusCredentialLoader
-		extends JanusConfigObjectLoader<JanusCredential>
+public class CredentialLoader
+		extends ConfigObjectLoader<Credential>
 {
 	
 	// CONSTANT METHODS
@@ -20,9 +20,9 @@ public class JanusCredentialLoader
 	
 	// LOADER
 	@Override
-	protected JanusCredential deserialize(String configContent)
+	protected Credential deserialize(String configContent)
 	{
-		return GsonUtil.get().fromJson(configContent, JanusCredential.class);
+		return GsonUtil.get().fromJson(configContent, Credential.class);
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package io.domisum.janus.configobject;
+package io.domisum.janus.config.object;
 
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
