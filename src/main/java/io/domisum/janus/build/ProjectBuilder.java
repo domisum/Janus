@@ -15,11 +15,11 @@ public class ProjectBuilder
 	// BUILD
 	public void build(Project project, Configuration configuration)
 	{
-		logger.info("Building project {}...", project.getId());
+		logger.info("Building project '{}'...", project.getId());
 		
 		// TODO
 		
-		logger.info("...Building project {} done", project.getId());
+		logger.info("...Building project '{}' done", project.getId());
 	}
 	
 }
