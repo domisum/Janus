@@ -44,7 +44,20 @@ public class Project
 		var validationReport = new ValidationReport();
 		
 		Validate.notNull(id, "id has to be set");
-		Validate.isTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
+		if(isJanusJar())
+		{
+			validationReport.noteFieldValue(true, "isJanusJar");
+			Validate.isTrue(buildRootDirectory == null && exportDirectory == null,
+					"buildRootDirectory and exportDirectory can't be set for janus jar");
+		}
+		else if(isJanusConfig())
+		{
+			validationReport.noteFieldValue(true, "isJanusConfig");
+			Validate.isTrue(buildRootDirectory == null && exportDirectory == null,
+					"buildRootDirectory and exportDirectory can't be set for janus config");
+		}
+		else
+			Validate.isTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
 		if(buildRootDirectory != null)
 			Validate.isTrue(id.equals(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
 		validationReport.noteFieldValue(buildRootDirectory, "buildRootDirectory");
@@ -101,6 +114,16 @@ public class Project
 		if(exportDirectory == null)
 			return null;
 		return new File(exportDirectory);
+	}
+	
+	public boolean isJanusJar()
+	{
+		return "___janusJar".equals(id);
+	}
+	
+	public boolean isJanusConfig()
+	{
+		return "___janusConfig".equals(id);
 	}
 	
 	public List<ProjectComponent> getComponents()
