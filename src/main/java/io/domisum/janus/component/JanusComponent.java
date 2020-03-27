@@ -1,5 +1,6 @@
 package io.domisum.janus.component;
 
+import io.domisum.janus.JanusConfigObject;
 import io.domisum.janus.ValidationReport;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public abstract class JanusComponent
+public abstract class JanusComponent implements JanusConfigObject
 {
 	
 	// ATTRIBUTES
@@ -17,6 +18,22 @@ public abstract class JanusComponent
 	private final String id;
 	@Getter
 	private final String credentialId;
+	
+	
+	// INIT
+	@Override
+	public ValidationReport validate()
+	{
+		var validationReport = new ValidationReport();
+		
+		Validate.notNull(id, "id can't be null");
+		validationReport.noteFieldValue(credentialId, "credentialId");
+		validateTypeSpecific(validationReport);
+		
+		return validationReport.complete();
+	}
+	
+	protected abstract void validateTypeSpecific(ValidationReport validationReport);
 	
 	
 	// OBJECT
@@ -30,20 +47,6 @@ public abstract class JanusComponent
 	
 	
 	// COMPONENT
-	public ValidationReport validate()
-	{
-		var validationReport = new ValidationReport();
-		
-		Validate.notNull(id, "id can't be null");
-		validationReport.noteFieldValue(credentialId, "credentialId");
-		validateTypeSpecific(validationReport);
-		
-		validationReport.complete();
-		return validationReport;
-	}
-	
-	protected abstract void validateTypeSpecific(ValidationReport validationReport);
-	
 	public abstract boolean update()
 			throws IOException;
 	

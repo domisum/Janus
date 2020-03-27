@@ -61,8 +61,6 @@ public class JanusComponentMavenArtifactJar
 		this.version = version;
 	}
 	
-	
-	// COMPONENT
 	@Override
 	public void validateTypeSpecific(ValidationReport validationReport)
 	{

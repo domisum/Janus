@@ -49,8 +49,6 @@ public class JanusComponentGitRepository
 		this.branch = branch;
 	}
 	
-	
-	// COMPONENT
 	@Override
 	public void validateTypeSpecific(ValidationReport validationReport)
 	{

@@ -43,11 +43,18 @@ public class ValidationReport
 		append("{}={}", fieldName, contentDisplay);
 	}
 	
-	public void complete()
+	public void addSubreport(ValidationReport subReport, String subReportName)
+	{
+		append("{}: ({})", subReportName, subReport);
+	}
+	
+	public ValidationReport complete()
 	{
 		if(completed)
 			throw new Error("can't complete when already completed");
+		
 		completed = true;
+		return this;
 	}
 	
 }
