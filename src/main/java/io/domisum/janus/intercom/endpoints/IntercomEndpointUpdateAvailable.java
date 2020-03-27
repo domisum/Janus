@@ -8,6 +8,8 @@ import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -15,6 +17,9 @@ import java.util.Objects;
 public class IntercomEndpointUpdateAvailable
 		extends HttpButlerEndpointTypeStaticPath
 {
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	
 	// DEPENDENCIES
 	private final LatestBuildRegistry latestBuildRegistry;
@@ -45,6 +50,7 @@ public class IntercomEndpointUpdateAvailable
 		var latestBuildOptional = latestBuildRegistry.get(projectId);
 		if(latestBuildOptional.isEmpty())
 		{
+			logger.warn("Received update available request for project '{}', no latest build is registered", projectId);
 			responseSender.sendPlaintext("false");
 			return;
 		}
