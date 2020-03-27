@@ -37,9 +37,6 @@ public class ComponentMavenArtifactJar
 	// CONSTANTS
 	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(10);
 	
-	// DEPENDENCIES
-	private final ComponentDependencies componentDependencies;
-	
 	// SETTINGS
 	private final String repositoryUrl;
 	private final String groupId;
@@ -49,12 +46,10 @@ public class ComponentMavenArtifactJar
 	
 	// INIT
 	public ComponentMavenArtifactJar(
-			ComponentDependencies componentDependencies,
-			String id, String credentialId,
+			String id, String credentialId, ComponentDependencies componentDependencies,
 			String repositoryUrl, String groupId, String artifactId, String version)
 	{
-		super(id, credentialId);
-		this.componentDependencies = componentDependencies;
+		super(id, credentialId, componentDependencies);
 		this.repositoryUrl = repositoryUrl;
 		this.groupId = groupId;
 		this.artifactId = artifactId;
@@ -208,7 +203,7 @@ public class ComponentMavenArtifactJar
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = componentDependencies.getCredential(getCredentialId());
+			var credential = getComponentDependencies().getCredential(getCredentialId());
 			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
 			request.addHeader(authHeader);
 		}

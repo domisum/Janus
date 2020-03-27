@@ -2,6 +2,7 @@ package io.domisum.janus.config.object.component;
 
 import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.janus.config.object.ValidationReport;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
@@ -19,6 +20,10 @@ public abstract class Component
 	private final String id;
 	@Getter
 	private final String credentialId;
+	
+	// DEPENDENCIES
+	@Getter(AccessLevel.PROTECTED)
+	private final ComponentDependencies componentDependencies;
 	
 	
 	// INIT

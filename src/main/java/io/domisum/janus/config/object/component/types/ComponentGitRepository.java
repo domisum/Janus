@@ -29,9 +29,6 @@ public class ComponentGitRepository
 	// CONSTANTS
 	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofMinutes(5);
 	
-	// DEPENDENCIES
-	private final ComponentDependencies componentDependencies;
-	
 	// SETTINGS
 	private final String repositoryUrl;
 	private final String branch;
@@ -39,12 +36,10 @@ public class ComponentGitRepository
 	
 	// INIT
 	public ComponentGitRepository(
-			ComponentDependencies componentDependencies,
-			String id, String credentialId,
+			String id, String credentialId, ComponentDependencies componentDependencies,
 			String repositoryUrl, String branch)
 	{
-		super(id, credentialId);
-		this.componentDependencies = componentDependencies;
+		super(id, credentialId, componentDependencies);
 		this.repositoryUrl = repositoryUrl;
 		this.branch = branch;
 	}
@@ -141,7 +136,7 @@ public class ComponentGitRepository
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = componentDependencies.getCredential(getCredentialId());
+			var credential = getComponentDependencies().getCredential(getCredentialId());
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}
