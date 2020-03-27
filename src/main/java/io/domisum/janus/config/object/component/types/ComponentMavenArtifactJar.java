@@ -121,7 +121,7 @@ public class ComponentMavenArtifactJar
 		
 		if(newJar)
 		{
-			LOGGER.info("Detected change in {}, downloading jar...", this);
+			LOGGER.info("Detected change in {}, downloading jar...", getId());
 			var fetchedFile = fetchFile(jarUrl);
 			FileUtil.moveFile(fetchedFile, getJarFile());
 			writeJarIdentifier(newJarIdentifier);
@@ -203,7 +203,7 @@ public class ComponentMavenArtifactJar
 	{
 		if(getCredentialId() != null)
 		{
-			var credential = this.getComponentDependencyFacade().getCredential(getCredentialId());
+			var credential = getComponentDependencyFacade().getCredential(getCredentialId());
 			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
 			request.addHeader(authHeader);
 		}
