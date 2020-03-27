@@ -2,6 +2,7 @@ package io.domisum.janus.config.object.component;
 
 import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +65,9 @@ public abstract class Component
 	// UTIL
 	protected File getDirectory()
 	{
-		return new File("_components/"+getId());
+		var directory = new File("_components/"+getId());
+		FileUtil.mkdirs(directory);
+		return directory;
 	}
 	
 }
