@@ -212,9 +212,9 @@ public class ComponentMavenArtifactJar
 	
 	// BUILD
 	@Override
-	public void addToBuild(File inBuildDir)
+	public void addToBuild(File directoryInBuild)
 	{
-		var targetFile = new File(inBuildDir, getJarFile().getName());
+		var targetFile = new File(directoryInBuild, getJarFile().getName());
 		FileUtil.copyFile(getJarFile(), targetFile);
 	}
 	

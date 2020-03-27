@@ -59,7 +59,7 @@ public abstract class Component
 	public abstract boolean update()
 			throws IOException;
 	
-	public abstract void addToBuild(File inBuildDir);
+	public abstract void addToBuild(File directoryInBuild);
 	
 	
 	// UTIL

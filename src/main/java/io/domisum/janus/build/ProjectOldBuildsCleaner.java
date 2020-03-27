@@ -1,27 +1,32 @@
 package io.domisum.janus.build;
 
+import com.google.inject.Inject;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.util.DurationUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectOldBuildsCleaner
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
+	
 	// CONSTANTS
 	private static final Duration MAX_BUILD_AGE = Duration.ofDays(7);
 	private static final int MAX_BUILD_COUNT = 10;
+	
+	// DEPENDENCIES
+	private final LatestBuildRegistry latestBuildRegistry;
 	
 	
 	// CLEAN
@@ -30,20 +35,24 @@ public class ProjectOldBuildsCleaner
 		if(project.getBuildRootDirectory() == null)
 			return;
 		
-		String runningBuild = readRunningBuild(project.getBuildRootDirectory());
+		String runningBuild = readRunningBuild(project);
 		deleteOldBuilds(project, runningBuild);
 		deleteTooManyBuilds(project, runningBuild);
 	}
 	
 	private void deleteOldBuilds(Project project, String runningBuild)
 	{
+		String latestBuild = latestBuildRegistry.get(project.getId()).orElse(null);
+		
 		var buildDirectories = FileUtil.listFilesFlat(project.getBuildRootDirectory(), FileType.DIRECTORY);
 		for(var buildDirectory : buildDirectories)
 		{
 			String buildName = buildDirectory.getName();
-			var buildTime = parseBuildTimeFromBuildDirectory(buildDirectory);
+			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
 			
 			if(Objects.equals(buildName, runningBuild))
+				continue;
+			if(Objects.equals(buildName, latestBuild))
 				continue;
 			
 			if(DurationUtil.isOlderThan(buildTime, MAX_BUILD_AGE))
@@ -67,7 +76,7 @@ public class ProjectOldBuildsCleaner
 			if(Objects.equals(buildDirectory.getName(), runningBuild))
 				continue;
 			
-			var buildTime = parseBuildTimeFromBuildDirectory(buildDirectory);
+			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
 			if(buildTime.compareTo(oldestBuildTime) < 0)
 			{
 				directoryOfOldestBuild = buildDirectory;
@@ -79,21 +88,12 @@ public class ProjectOldBuildsCleaner
 		FileUtil.deleteDirectory(directoryOfOldestBuild);
 	}
 	
-	private String readRunningBuild(File buildRootDirectory)
+	private String readRunningBuild(Project project)
 	{
-		var runningBuildFile = new File(buildRootDirectory, "runningBuild.txt");
+		var runningBuildFile = new File(project.getBuildRootDirectory(), "runningBuild.txt");
 		if(!runningBuildFile.exists())
 			return null;
 		return FileUtil.readString(runningBuildFile);
-	}
-	
-	
-	// TODO move this to more appropriate place
-	private Instant parseBuildTimeFromBuildDirectory(File buildDirectory)
-	{
-		var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS").withZone(ZoneId.systemDefault());
-		var parsed = dateTimeFormatter.parse(buildDirectory.getName());
-		return Instant.from(parsed);
 	}
 	
 }

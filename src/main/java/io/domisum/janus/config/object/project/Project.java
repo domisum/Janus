@@ -23,7 +23,6 @@ public class Project
 	private final String id;
 	
 	private final String buildRootDirectory;
-	@Getter
 	private final String exportDirectory;
 	
 	// COMPONENTS
@@ -93,6 +92,13 @@ public class Project
 		return new File(buildRootDirectory);
 	}
 	
+	public File getExportDirectory()
+	{
+		if(exportDirectory == null)
+			return null;
+		return new File(exportDirectory);
+	}
+	
 	public List<ProjectComponent> getComponents()
 	{
 		return new ArrayList<>(components);
@@ -118,6 +124,15 @@ public class Project
 			validationReport.noteFieldValue(directoryInBuild, "directoryInBuild");
 			
 			return validationReport.complete();
+		}
+		
+		
+		// GETTERS
+		public File getDirectoryInBuild(File buildDirectory)
+		{
+			if(directoryInBuild == null)
+				return buildDirectory;
+			return new File(buildDirectory, directoryInBuild);
 		}
 		
 	}

@@ -145,10 +145,10 @@ public class ComponentGitRepository
 	
 	// BUILD
 	@Override
-	public void addToBuild(File inBuildDir)
+	public void addToBuild(File directoryInBuild)
 	{
 		var gitDirFilter = new FilterOutBaseDirectory(".git");
-		FileUtil.copyDirectory(getDirectory(), inBuildDir, gitDirFilter);
+		FileUtil.copyDirectory(getDirectory(), directoryInBuild, gitDirFilter);
 	}
 	
 }
