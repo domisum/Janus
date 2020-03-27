@@ -7,10 +7,12 @@ import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
+import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -101,14 +103,19 @@ public class JanusTicker
 		
 		var projects = configuration.getProjectRegistry().getAll();
 		for(var project : projects)
+		{
+			var changedProjectComponentIds = new ArrayList<String>();
 			for(var projectComponent : project.getComponents())
 				if(changedComponentIds.contains(projectComponent.getComponentId()))
-				{
-					logger.info("Component '{}' changed, scheduling build of project '{}'",
-							projectComponent.getComponentId(), project.getId());
-					projectsToBuild.add(project);
-					break;
-				}
+					changedProjectComponentIds.add(projectComponent.getComponentId());
+			
+			if(changedProjectComponentIds.size() > 0)
+			{
+				logger.info("Scheduling build of project '{}'. Changed project components: ({})",
+						project.getId(), StringUtil.listToString(changedProjectComponentIds, ", "));
+				projectsToBuild.add(project);
+			}
+		}
 		
 		return projectsToBuild;
 	}
