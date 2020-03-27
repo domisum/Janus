@@ -86,7 +86,7 @@ public class Project
 	
 	
 	// GETTERS
-	private File getBuildRootDirectory()
+	public File getBuildRootDirectory()
 	{
 		if(buildRootDirectory == null)
 			return null;

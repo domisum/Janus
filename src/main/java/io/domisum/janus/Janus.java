@@ -1,7 +1,6 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.intercom.IntercomServer;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
@@ -23,14 +22,12 @@ public class Janus
 	
 	// CONSTANTS
 	public static final File CONFIG_DIRECTORY = new File("config");
-	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(5);
+	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(10);
 	
 	// DEPENDENCIES
 	private final ConfigurationLoader configurationLoader;
 	private final IntercomServer intercomServer;
-	
-	// CONFIGURATION
-	private Configuration configuration;
+	private final JanusTicker janusTicker;
 	
 	
 	// START
@@ -44,7 +41,7 @@ public class Janus
 		
 		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		intercomServer.start();
-		// TODO ticker
+		janusTicker.start();
 		
 		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
 		logger.info("Startup complete\n");
@@ -54,7 +51,8 @@ public class Janus
 	{
 		try
 		{
-			configuration = configurationLoader.load();
+			var configuration = configurationLoader.load();
+			janusTicker.setConfiguration(configuration);
 			return true;
 		}
 		catch(InvalidConfigurationException e)
@@ -72,6 +70,7 @@ public class Janus
 		ThreadUtil.scheduleEmergencyExit(EMERGENCY_EXIT_DELAY);
 		logger.info("Initiating shutdown sequence...");
 		
+		janusTicker.stop();
 		intercomServer.stop();
 		
 		logger.info("Shutdown sequence complete, exiting...");
