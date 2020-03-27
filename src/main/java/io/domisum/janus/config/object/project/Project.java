@@ -93,6 +93,11 @@ public class Project
 		return new File(buildRootDirectory);
 	}
 	
+	public List<ProjectComponent> getComponents()
+	{
+		return new ArrayList<>(components);
+	}
+	
 	
 	// COMPONENT
 	@RequiredArgsConstructor

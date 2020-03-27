@@ -2,8 +2,10 @@ package io.domisum.janus;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.domisum.janus.build.ProjectBuilder;
 import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
+import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import lombok.Setter;
 
@@ -19,6 +21,7 @@ public class JanusTicker
 {
 	
 	// DEPENDENCIES
+	private final ProjectBuilder projectBuilder;
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	
 	// CONFIG
@@ -28,9 +31,10 @@ public class JanusTicker
 	
 	// INIT
 	@Inject
-	public JanusTicker(ProjectOldBuildsCleaner projectOldBuildsCleaner)
+	public JanusTicker(ProjectBuilder projectBuilder, ProjectOldBuildsCleaner projectOldBuildsCleaner)
 	{
 		super("janusTicker", Duration.ofSeconds(5), Duration.ofMinutes(5));
+		this.projectBuilder = projectBuilder;
 		this.projectOldBuildsCleaner = projectOldBuildsCleaner;
 	}
 	
@@ -46,10 +50,10 @@ public class JanusTicker
 	@Override
 	protected void tick(Supplier<Boolean> shouldStop)
 	{
-		cleanOldBuilds();
-		
 		var updatedComponentIds = updateComponents();
 		runBuilds(updatedComponentIds);
+		
+		cleanOldBuilds();
 	}
 	
 	private void cleanOldBuilds()
@@ -60,6 +64,7 @@ public class JanusTicker
 	}
 	
 	
+	// UPDATE
 	private Set<String> updateComponents()
 	{
 		try
@@ -89,9 +94,31 @@ public class JanusTicker
 		return changedComponentIds;
 	}
 	
+	
+	// BUILD
 	private void runBuilds(Set<String> changedComponentIds)
 	{
+		var projectsToBuild = getProjectsToBuild(changedComponentIds);
+		for(var project : projectsToBuild)
+			projectBuilder.build(project, configuration);
+	}
 	
+	private Set<Project> getProjectsToBuild(Set<String> changedComponentIds)
+	{
+		var projectsToBuild = new HashSet<Project>();
+		
+		var projects = configuration.getProjectRegistry().getAll();
+		for(var project : projects)
+			for(var projectComponent : project.getComponents())
+				if(changedComponentIds.contains(projectComponent.getComponentId()))
+				{
+					logger.info("Component {} changed, scheduling build of project {}",
+							projectComponent.getComponentId(), project.getId());
+					projectsToBuild.add(project);
+					break;
+				}
+		
+		return projectsToBuild;
 	}
 	
 }
