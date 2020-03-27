@@ -67,29 +67,21 @@ public class JanusTicker
 	// UPDATE
 	private Set<String> updateComponents()
 	{
-		try
-		{
-			return updateComponentsUncaught();
-		}
-		catch(IOException e)
-		{
-			logger.warn("Failed to update component", e);
-			return new HashSet<>(); // don't trigger builds after failed update
-		}
-	}
-	
-	private Set<String> updateComponentsUncaught()
-			throws IOException
-	{
 		var changedComponentIds = new HashSet<String>();
 		
 		var components = configuration.getComponentRegistry().getAll();
 		for(var component : components)
-		{
-			boolean changed = component.update();
-			if(changed)
-				changedComponentIds.add(component.getId());
-		}
+			try
+			{
+				boolean changed = component.update();
+				if(changed)
+					changedComponentIds.add(component.getId());
+			}
+			catch(IOException e)
+			{
+				logger.warn("Failed to update component '{}'", component.getId(), e);
+				return new HashSet<>(); // don't trigger builds after failed update
+			}
 		
 		return changedComponentIds;
 	}
@@ -112,7 +104,7 @@ public class JanusTicker
 			for(var projectComponent : project.getComponents())
 				if(changedComponentIds.contains(projectComponent.getComponentId()))
 				{
-					logger.info("Component {} changed, scheduling build of project {}",
+					logger.info("Component '{}' changed, scheduling build of project '{}'",
 							projectComponent.getComponentId(), project.getId());
 					projectsToBuild.add(project);
 					break;
