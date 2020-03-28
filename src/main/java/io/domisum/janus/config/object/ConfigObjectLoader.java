@@ -87,14 +87,14 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		String configObjectIdFromFileName = FileUtil.getNameWithoutCompositeExtension(file);
 		if(!Objects.equals(configObject.getId(), configObjectIdFromFileName))
 		{
-			String exceptionMessage = PHR.r("{} id ({}) does not match file name: {}",
+			String exceptionMessage = PHR.r("{} id '{}' does not match file name: '{}'",
 					OBJECT_NAME(), configObject.getId(), file.getName());
 			throw new InvalidConfigurationException(exceptionMessage);
 		}
 		
 		if(validationReport != null)
-			logger.info("Validated {} {}: {}", OBJECT_NAME(), configObject.getId(), validationReport);
-		logger.info("Loaded {} {}", OBJECT_NAME(), configObject);
+			logger.info("Validated {} '{}': {}", OBJECT_NAME(), configObject.getId(), validationReport);
+		logger.info("Loaded {} '{}'", OBJECT_NAME(), configObject);
 		
 		return configObject;
 	}
