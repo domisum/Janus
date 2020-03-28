@@ -21,7 +21,7 @@ public class ValidationReport
 	@Override
 	public String toString()
 	{
-		return StringUtil.listToString(lines, TO_STRING_DELIMITER);
+		return StringUtil.listToString(lines, TO_STRING_DELIMITER+" ");
 	}
 	
 	
