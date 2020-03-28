@@ -76,7 +76,7 @@ public class Project
 			try
 			{
 				var componentValidationReport = projectComponent.validate();
-				validationReport.addSubreport(componentValidationReport, projectComponent.getComponentId());
+				validationReport.addSubreport(componentValidationReport, "component "+projectComponent.getComponentId());
 			}
 			catch(InvalidConfigurationException|IllegalArgumentException e)
 			{
