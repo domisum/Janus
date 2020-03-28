@@ -2,11 +2,12 @@ package io.domisum.janus.intercom.endpoints;
 
 import com.google.inject.Inject;
 import io.domisum.janus.build.LatestBuildRegistry;
-import io.domisum.lib.httpbutler.HttpResponseSender;
+import io.domisum.lib.httpbutler.HttpResponse;
 import io.domisum.lib.httpbutler.endpointtypes.HttpButlerEndpointTypeStaticPath;
 import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
+import io.domisum.lib.httpbutler.responses.HttpResponsePlaintext;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class IntercomEndpointUpdateAvailable
 	
 	// HANDLING
 	@Override
-	protected void handleRequest(HttpRequest request, HttpResponseSender responseSender)
+	protected HttpResponse handleRequest(HttpRequest request)
 			throws BadRequestHttpException
 	{
 		String projectId = request.getQueryParameterValue("project");
@@ -51,13 +52,12 @@ public class IntercomEndpointUpdateAvailable
 		if(latestBuildOptional.isEmpty())
 		{
 			logger.warn("Received update available request for project '{}', no latest build is registered", projectId);
-			responseSender.sendPlaintext("false");
-			return;
+			return new HttpResponsePlaintext("false");
 		}
 		
 		String latestBuild = latestBuildOptional.get();
 		boolean updateAvailable = !Objects.equals(latestBuild, buildName);
-		responseSender.sendPlaintext(updateAvailable+"");
+		return new HttpResponsePlaintext(updateAvailable+"");
 	}
 	
 }
