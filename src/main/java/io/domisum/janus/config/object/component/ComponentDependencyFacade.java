@@ -3,8 +3,8 @@ package io.domisum.janus.config.object.component;
 import com.google.inject.Singleton;
 import io.domisum.janus.config.object.ConfigObjectRegistry;
 import io.domisum.janus.config.object.credentials.Credential;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.Setter;
-import org.apache.commons.lang3.Validate;
 
 @Singleton
 public class ComponentDependencyFacade
@@ -17,8 +17,9 @@ public class ComponentDependencyFacade
 	
 	// CREDENTIAL
 	public void validateCredentialExists(String id)
+			throws InvalidConfigurationException
 	{
-		Validate.isTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
+		InvalidConfigurationException.validateIsTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
 	}
 	
 	public Credential getCredential(String id)

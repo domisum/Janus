@@ -26,13 +26,12 @@ public class ValidationReport
 	
 	
 	// REPORT
-	public void append(String line, Object... placeholderValues)
+	private void append(String line, Object... placeholderValues)
 	{
-		// throw errors so catch around validation does not catch these
 		if(completed)
-			throw new Error("can't append to validation report when it is already completed");
+			throw new IllegalArgumentException("can't append to validation report when it is already completed");
 		if(line.contains(TO_STRING_DELIMITER))
-			throw new Error("line is not allowed to contain validation report delimiter '"+TO_STRING_DELIMITER+"'");
+			throw new IllegalArgumentException("line is not allowed to contain validation report delimiter '"+TO_STRING_DELIMITER+"'");
 		
 		lines.add(PHR.r(line, placeholderValues));
 	}

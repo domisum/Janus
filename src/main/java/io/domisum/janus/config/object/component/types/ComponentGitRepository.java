@@ -3,9 +3,9 @@ package io.domisum.janus.config.object.component.types;
 import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
-import org.apache.commons.lang3.Validate;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -46,9 +46,10 @@ public class ComponentGitRepository
 	
 	@Override
 	public void validateTypeSpecific(ValidationReport validationReport)
+			throws InvalidConfigurationException
 	{
-		Validate.notNull(repositoryUrl);
-		Validate.notNull(branch);
+		InvalidConfigurationException.validateNotNull(repositoryUrl, "repositoryUrl");
+		InvalidConfigurationException.validateNotNull(branch, "branch");
 	}
 	
 	

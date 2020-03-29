@@ -34,6 +34,7 @@ public class ComponentLoader
 	// DESERIALIZATION
 	@Override
 	protected Component deserialize(String json)
+			throws InvalidConfigurationException
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
@@ -43,6 +44,7 @@ public class ComponentLoader
 	}
 	
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
+			throws InvalidConfigurationException
 	{
 		String typeKey = jsonTree.get("type").getAsString();
 		

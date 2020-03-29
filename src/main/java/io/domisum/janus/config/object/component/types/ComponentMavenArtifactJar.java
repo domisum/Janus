@@ -4,15 +4,15 @@ import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
 import io.domisum.lib.ezhttp.header.EzHttpHeaderBasicAuthentication;
 import io.domisum.lib.ezhttp.request.EzHttpRequest;
-import io.domisum.lib.ezhttp.request.EzUrl;
+import io.domisum.lib.ezhttp.request.url.EzUrl;
 import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpStringBodyReader;
 import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpWriteToTempFileBodyReader;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -58,11 +58,12 @@ public class ComponentMavenArtifactJar
 	
 	@Override
 	public void validateTypeSpecific(ValidationReport validationReport)
+			throws InvalidConfigurationException
 	{
-		Validate.notNull(repositoryUrl);
-		Validate.notNull(groupId);
-		Validate.notNull(artifactId);
-		Validate.notNull(version);
+		InvalidConfigurationException.validateNotNull(repositoryUrl, "repositoryUrl");
+		InvalidConfigurationException.validateNotNull(groupId, "groupId");
+		InvalidConfigurationException.validateNotNull(artifactId, "artifactId");
+		InvalidConfigurationException.validateNotNull(version, "version");
 	}
 	
 	
@@ -88,26 +89,26 @@ public class ComponentMavenArtifactJar
 	private boolean updateSnapshot()
 			throws IOException
 	{
-		var repositoryUrl = new EzUrl(this.repositoryUrl);
-		String artifactVersionDirUrlExtension = PHR.r("{}/{}/{}", getGroupIdUrlExtension(), artifactId, version);
-		var artifactVersionDirUrl = new EzUrl(repositoryUrl, artifactVersionDirUrlExtension);
+		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
+		String artifactVersionDirPathExtension = PHR.r("{}/{}/{}", getGroupIdUrlExtension(), artifactId, version);
+		var artifactVersionDirUrl = repositoryUrl.extendPath(artifactVersionDirPathExtension);
 		
-		var mavenMetadataUrl = new EzUrl(artifactVersionDirUrl, "maven-metadata.xml");
+		var mavenMetadataUrl = artifactVersionDirUrl.extendPath("maven-metadata.xml");
 		String mavenMetadata = fetchString(mavenMetadataUrl);
 		String latestSnapshotBuild = parseLatestSnapshotBuild(mavenMetadata);
 		
-		var jarUrl = new EzUrl(artifactVersionDirUrl, artifactId+"-"+latestSnapshotBuild+".jar");
+		var jarUrl = artifactVersionDirUrl.extendPath(artifactId+"-"+latestSnapshotBuild+".jar");
 		return downloadJarIfIdentifierChanged(jarUrl, latestSnapshotBuild);
 	}
 	
 	private boolean updateRelease()
 			throws IOException
 	{
-		var repositoryUrl = new EzUrl(this.repositoryUrl);
-		String jarUrlExtension = PHR.r("{}/{}/{}/{}-{}.jar", getGroupIdUrlExtension(), artifactId, version, artifactId, version);
-		var jarUrl = new EzUrl(repositoryUrl, jarUrlExtension);
+		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
+		String jarPathExtension = PHR.r("{}/{}/{}/{}-{}.jar", getGroupIdUrlExtension(), artifactId, version, artifactId, version);
+		var jarUrl = repositoryUrl.extendPath(jarPathExtension);
 		
-		var jarMd5Url = new EzUrl(jarUrl.toString()+".md5");
+		var jarMd5Url = EzUrl.parseEscaped(jarUrl.toString()+".md5");
 		String jarMd5 = fetchString(jarMd5Url);
 		
 		return downloadJarIfIdentifierChanged(jarUrl, jarMd5);

@@ -7,7 +7,6 @@ import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.Validate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,23 +42,23 @@ public class Project
 	{
 		var validationReport = new ValidationReport();
 		
-		Validate.notNull(id, "id has to be set");
+		InvalidConfigurationException.validateNotNull(id, "id");
 		if(isJanusJar())
 		{
 			validationReport.noteFieldValue(true, "isJanusJar");
-			Validate.isTrue(buildRootDirectory == null && exportDirectory == null,
+			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"buildRootDirectory and exportDirectory can't be set for janus jar");
 		}
 		else if(isJanusConfig())
 		{
 			validationReport.noteFieldValue(true, "isJanusConfig");
-			Validate.isTrue(buildRootDirectory == null && exportDirectory == null,
+			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"buildRootDirectory and exportDirectory can't be set for janus config");
 		}
 		else
-			Validate.isTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
+			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
 		if(buildRootDirectory != null)
-			Validate.isTrue(id.equals(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
+			InvalidConfigurationException.validateIsTrue(id.equals(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
 		validationReport.noteFieldValue(buildRootDirectory, "buildRootDirectory");
 		validationReport.noteFieldValue(exportDirectory, "exportDirectory");
 		validateComponents(validationReport);
@@ -78,7 +77,7 @@ public class Project
 				var componentValidationReport = projectComponent.validate();
 				validationReport.addSubreport(componentValidationReport, "component "+projectComponent.getComponentId());
 			}
-			catch(InvalidConfigurationException|IllegalArgumentException e)
+			catch(InvalidConfigurationException e)
 			{
 				throw new InvalidConfigurationException("configuration error in projectComponent at index "+i, e);
 			}
@@ -144,10 +143,11 @@ public class Project
 		
 		// INIT
 		public ValidationReport validate()
+				throws InvalidConfigurationException
 		{
 			var validationReport = new ValidationReport();
 			
-			Validate.notNull(componentId, "componentId can't be null");
+			InvalidConfigurationException.validateNotNull(componentId, "componentId");
 			validationReport.noteFieldValue(directoryInBuild, "directoryInBuild");
 			
 			return validationReport.complete();

@@ -2,11 +2,11 @@ package io.domisum.janus.config.object.component;
 
 import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.Validate;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +30,11 @@ public abstract class Component
 	// INIT
 	@Override
 	public ValidationReport validate()
+			throws InvalidConfigurationException
 	{
 		var validationReport = new ValidationReport();
 		
-		Validate.notNull(id, "id can't be null");
+		InvalidConfigurationException.validateNotNull(id, "id can't be null");
 		validationReport.noteFieldValue(credentialId, "credentialId");
 		if(credentialId != null)
 			componentDependencyFacade.validateCredentialExists(credentialId);
@@ -42,7 +43,8 @@ public abstract class Component
 		return validationReport.complete();
 	}
 	
-	protected abstract void validateTypeSpecific(ValidationReport validationReport);
+	protected abstract void validateTypeSpecific(ValidationReport validationReport)
+			throws InvalidConfigurationException;
 	
 	
 	// OBJECT

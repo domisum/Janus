@@ -2,10 +2,10 @@ package io.domisum.janus.config.object.credentials;
 
 import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.janus.config.object.ValidationReport;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.Validate;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -24,10 +24,11 @@ public class Credential
 	// INIT
 	@Override
 	public ValidationReport validate()
+			throws InvalidConfigurationException
 	{
-		Validate.notNull(id, "id has to be set");
-		Validate.notNull(username, "username has to be set");
-		Validate.notNull(password, "password has to be set");
+		InvalidConfigurationException.validateNotNull(id, "id");
+		InvalidConfigurationException.validateNotNull(username, "username");
+		InvalidConfigurationException.validateNotNull(password, "password");
 		
 		return null;
 	}

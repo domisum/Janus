@@ -71,7 +71,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		{
 			return createConfigObject(file, fileContent);
 		}
-		catch(InvalidConfigurationException|IllegalArgumentException e)
+		catch(InvalidConfigurationException e)
 		{
 			String message = PHR.r("invalid configuration of {} from file '{}'", OBJECT_NAME(), file.getName());
 			throw new InvalidConfigurationException(message, e);
@@ -79,6 +79,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 	}
 	
 	private T createConfigObject(File file, String fileContent)
+			throws InvalidConfigurationException
 	{
 		var configObject = deserialize(fileContent);
 		injectDependencies(configObject);
@@ -99,7 +100,8 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		return configObject;
 	}
 	
-	protected abstract T deserialize(String configContent);
+	protected abstract T deserialize(String configContent)
+			throws InvalidConfigurationException;
 	
 	protected abstract Map<Class<?>,Object> getDependenciesToInject();
 	
