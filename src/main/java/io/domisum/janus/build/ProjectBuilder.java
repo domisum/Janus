@@ -5,7 +5,8 @@ import com.google.inject.Inject;
 import io.domisum.janus.Janus;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
-import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
+import io.domisum.lib.auxiliumlib.PHR;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +31,22 @@ public class ProjectBuilder
 	
 	// DEPENDENCIES
 	private final LatestBuildRegistry latestBuildRegistry;
-	private final ApplicationStopper applicationStopper;
 	
 	
 	// BUILD
-	public void build(Project project, Configuration configuration)
+	public boolean build(Project project, Configuration configuration)
+			throws InvalidConfigurationException
 	{
 		logger.info("Building project '{}'...", project.getId());
 		
+		boolean restart = false;
 		if(project.getBuildRootDirectory() != null)
 			buildRegular(project, configuration);
 		else
-			buildAndExport(project, configuration);
+			restart = buildAndExport(project, configuration);
 		
 		logger.info("...Building project '{}' done", project.getId());
+		return restart;
 	}
 	
 	private void buildRegular(Project project, Configuration configuration)
@@ -58,23 +61,31 @@ public class ProjectBuilder
 		FileUtil.writeString(latestBuildFile, buildName);
 	}
 	
-	private void buildAndExport(Project project, Configuration configuration)
+	private boolean buildAndExport(Project project, Configuration configuration)
+			throws InvalidConfigurationException
 	{
 		var tempBuildDir = FileUtil.createTemporaryDirectory();
 		buildProjectTo(project, tempBuildDir, configuration);
 		
 		if(project.isJanusJar())
+		{
 			exportJanusJar(project, tempBuildDir);
+			return true;
+		}
 		else if(project.isJanusConfig())
 		{
 			exportBuild(tempBuildDir, Janus.CONFIG_DIRECTORY);
-			applicationStopper.stop();
+			return true;
 		}
 		else
+		{
 			exportBuild(tempBuildDir, project.getExportDirectory());
+			return false;
+		}
 	}
 	
 	private void exportJanusJar(Project project, File tempBuildDir)
+			throws InvalidConfigurationException
 	{
 		if(FileUtil.listFilesFlat(tempBuildDir, FileType.DIRECTORY).size() > 0)
 		{
@@ -104,7 +115,6 @@ public class ProjectBuilder
 		var targetFile = new File("Updated.jar");
 		FileUtil.moveFile(buildJarFile, targetFile);
 		FileUtil.deleteDirectory(tempBuildDir);
-		applicationStopper.stop();
 	}
 	
 	private void exportBuild(File tempBuildDir, File exportDirectory)
@@ -114,9 +124,9 @@ public class ProjectBuilder
 	}
 	
 	private void failBuild(Project project, String reason)
+			throws InvalidConfigurationException
 	{
-		logger.error("Build of project '{}' failed, reason: {}", project.getId(), reason);
-		applicationStopper.stop();
+		throw new InvalidConfigurationException(PHR.r("Build of project '{}' failed, reason: {}", project.getId(), reason));
 	}
 	
 	

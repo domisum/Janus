@@ -7,6 +7,8 @@ import io.domisum.janus.build.ProjectBuilder;
 import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
+import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
+import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Setter;
@@ -24,9 +26,10 @@ public class JanusTicker
 {
 	
 	// DEPENDENCIES
+	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	private final ProjectBuilder projectBuilder;
 	private final LatestBuildRegistry latestBuildRegistry;
-	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
+	private final ApplicationStopper applicationStopper;
 	
 	// CONFIG
 	@Setter
@@ -35,13 +38,17 @@ public class JanusTicker
 	
 	// INIT
 	@Inject
-	public JanusTicker(ProjectBuilder projectBuilder, LatestBuildRegistry latestBuildRegistry, ProjectOldBuildsCleaner projectOldBuildsCleaner)
+	public JanusTicker(
+			ProjectOldBuildsCleaner projectOldBuildsCleaner,
+			ProjectBuilder projectBuilder, LatestBuildRegistry latestBuildRegistry,
+			ApplicationStopper applicationStopper)
 	{
 		super("janusTicker", Duration.ofSeconds(5), Duration.ofMinutes(5));
 		
 		this.projectBuilder = projectBuilder;
 		this.latestBuildRegistry = latestBuildRegistry;
 		this.projectOldBuildsCleaner = projectOldBuildsCleaner;
+		this.applicationStopper = applicationStopper;
 	}
 	
 	
@@ -56,11 +63,10 @@ public class JanusTicker
 	@Override
 	protected void tick(Supplier<Boolean> shouldStop)
 	{
-		var updatedComponentIds = updateComponents();
-		runBuilds(updatedComponentIds, shouldStop);
+		cleanOldBuilds();
 		
-		if(!shouldStop.get())
-			cleanOldBuilds();
+		var updatedComponentIds = updateComponents();
+		runBuilds(updatedComponentIds);
 	}
 	
 	private void cleanOldBuilds()
@@ -95,15 +101,33 @@ public class JanusTicker
 	
 	
 	// BUILD
-	private void runBuilds(Set<String> changedComponentIds, Supplier<Boolean> shouldStop)
+	private void runBuilds(Set<String> changedComponentIds)
 	{
+		boolean restartAfterBuilds = false;
+		
 		var projectsToBuild = getProjectsToBuild(changedComponentIds);
 		for(var project : projectsToBuild)
-			if(!shouldStop.get())
-				projectBuilder.build(project, configuration);
+			try
+			{
+				boolean shouldRestart = projectBuilder.build(project, configuration);
+				if(shouldRestart)
+					restartAfterBuilds = true;
+			}
+			catch(InvalidConfigurationException e)
+			{
+				logger.error("Build failed, shutting down", e);
+				restartAfterBuilds = true;
+				break;
+			}
 		
 		if(projectsToBuild.size() > 0)
 			logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
+		
+		if(restartAfterBuilds)
+		{
+			logger.info("ProjectBuilder indicates restart, shutting down...");
+			applicationStopper.stop();
+		}
 	}
 	
 	private Set<Project> getProjectsToBuild(Set<String> changedComponentIds)
