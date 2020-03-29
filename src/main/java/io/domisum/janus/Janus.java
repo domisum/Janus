@@ -28,6 +28,8 @@ public class Janus
 	
 	// CONSTANTS
 	public static final File CONFIG_DIRECTORY = new File("config");
+	public static final File CONFIG_DIRECTORY_BACKUP = new File("config_backup");
+	public static final File CONFIG_DIRECTORY_INVALID = new File("config_invalid");
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(10);
 	
 	// DEPENDENCIES
@@ -68,7 +70,17 @@ public class Janus
 		}
 		catch(InvalidConfigurationException e)
 		{
-			logger.error("Invalid configuration, shutting down", e);
+			logger.error("Invalid configuration, trying to restore backup", e);
+			if(CONFIG_DIRECTORY_BACKUP.exists())
+			{
+				logger.info("Config directory backup exists, restoring...");
+				FileUtil.deleteDirectory(CONFIG_DIRECTORY_INVALID);
+				FileUtil.moveDirectory(CONFIG_DIRECTORY, CONFIG_DIRECTORY_INVALID);
+				FileUtil.moveDirectory(CONFIG_DIRECTORY_BACKUP, CONFIG_DIRECTORY);
+				logger.info("...Config directory backup restored");
+			}
+			
+			logger.info("Restarting...");
 			stop();
 			return false;
 		}
