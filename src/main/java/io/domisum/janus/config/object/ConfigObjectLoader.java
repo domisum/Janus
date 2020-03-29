@@ -1,5 +1,6 @@
 package io.domisum.janus.config.object;
 
+import com.google.gson.JsonParseException;
 import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
@@ -71,7 +72,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		{
 			return createConfigObject(file, fileContent);
 		}
-		catch(InvalidConfigurationException e)
+		catch(JsonParseException|InvalidConfigurationException e)
 		{
 			String message = PHR.r("invalid configuration of {} from file '{}'", OBJECT_NAME(), file.getName());
 			throw new InvalidConfigurationException(message, e);
