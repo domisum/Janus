@@ -46,7 +46,10 @@ public class ComponentLoader
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
 			throws InvalidConfigurationException
 	{
-		String typeKey = jsonTree.get("type").getAsString();
+		var typeJsonElement = jsonTree.get("type");
+		if(typeJsonElement == null)
+			throw new InvalidConfigurationException("no component type set");
+		String typeKey = typeJsonElement.getAsString();
 		
 		if(typeKey == null)
 			throw new InvalidConfigurationException("component config file does not specify type");
