@@ -26,9 +26,9 @@ public class Credential
 	public ValidationReport validate()
 			throws InvalidConfigurationException
 	{
-		InvalidConfigurationException.validateNotNull(id, "id");
-		InvalidConfigurationException.validateNotNull(username, "username");
-		InvalidConfigurationException.validateNotNull(password, "password");
+		InvalidConfigurationException.validateIsSet(id, "id");
+		InvalidConfigurationException.validateIsSet(username, "username");
+		InvalidConfigurationException.validateIsSet(password, "password");
 		
 		return null;
 	}

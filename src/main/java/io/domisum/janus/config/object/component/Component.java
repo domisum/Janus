@@ -34,7 +34,7 @@ public abstract class Component
 	{
 		var validationReport = new ValidationReport();
 		
-		InvalidConfigurationException.validateNotNull(id, "id can't be null");
+		InvalidConfigurationException.validateIsSet(id, "id can't be null");
 		validationReport.noteFieldValue(credentialId, "credentialId");
 		if(credentialId != null)
 			componentDependencyFacade.validateCredentialExists(credentialId);

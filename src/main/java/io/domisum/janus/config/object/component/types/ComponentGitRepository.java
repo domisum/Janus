@@ -48,8 +48,8 @@ public class ComponentGitRepository
 	public void validateTypeSpecific(ValidationReport validationReport)
 			throws InvalidConfigurationException
 	{
-		InvalidConfigurationException.validateNotNull(repositoryUrl, "repositoryUrl");
-		InvalidConfigurationException.validateNotNull(branch, "branch");
+		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");
+		InvalidConfigurationException.validateIsSet(branch, "branch");
 	}
 	
 	

@@ -42,7 +42,7 @@ public class Project
 	{
 		var validationReport = new ValidationReport();
 		
-		InvalidConfigurationException.validateNotNull(id, "id");
+		InvalidConfigurationException.validateIsSet(id, "id");
 		if(isJanusJar())
 		{
 			validationReport.noteFieldValue(true, "isJanusJar");
@@ -147,7 +147,7 @@ public class Project
 		{
 			var validationReport = new ValidationReport();
 			
-			InvalidConfigurationException.validateNotNull(componentId, "componentId");
+			InvalidConfigurationException.validateIsSet(componentId, "componentId");
 			validationReport.noteFieldValue(directoryInBuild, "directoryInBuild");
 			
 			return validationReport.complete();

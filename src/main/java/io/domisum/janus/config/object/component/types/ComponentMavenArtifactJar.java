@@ -60,10 +60,10 @@ public class ComponentMavenArtifactJar
 	public void validateTypeSpecific(ValidationReport validationReport)
 			throws InvalidConfigurationException
 	{
-		InvalidConfigurationException.validateNotNull(repositoryUrl, "repositoryUrl");
-		InvalidConfigurationException.validateNotNull(groupId, "groupId");
-		InvalidConfigurationException.validateNotNull(artifactId, "artifactId");
-		InvalidConfigurationException.validateNotNull(version, "version");
+		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");
+		InvalidConfigurationException.validateIsSet(groupId, "groupId");
+		InvalidConfigurationException.validateIsSet(artifactId, "artifactId");
+		InvalidConfigurationException.validateIsSet(version, "version");
 	}
 	
 	
@@ -91,13 +91,13 @@ public class ComponentMavenArtifactJar
 	{
 		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
 		String artifactVersionDirPathExtension = PHR.r("{}/{}/{}", getGroupIdUrlExtension(), artifactId, version);
-		var artifactVersionDirUrl = repositoryUrl.extendPath(artifactVersionDirPathExtension);
+		var artifactVersionDirUrl = repositoryUrl.withExtendedPath(artifactVersionDirPathExtension);
 		
-		var mavenMetadataUrl = artifactVersionDirUrl.extendPath("maven-metadata.xml");
+		var mavenMetadataUrl = artifactVersionDirUrl.withExtendedPath("maven-metadata.xml");
 		String mavenMetadata = fetchString(mavenMetadataUrl);
 		String latestSnapshotBuild = parseLatestSnapshotBuild(mavenMetadata);
 		
-		var jarUrl = artifactVersionDirUrl.extendPath(artifactId+"-"+latestSnapshotBuild+".jar");
+		var jarUrl = artifactVersionDirUrl.withExtendedPath(artifactId+"-"+latestSnapshotBuild+".jar");
 		return downloadJarIfIdentifierChanged(jarUrl, latestSnapshotBuild);
 	}
 	
@@ -106,7 +106,7 @@ public class ComponentMavenArtifactJar
 	{
 		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
 		String jarPathExtension = PHR.r("{}/{}/{}/{}-{}.jar", getGroupIdUrlExtension(), artifactId, version, artifactId, version);
-		var jarUrl = repositoryUrl.extendPath(jarPathExtension);
+		var jarUrl = repositoryUrl.withExtendedPath(jarPathExtension);
 		
 		var jarMd5Url = EzUrl.parseEscaped(jarUrl.toString()+".md5");
 		String jarMd5 = fetchString(jarMd5Url);
