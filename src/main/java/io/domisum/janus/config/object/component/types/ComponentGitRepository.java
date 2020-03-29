@@ -3,6 +3,7 @@ package io.domisum.janus.config.object.component.types;
 import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
+import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
@@ -128,7 +129,7 @@ public class ComponentGitRepository
 	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
-			throw new IllegalArgumentException("git repository does not contain branch '"+branch+"'");
+			throw new IllegalArgumentException(PHR.r("git repository '{}' does not contain branch '{}'", getId(), branch));
 		
 		return branchRef.getObjectId().getName();
 	}
