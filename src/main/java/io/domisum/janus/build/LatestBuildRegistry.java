@@ -19,12 +19,12 @@ public class LatestBuildRegistry
 	// REGISTRY
 	public void set(String projectId, String buildName)
 	{
-		latestBuilds.put(projectId, buildName);
+		latestBuilds.put(projectId.toLowerCase(), buildName);
 	}
 	
 	public Optional<String> get(String projectId)
 	{
-		return Optional.ofNullable(latestBuilds.get(projectId));
+		return Optional.ofNullable(latestBuilds.get(projectId.toLowerCase()));
 	}
 	
 	public String getReport()

@@ -58,7 +58,7 @@ public class Project
 		else
 			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
 		if(buildRootDirectory != null)
-			InvalidConfigurationException.validateIsTrue(id.equals(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
+			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
 		validationReport.noteFieldValue(buildRootDirectory, "buildRootDirectory");
 		validationReport.noteFieldValue(exportDirectory, "exportDirectory");
 		validateComponents(validationReport);
