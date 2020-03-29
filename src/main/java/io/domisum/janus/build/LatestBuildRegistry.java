@@ -30,11 +30,11 @@ public class LatestBuildRegistry
 	public String getReport()
 	{
 		var latestBuildsKeyValuePairs = new ArrayList<String>();
-		
 		for(var latestBuildsEntry : latestBuilds.entrySet())
 			latestBuildsKeyValuePairs.add(latestBuildsEntry.getKey()+"="+latestBuildsEntry.getValue());
 		
-		return "("+StringUtil.listToString(latestBuildsKeyValuePairs, ", ")+")";
+		var report = latestBuildsKeyValuePairs.isEmpty() ? "none" : StringUtil.listToString(latestBuildsKeyValuePairs, ", ");
+		return "("+report+")";
 	}
 	
 }
