@@ -2,7 +2,7 @@ package io.domisum.janus.config.object.project;
 
 import com.google.inject.Inject;
 import io.domisum.janus.config.object.ConfigObjectLoader;
-import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
+import io.domisum.lib.auxiliumlib.util.GsonUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import io.domisum.janus.config.object.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
-import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
+import io.domisum.lib.auxiliumlib.util.GsonUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

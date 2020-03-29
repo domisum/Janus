@@ -1,7 +1,7 @@
 package io.domisum.janus.config.object.credentials;
 
 import io.domisum.janus.config.object.ConfigObjectLoader;
-import io.domisum.lib.auxiliumlib.util.json.GsonUtil;
+import io.domisum.lib.auxiliumlib.util.GsonUtil;
 
 import java.util.HashMap;
 import java.util.Map;
