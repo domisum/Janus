@@ -11,7 +11,10 @@ import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -21,47 +24,43 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 @Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class JanusTicker
-		extends Ticker
 {
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	
 	// DEPENDENCIES
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	private final ProjectBuilder projectBuilder;
 	private final LatestBuildRegistry latestBuildRegistry;
+	
+	private final CommandExecutor commandExecutor;
 	private final ApplicationStopper applicationStopper;
+	
+	// REFERENCES
+	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), Duration.ofMinutes(5), this::tick);
 	
 	// CONFIG
 	@Setter
 	private transient Configuration configuration = null;
 	
 	
-	// INIT
-	@Inject
-	public JanusTicker(
-			ProjectOldBuildsCleaner projectOldBuildsCleaner,
-			ProjectBuilder projectBuilder, LatestBuildRegistry latestBuildRegistry,
-			ApplicationStopper applicationStopper)
+	// CONTROL
+	public void start()
 	{
-		super("ticker", Duration.ofSeconds(5), Duration.ofMinutes(5));
-		
-		this.projectBuilder = projectBuilder;
-		this.latestBuildRegistry = latestBuildRegistry;
-		this.projectOldBuildsCleaner = projectOldBuildsCleaner;
-		this.applicationStopper = applicationStopper;
+		ticker.start();
 	}
 	
-	
-	// CONTROL
 	public void stop()
 	{
-		stopSoft();
+		ticker.stopSoft();
 	}
 	
 	
 	// TICK
-	@Override
-	protected void tick(Supplier<Boolean> shouldStop)
+	private void tick(Supplier<Boolean> shouldStop)
 	{
 		cleanOldBuilds();
 		
@@ -106,6 +105,7 @@ public class JanusTicker
 	private void runBuilds(Set<String> changedComponentIds)
 	{
 		boolean restartAfterBuilds = false;
+		var commandsToExecute = new HashSet<String>();
 		
 		var projectsToBuild = getProjectsToBuild(changedComponentIds);
 		for(var project : projectsToBuild)
@@ -114,6 +114,13 @@ public class JanusTicker
 				boolean shouldRestart = projectBuilder.build(project, configuration);
 				if(shouldRestart)
 					restartAfterBuilds = true;
+				
+				String command = project.getCommandToExecuteAfterBuild();
+				if(command != null)
+				{
+					logger.info("Project '{}' scheduled to run a command after building successfully: {}", project.getId(), command);
+					commandsToExecute.add(command);
+				}
 			}
 			catch(InvalidConfigurationException e)
 			{
@@ -124,6 +131,9 @@ public class JanusTicker
 		
 		if(projectsToBuild.size() > 0)
 			logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
+		
+		for(String command : commandsToExecute)
+			commandExecutor.executeCommand(command);
 		
 		if(restartAfterBuilds)
 		{

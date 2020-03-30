@@ -25,8 +25,11 @@ public class Project
 	private final String id;
 	
 	private final String buildRootDirectory;
+	
 	private final String exportDirectory;
 	private final Boolean keepOtherFilesOnExport;
+	
+	private final String commandToExecuteAfterBuild;
 	
 	// COMPONENTS
 	private final List<ProjectComponent> components;
@@ -127,6 +130,12 @@ public class Project
 		
 		return keepOtherFilesOnExport == null ? false : keepOtherFilesOnExport;
 	}
+	
+	public String getCommandToExecuteAfterBuild()
+	{
+		return commandToExecuteAfterBuild;
+	}
+	
 	
 	public List<ProjectComponent> getComponents()
 	{
