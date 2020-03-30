@@ -66,7 +66,9 @@ public class JanusTicker
 		cleanOldBuilds();
 		
 		var updatedComponentIds = updateComponents();
-		logger.info("Detected update in components: [{}]", StringUtil.collectionToString(updatedComponentIds, ", "));
+		if(updatedComponentIds.size() > 0)
+			logger.info("Detected update in components: [{}]", StringUtil.collectionToString(updatedComponentIds, ", "));
+		
 		runBuilds(updatedComponentIds);
 	}
 	
