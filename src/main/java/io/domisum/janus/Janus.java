@@ -57,7 +57,7 @@ public class Janus
 		janusTicker.start();
 		
 		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
-		logger.info("Startup complete\n");
+		logger.info("...Startup complete\n");
 	}
 	
 	private boolean loadConfiguration()
