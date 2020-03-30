@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.lib.httpbutler.HttpResponse;
 import io.domisum.lib.httpbutler.endpointtypes.HttpButlerEndpointTypeStaticPath;
-import io.domisum.lib.httpbutler.exceptions.BadRequestHttpException;
+import io.domisum.lib.httpbutler.exceptions.HttpBadRequest;
 import io.domisum.lib.httpbutler.request.HttpMethod;
 import io.domisum.lib.httpbutler.request.HttpRequest;
 import io.domisum.lib.httpbutler.responses.HttpResponsePlaintext;
@@ -43,7 +43,7 @@ public class IntercomEndpointUpdateAvailable
 	// HANDLING
 	@Override
 	protected HttpResponse handleRequest(HttpRequest request)
-			throws BadRequestHttpException
+			throws HttpBadRequest
 	{
 		String projectId = request.getQueryParameterValue("project");
 		String buildName = request.getQueryParameterValue("build");
