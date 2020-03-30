@@ -76,12 +76,12 @@ public class ProjectBuilder
 		else if(project.isJanusConfig())
 		{
 			FileUtil.moveDirectory(Janus.CONFIG_DIRECTORY, Janus.CONFIG_DIRECTORY_BACKUP);
-			exportBuild(tempBuildDir, Janus.CONFIG_DIRECTORY);
+			exportBuild(tempBuildDir, Janus.CONFIG_DIRECTORY, false);
 			return true;
 		}
 		else
 		{
-			exportBuild(tempBuildDir, project.getExportDirectory());
+			exportBuild(tempBuildDir, project.getExportDirectory(), project.keepOtherFilesOnExport());
 			return false;
 		}
 	}
@@ -119,9 +119,12 @@ public class ProjectBuilder
 		FileUtil.deleteDirectory(tempBuildDir);
 	}
 	
-	private void exportBuild(File tempBuildDir, File exportDirectory)
+	private void exportBuild(File tempBuildDir, File exportDirectory, boolean keepOtherFiles)
 	{
-		FileUtil.deleteDirectoryContents(exportDirectory);
+		boolean clearOtherFiles = !keepOtherFiles;
+		if(clearOtherFiles)
+			FileUtil.deleteDirectoryContents(exportDirectory);
+		
 		FileUtil.moveDirectory(tempBuildDir, exportDirectory);
 	}
 	

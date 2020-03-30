@@ -26,6 +26,7 @@ public class Project
 	
 	private final String buildRootDirectory;
 	private final String exportDirectory;
+	private final Boolean keepOtherFilesOnExport;
 	
 	// COMPONENTS
 	private final List<ProjectComponent> components;
@@ -40,16 +41,24 @@ public class Project
 			throws InvalidConfigurationException
 	{
 		InvalidConfigurationException.validateIsSet(id, "id");
+		
 		if(isJanusJar())
 			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
-					"buildRootDirectory and exportDirectory can't be set for janus jar");
+					"'buildRootDirectory' and 'exportDirectory' can't be set for janus jar project");
 		else if(isJanusConfig())
 			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
-					"buildRootDirectory and exportDirectory can't be set for janus config");
+					"'buildRootDirectory' and 'exportDirectory' can't be set for janus config project");
 		else
-			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
+			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null),
+					"Either 'buildRootDirectory' or 'exportDirectory' has to be set");
+		
 		if(buildRootDirectory != null)
-			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
+			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()),
+					"The name of 'buildRootDirectory' has to be the id of the project");
+		
+		if(exportDirectory == null)
+			InvalidConfigurationException.validateIsTrue(keepOtherFilesOnExport == null,
+					"'keepOtherFilesOnExport' is only supported for projects which define 'exportDirectory'");
 		
 		validateComponents();
 	}
@@ -109,6 +118,14 @@ public class Project
 	public boolean isJanusConfig()
 	{
 		return "___janusConfig".equals(id);
+	}
+	
+	public boolean keepOtherFilesOnExport()
+	{
+		if(exportDirectory == null)
+			throw new UnsupportedOperationException("This method only works if this is an export project");
+		
+		return keepOtherFilesOnExport == null ? false : keepOtherFilesOnExport;
 	}
 	
 	public List<ProjectComponent> getComponents()
