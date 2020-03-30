@@ -96,7 +96,6 @@ public class JanusTicker
 			catch(IOException e)
 			{
 				logger.warn("Failed to update component '{}'", component.getId(), e);
-				return new HashSet<>(); // don't trigger builds after failed update
 			}
 		
 		return changedComponentIds;
