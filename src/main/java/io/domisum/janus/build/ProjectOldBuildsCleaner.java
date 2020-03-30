@@ -57,7 +57,7 @@ public class ProjectOldBuildsCleaner
 			
 			if(DurationUtil.isOlderThan(buildTime, MAX_BUILD_AGE))
 			{
-				logger.info("Deleting build '{}' of project '{}': Exceeded max age", buildName, project.getId());
+				logger.info("Deleting build '{}' of project '{}': Older than max build age", buildName, project.getId());
 				FileUtil.deleteDirectory(buildDirectory);
 			}
 		}
@@ -84,7 +84,7 @@ public class ProjectOldBuildsCleaner
 			}
 		}
 		
-		logger.info("Deleting build '{}' of project '{}': Too many builds", directoryOfOldestBuild.getName(), project.getId());
+		logger.info("Deleting build '{}' of project '{}': Too many builds in directory", directoryOfOldestBuild.getName(), project.getId());
 		FileUtil.deleteDirectory(directoryOfOldestBuild);
 	}
 	
