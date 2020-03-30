@@ -66,6 +66,9 @@ public class Janus
 		{
 			configuration = configurationLoader.load();
 			janusTicker.setConfiguration(configuration);
+			
+			FileUtil.deleteDirectory(CONFIG_DIRECTORY_INVALID);
+			FileUtil.deleteDirectory(CONFIG_DIRECTORY_BACKUP);
 			return true;
 		}
 		catch(InvalidConfigurationException e)
