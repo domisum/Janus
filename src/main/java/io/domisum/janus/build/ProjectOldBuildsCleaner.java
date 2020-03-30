@@ -49,6 +49,11 @@ public class ProjectOldBuildsCleaner
 		{
 			String buildName = buildDirectory.getName();
 			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
+			if(buildTime == null)
+			{
+				logger.warn("Failed to parse build time of directory in build root directory: {}", buildDirectory);
+				continue;
+			}
 			
 			if(Objects.equals(buildName, runningBuild))
 				continue;
@@ -77,6 +82,12 @@ public class ProjectOldBuildsCleaner
 				continue;
 			
 			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
+			if(buildTime == null)
+			{
+				logger.warn("Failed to parse build time of directory in build root directory: {}", buildDirectory);
+				continue;
+			}
+			
 			if(buildTime.compareTo(oldestBuildTime) < 0)
 			{
 				directoryOfOldestBuild = buildDirectory;

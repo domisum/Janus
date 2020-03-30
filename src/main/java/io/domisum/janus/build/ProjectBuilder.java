@@ -17,6 +17,7 @@ import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectBuilder
@@ -154,8 +155,15 @@ public class ProjectBuilder
 	
 	public static Instant parseBuildTimeFromBuildDirectory(File buildDirectory)
 	{
-		var parsed = BUILD_NAME_DATE_TIME_FORMATTER.parse(buildDirectory.getName());
-		return Instant.from(parsed);
+		try
+		{
+			var parsed = BUILD_NAME_DATE_TIME_FORMATTER.parse(buildDirectory.getName());
+			return Instant.from(parsed);
+		}
+		catch(DateTimeParseException ignored)
+		{
+			return null;
+		}
 	}
 	
 }
