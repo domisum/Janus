@@ -5,6 +5,7 @@ import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
+import io.domisum.lib.auxiliumlib.util.StringUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class ConfigObjectLoader<T extends ConfigObject>
 {
@@ -60,7 +62,8 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		if(configObjects.isEmpty())
 			logger.info("(there are no {})", OBJECT_NAME_PLURAL());
 		
-		logger.info("...Loading {} done, loaded {}", OBJECT_NAME_PLURAL(), configObjects.size());
+		var configObjectIds = configObjects.stream().map(ConfigObject::getId).collect(Collectors.toSet());
+		logger.info("...Loading {} done, loaded {}: [{}]", OBJECT_NAME_PLURAL(), configObjects.size(), StringUtil.collectionToString(configObjectIds, ", "));
 		return new ConfigObjectRegistry<>(configObjects);
 	}
 	

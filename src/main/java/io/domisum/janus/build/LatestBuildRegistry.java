@@ -34,7 +34,7 @@ public class LatestBuildRegistry
 			latestBuildsKeyValuePairs.add(latestBuildsEntry.getKey()+"="+latestBuildsEntry.getValue());
 		
 		var report = latestBuildsKeyValuePairs.isEmpty() ? "none" : StringUtil.listToString(latestBuildsKeyValuePairs, ", ");
-		return "("+report+")";
+		return "["+report+"]";
 	}
 	
 }
