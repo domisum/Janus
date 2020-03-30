@@ -1,7 +1,6 @@
 package io.domisum.janus.config.object;
 
 import com.google.gson.JsonParseException;
-import io.domisum.janus.Janus;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
@@ -33,9 +32,9 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 		return OBJECT_NAME()+"s";
 	}
 	
-	private File CONFIG_SUB_DIRECTORY()
+	private String CONFIG_SUB_DIRECTORY_NAME()
 	{
-		return new File(Janus.CONFIG_DIRECTORY, OBJECT_NAME_PLURAL());
+		return OBJECT_NAME_PLURAL();
 	}
 	
 	private String FILE_EXTENSION()
@@ -45,12 +44,13 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 	
 	
 	// LOADING
-	public ConfigObjectRegistry<T> load()
+	public ConfigObjectRegistry<T> load(File configDirectory)
 			throws InvalidConfigurationException
 	{
 		logger.info("Loading {}...", OBJECT_NAME_PLURAL());
 		
-		var files = FileUtil.listFilesRecursively(CONFIG_SUB_DIRECTORY(), FileType.FILE);
+		var configSubDirectory = new File(configDirectory, CONFIG_SUB_DIRECTORY_NAME());
+		var files = FileUtil.listFilesRecursively(configSubDirectory, FileType.FILE);
 		var configObjects = new HashSet<T>();
 		for(var file : files)
 			if(FILE_EXTENSION().equals(FileUtil.getCompositeExtension(file)))

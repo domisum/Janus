@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ConfigurationLoader
 {
@@ -29,18 +31,18 @@ public class ConfigurationLoader
 	
 	
 	// LOAD
-	public Configuration load()
+	public Configuration load(File configDirectory)
 			throws InvalidConfigurationException
 	{
-		logger.info("Loading configuration...");
+		logger.info("Loading configuration from directory '{}'...", configDirectory);
 		
-		var credentialRegistry = janusCredentialLoader.load();
+		var credentialRegistry = janusCredentialLoader.load(configDirectory);
 		
 		componentDependencyFacade.setCredentialRegistry(credentialRegistry);
-		var componentRegistry = janusComponentLoader.load();
+		var componentRegistry = janusComponentLoader.load(configDirectory);
 		
 		projectDependencyFacade.setComponentRegistry(componentRegistry);
-		var projectRegistry = janusProjectLoader.load();
+		var projectRegistry = janusProjectLoader.load(configDirectory);
 		
 		var configuration = new Configuration(credentialRegistry, componentRegistry, projectRegistry);
 		logger.info("...Loading configuration done\n");

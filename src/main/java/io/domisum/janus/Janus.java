@@ -64,7 +64,7 @@ public class Janus
 	{
 		try
 		{
-			configuration = configurationLoader.load();
+			configuration = configurationLoader.load(CONFIG_DIRECTORY);
 			janusTicker.setConfiguration(configuration);
 			
 			FileUtil.deleteDirectory(CONFIG_DIRECTORY_INVALID);
