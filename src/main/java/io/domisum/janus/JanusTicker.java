@@ -43,7 +43,7 @@ public class JanusTicker
 			ProjectBuilder projectBuilder, LatestBuildRegistry latestBuildRegistry,
 			ApplicationStopper applicationStopper)
 	{
-		super("janusTicker", Duration.ofSeconds(5), Duration.ofMinutes(5));
+		super("ticker", Duration.ofSeconds(5), Duration.ofMinutes(5));
 		
 		this.projectBuilder = projectBuilder;
 		this.latestBuildRegistry = latestBuildRegistry;
