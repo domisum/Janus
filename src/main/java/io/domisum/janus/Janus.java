@@ -29,7 +29,7 @@ public class Janus
 	// CONSTANTS
 	public static final File CONFIG_DIRECTORY = new File("config");
 	public static final File CONFIG_DIRECTORY_BACKUP = new File("config_backup");
-	public static final File CONFIG_DIRECTORY_INVALID = new File("config_invalid");
+	private static final File CONFIG_DIRECTORY_INVALID = new File("config_invalid");
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(10);
 	
 	// DEPENDENCIES
