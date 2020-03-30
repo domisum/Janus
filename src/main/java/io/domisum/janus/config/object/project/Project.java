@@ -1,7 +1,6 @@
 package io.domisum.janus.config.object.project;
 
 import io.domisum.janus.config.object.ConfigObject;
-import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
@@ -37,36 +36,25 @@ public class Project
 	
 	// INIT
 	@Override
-	public ValidationReport validate()
+	public void validate()
 			throws InvalidConfigurationException
 	{
-		var validationReport = new ValidationReport();
-		
 		InvalidConfigurationException.validateIsSet(id, "id");
 		if(isJanusJar())
-		{
-			validationReport.noteFieldValue(true, "isJanusJar");
 			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"buildRootDirectory and exportDirectory can't be set for janus jar");
-		}
 		else if(isJanusConfig())
-		{
-			validationReport.noteFieldValue(true, "isJanusConfig");
 			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"buildRootDirectory and exportDirectory can't be set for janus config");
-		}
 		else
 			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null), "either buildRootDirectory or exportDirectory has to be set");
 		if(buildRootDirectory != null)
 			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()), "the name of buildRootDirectory has to be the id of the project");
-		validationReport.noteFieldValue(buildRootDirectory, "buildRootDirectory");
-		validationReport.noteFieldValue(exportDirectory, "exportDirectory");
-		validateComponents(validationReport);
 		
-		return validationReport.complete();
+		validateComponents();
 	}
 	
-	private void validateComponents(ValidationReport validationReport)
+	private void validateComponents()
 			throws InvalidConfigurationException
 	{
 		for(int i = 0; i < components.size(); i++)
@@ -74,15 +62,13 @@ public class Project
 			var projectComponent = components.get(i);
 			try
 			{
-				var componentValidationReport = projectComponent.validate();
-				validationReport.addSubreport(componentValidationReport, "component "+projectComponent.getComponentId());
+				projectComponent.validate();
+				projectDependencyFacade.validateComponentExists(projectComponent.getComponentId());
 			}
 			catch(InvalidConfigurationException e)
 			{
 				throw new InvalidConfigurationException("configuration error in projectComponent at index "+i, e);
 			}
-			
-			projectDependencyFacade.validateComponentExists(projectComponent.getComponentId());
 		}
 	}
 	
@@ -142,15 +128,10 @@ public class Project
 		
 		
 		// INIT
-		public ValidationReport validate()
+		public void validate()
 				throws InvalidConfigurationException
 		{
-			var validationReport = new ValidationReport();
-			
 			InvalidConfigurationException.validateIsSet(componentId, "componentId");
-			validationReport.noteFieldValue(directoryInBuild, "directoryInBuild");
-			
-			return validationReport.complete();
 		}
 		
 		

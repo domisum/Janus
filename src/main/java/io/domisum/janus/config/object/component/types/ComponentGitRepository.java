@@ -1,6 +1,5 @@
 package io.domisum.janus.config.object.component.types;
 
-import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
@@ -46,7 +45,7 @@ public class ComponentGitRepository
 	}
 	
 	@Override
-	public void validateTypeSpecific(ValidationReport validationReport)
+	public void validateTypeSpecific()
 			throws InvalidConfigurationException
 	{
 		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");

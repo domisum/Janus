@@ -1,7 +1,6 @@
 package io.domisum.janus.config.object.component;
 
 import io.domisum.janus.config.object.ConfigObject;
-import io.domisum.janus.config.object.ValidationReport;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import lombok.AccessLevel;
@@ -29,21 +28,16 @@ public abstract class Component
 	
 	// INIT
 	@Override
-	public ValidationReport validate()
+	public void validate()
 			throws InvalidConfigurationException
 	{
-		var validationReport = new ValidationReport();
-		
 		InvalidConfigurationException.validateIsSet(id, "id can't be null");
-		validationReport.noteFieldValue(credentialId, "credentialId");
 		if(credentialId != null)
 			componentDependencyFacade.validateCredentialExists(credentialId);
-		validateTypeSpecific(validationReport);
-		
-		return validationReport.complete();
+		validateTypeSpecific();
 	}
 	
-	protected abstract void validateTypeSpecific(ValidationReport validationReport)
+	protected abstract void validateTypeSpecific()
 			throws InvalidConfigurationException;
 	
 	

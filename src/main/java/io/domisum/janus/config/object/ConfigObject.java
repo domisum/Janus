@@ -7,7 +7,7 @@ public interface ConfigObject
 	
 	String getId();
 	
-	ValidationReport validate()
+	void validate()
 			throws InvalidConfigurationException;
 	
 }

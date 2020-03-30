@@ -87,7 +87,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 	{
 		var configObject = deserialize(fileContent);
 		injectDependencies(configObject);
-		var validationReport = configObject.validate();
+		configObject.validate();
 		
 		String configObjectIdFromFileName = FileUtil.getNameWithoutCompositeExtension(file);
 		if(!Objects.equals(configObject.getId(), configObjectIdFromFileName))
@@ -97,10 +97,7 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 			throw new InvalidConfigurationException(exceptionMessage);
 		}
 		
-		if(validationReport != null)
-			logger.info("Validated {} '{}': {}", OBJECT_NAME(), configObject.getId(), validationReport);
 		logger.info("Loaded {} {}", OBJECT_NAME(), configObject);
-		
 		return configObject;
 	}
 	
