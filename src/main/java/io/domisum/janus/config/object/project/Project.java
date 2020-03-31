@@ -56,14 +56,33 @@ public class Project
 					"Either 'buildRootDirectory' or 'exportDirectory' has to be set");
 		
 		if(buildRootDirectory != null)
+		{
+			validatePath(buildRootDirectory, "buildRootDirectory");
 			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()),
 					"The name of 'buildRootDirectory' has to be the id of the project");
+		}
+		
+		if(exportDirectory != null)
+			validatePath(exportDirectory, "exportDirectory");
 		
 		if(exportDirectory == null)
 			InvalidConfigurationException.validateIsTrue(keepOtherFilesOnExport == null,
 					"'keepOtherFilesOnExport' is only supported for projects which define 'exportDirectory'");
 		
 		validateComponents();
+	}
+	
+	private void validatePath(String path, String pathName)
+			throws InvalidConfigurationException
+	{
+		try
+		{
+			parseConfigPath(path);
+		}
+		catch(IllegalArgumentException e)
+		{
+			throw new InvalidConfigurationException("Invalid value for "+pathName, e);
+		}
 	}
 	
 	private void validateComponents()
@@ -175,18 +194,24 @@ public class Project
 	// UTIL
 	private static File parseConfigPath(String path)
 	{
-		String appdata = System.getenv("APPDATA");
-		if(appdata != null)
-			appdata = appdata.replace('\\', '/');
-		String userHome = System.getProperty("user.home");
-		if(userHome != null)
-			userHome = userHome.replace('\\', '/');
-		
-		path = path.replaceFirst("(?i)^%APPDATA%", appdata);
-		path = path.replaceFirst("(?i)^%HOME%", userHome);
-		path = path.replaceFirst("^~", userHome);
+		path = replacePathVar(path, "(?i)^%APPDATA%", System.getenv("APPDATA"));
+		path = replacePathVar(path, "(?i)^%HOME%", System.getProperty("user.home"));
+		path = replacePathVar(path, "^~", System.getProperty("user.home"));
 		
 		return new File(path);
+	}
+	
+	private static String replacePathVar(String path, String regex, String replacement)
+	{
+		if(replacement == null && path.matches(regex))
+			throw new IllegalArgumentException("Can't replace variable, this variable is not set for this system. Path: "+path);
+		else if(replacement != null)
+		{
+			replacement = replacement.replace('\\', '/');
+			path = path.replace(regex, replacement);
+		}
+		
+		return path;
 	}
 	
 }
