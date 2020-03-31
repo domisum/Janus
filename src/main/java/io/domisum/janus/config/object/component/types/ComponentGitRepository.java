@@ -4,17 +4,20 @@ import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Objects;
@@ -34,6 +37,9 @@ public class ComponentGitRepository
 	private final String repositoryUrl;
 	private final String branch;
 	
+	// STATUS
+	private transient boolean remoteUrlUpdated = false;
+	
 	
 	// INIT
 	public ComponentGitRepository(
@@ -50,7 +56,21 @@ public class ComponentGitRepository
 			throws InvalidConfigurationException
 	{
 		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");
+		validateRepositoryUrl();
 		InvalidConfigurationException.validateIsSet(branch, "branch");
+	}
+	
+	private void validateRepositoryUrl()
+			throws InvalidConfigurationException
+	{
+		try
+		{
+			new URIish(repositoryUrl);
+		}
+		catch(URISyntaxException e)
+		{
+			throw new InvalidConfigurationException("Invalid repositoryUrl: '"+repositoryUrl+"'", e);
+		}
 	}
 	
 	
@@ -67,14 +87,65 @@ public class ComponentGitRepository
 	public boolean update()
 			throws IOException
 	{
-		boolean componentDirectoryEmpty = Files.list(getDirectory().toPath()).findAny().isEmpty();
-		if(componentDirectoryEmpty)
+		updateRemoteUrlOncePerApplicationRun();
+		
+		if(doesLocalRepoExist())
+			return gitPull();
+		else
 		{
 			gitClone();
 			return true;
 		}
-		else
-			return gitPull();
+	}
+	
+	private boolean doesLocalRepoExist()
+			throws IOException
+	{
+		boolean componentDirectoryEmpty = Files.list(getDirectory().toPath()).findAny().isEmpty();
+		return !componentDirectoryEmpty;
+	}
+	
+	
+	private void updateRemoteUrlOncePerApplicationRun()
+			throws IOException
+	{
+		if(remoteUrlUpdated)
+			return;
+		remoteUrlUpdated = true;
+		
+		updateRemoteUrl();
+	}
+	
+	private void updateRemoteUrl()
+			throws IOException
+	{
+		try(var git = Git.open(getDirectory()))
+		{
+			var remoteNames = git.getRepository().getRemoteNames();
+			for(String remoteName : remoteNames)
+			{
+				var remoteSetUrlCommand = git.remoteSetUrl();
+				remoteSetUrlCommand.setRemoteName(remoteName);
+				remoteSetUrlCommand.setRemoteUri(getRepositoryUriish());
+				remoteSetUrlCommand.call();
+			}
+		}
+		catch(GitAPIException e)
+		{
+			throw new IOException("failed to update git remote url in component '"+getId()+"'", e);
+		}
+	}
+	
+	private URIish getRepositoryUriish()
+	{
+		try
+		{
+			return new URIish(repositoryUrl);
+		}
+		catch(URISyntaxException e)
+		{
+			throw new ShouldNeverHappenError("this should have been detected during validation", e);
+		}
 	}
 	
 	
