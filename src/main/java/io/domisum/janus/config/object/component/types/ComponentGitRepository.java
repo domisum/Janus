@@ -7,6 +7,7 @@ import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
+import io.domisum.lib.auxiliumlib.util.java.ExceptionUtil;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -109,6 +110,9 @@ public class ComponentGitRepository
 	private void updateRemoteUrlOncePerApplicationRun()
 			throws IOException
 	{
+		if(!doesLocalRepoExist())
+			return;
+		
 		if(remoteUrlUpdated)
 			return;
 		remoteUrlUpdated = true;
@@ -191,6 +195,9 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
+			if(ExceptionUtil.getShortSynopsis(e).contains("Connection reset"))
+				return false;
+			
 			throw new IOException("failed to pull changes in "+this, e);
 		}
 	}
