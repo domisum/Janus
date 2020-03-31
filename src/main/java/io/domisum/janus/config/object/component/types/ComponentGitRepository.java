@@ -27,7 +27,8 @@ public class ComponentGitRepository
 	
 	
 	// CONSTANTS
-	private static final Duration GIT_COMMAND_TIMEOUT = Duration.ofMinutes(5);
+	private static final Duration GIT_CLONE_TIMEOUT = Duration.ofMinutes(5);
+	private static final Duration GIT_PULL_TIMEOUT = Duration.ofMinutes(1);
 	
 	// SETTINGS
 	private final String repositoryUrl;
@@ -89,7 +90,7 @@ public class ComponentGitRepository
 			cloneCommand.setURI(repositoryUrl);
 			cloneCommand.setDirectory(getDirectory());
 			cloneCommand.setBranch(branch);
-			cloneCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
+			cloneCommand.setTimeout((int) GIT_CLONE_TIMEOUT.getSeconds());
 			authorizeCommand(cloneCommand);
 			
 			cloneCommand.call();
@@ -110,7 +111,7 @@ public class ComponentGitRepository
 			String latestCommitHashBefore = readLatestCommitHash(git);
 			
 			var pullCommand = git.pull();
-			pullCommand.setTimeout((int) GIT_COMMAND_TIMEOUT.getSeconds());
+			pullCommand.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
 			authorizeCommand(pullCommand);
 			pullCommand.call();
 			
