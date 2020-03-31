@@ -194,8 +194,8 @@ public class Project
 	// UTIL
 	private static File parseConfigPath(String path)
 	{
-		path = replacePathVar(path, "(?i)^%APPDATA%", System.getenv("APPDATA"));
-		path = replacePathVar(path, "(?i)^%HOME%", System.getProperty("user.home"));
+		path = replacePathVar(path, "(?i)^%appdata%", System.getenv("APPDATA"));
+		path = replacePathVar(path, "(?i)^%home%", System.getProperty("user.home"));
 		path = replacePathVar(path, "^~", System.getProperty("user.home"));
 		
 		return new File(path);
