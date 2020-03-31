@@ -175,9 +175,16 @@ public class Project
 	// UTIL
 	private static File parseConfigPath(String path)
 	{
-		path = path.replaceFirst("(?i)^%APPDATA%$", System.getenv("APPDATA"));
-		path = path.replaceFirst("(?i)^%HOME%$", System.getProperty("user.home"));
-		path = path.replaceFirst("^~$", System.getProperty("user.home"));
+		String appdata = System.getenv("APPDATA");
+		if(appdata != null)
+			appdata = appdata.replace('\\', '/');
+		String userHome = System.getProperty("user.home");
+		if(userHome != null)
+			userHome = userHome.replace('\\', '/');
+		
+		path = path.replaceFirst("(?i)^%APPDATA%", appdata);
+		path = path.replaceFirst("(?i)^%HOME%", userHome);
+		path = path.replaceFirst("^~", userHome);
 		
 		return new File(path);
 	}
