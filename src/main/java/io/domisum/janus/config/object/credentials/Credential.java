@@ -35,7 +35,7 @@ public class Credential
 	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName()+"("+id+": "+username+")";
+		return getClass().getSimpleName()+"("+id+": '"+username+"')";
 	}
 	
 }
