@@ -195,7 +195,10 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			if(ExceptionUtil.getShortSynopsis(e).contains("Connection reset"))
+			String exceptionSynopsis = ExceptionUtil.getSynopsis(e);
+			if(exceptionSynopsis.contains("Connection reset"))
+				return false;
+			if(exceptionSynopsis.contains("authentication not supported"))
 				return false;
 			
 			throw new IOException("failed to pull changes in "+this, e);
