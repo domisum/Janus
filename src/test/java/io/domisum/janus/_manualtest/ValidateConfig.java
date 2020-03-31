@@ -15,7 +15,7 @@ public final class ValidateConfig
 	public static void main(String[] args)
 			throws InvalidConfigurationException
 	{
-		var configDir = new File("C:\\Users\\domisum\\testChamber\\domisumReplay\\repos\\___JanusConfig-dR-VideoCreator");
+		var configDir = new File("C:\\Users\\domisum\\testChamber\\domisumReplay\\repos\\___dR-JanusConfig-VideoCreator");
 		
 		var configLoader = JanusInjector.create().getInstance(ConfigurationLoader.class);
 		configLoader.load(configDir);
