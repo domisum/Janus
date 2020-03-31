@@ -121,6 +121,8 @@ public class ProjectBuilder
 	
 	private void exportBuild(File tempBuildDir, File exportDirectory, boolean keepOtherFiles)
 	{
+		logger.info("Exporting build to dir '{}', keeping other files: {}", exportDirectory, keepOtherFiles);
+		
 		boolean clearOtherFiles = !keepOtherFiles;
 		if(clearOtherFiles)
 			FileUtil.deleteDirectoryContents(exportDirectory);
