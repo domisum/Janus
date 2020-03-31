@@ -40,7 +40,7 @@ public class JanusTicker
 	private final ApplicationStopper applicationStopper;
 	
 	// REFERENCES
-	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), Duration.ofMinutes(5), this::tick);
+	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), Duration.ofMinutes(10), this::tick);
 	
 	// CONFIG
 	@Setter
