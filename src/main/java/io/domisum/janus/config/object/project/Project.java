@@ -103,14 +103,14 @@ public class Project
 	{
 		if(buildRootDirectory == null)
 			return null;
-		return new File(buildRootDirectory);
+		return parseConfigPath(buildRootDirectory);
 	}
 	
 	public File getExportDirectory()
 	{
 		if(exportDirectory == null)
 			return null;
-		return new File(exportDirectory);
+		return parseConfigPath(exportDirectory);
 	}
 	
 	public boolean isJanusJar()
@@ -169,6 +169,17 @@ public class Project
 			return new File(buildDirectory, directoryInBuild);
 		}
 		
+	}
+	
+	
+	// UTIL
+	private static File parseConfigPath(String path)
+	{
+		path = path.replaceFirst("(?i)^%APPDATA%$", System.getenv("APPDATA"));
+		path = path.replaceFirst("(?i)^%HOME%$", System.getProperty("user.home"));
+		path = path.replaceFirst("^~$", System.getProperty("user.home"));
+		
+		return new File(path);
 	}
 	
 }
