@@ -4,11 +4,13 @@ import com.google.inject.Inject;
 import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
+import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.janus.intercom.IntercomServer;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class Janus
@@ -51,6 +54,7 @@ public class Janus
 		if(!configurationValid)
 			return;
 		readLatestBuilds();
+		deleteNoLongerUsedComponentDirs(configuration);
 		
 		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		intercomServer.start();
@@ -107,6 +111,23 @@ public class Janus
 		}
 		
 		logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
+	}
+	
+	private void deleteNoLongerUsedComponentDirs(Configuration configuration)
+	{
+		var components = configuration.getComponentRegistry().getAll();
+		var currentComponentDirNames = components.stream()
+				.map(Component::getDirectory)
+				.map(File::getName)
+				.collect(Collectors.toSet());
+		
+		var componentDirs = FileUtil.listFilesFlat(Component.COMPONENTS_DIRECTORY, FileType.DIRECTORY);
+		for(var componentDir : componentDirs)
+			if(!currentComponentDirNames.contains(componentDir.getName()))
+			{
+				logger.info("Deleting no longer used component directory: {}", componentDir);
+				FileUtil.deleteDirectory(componentDir);
+			}
 	}
 	
 	

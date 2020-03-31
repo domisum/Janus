@@ -15,6 +15,9 @@ public abstract class Component
 		implements ConfigObject
 {
 	
+	// CONSTANTS
+	public static final File COMPONENTS_DIRECTORY = new File("_components");
+	
 	// ATTRIBUTES
 	@Getter
 	private final String id;
@@ -59,9 +62,9 @@ public abstract class Component
 	
 	
 	// UTIL
-	protected File getDirectory()
+	public File getDirectory()
 	{
-		var directory = new File("_components/"+getId());
+		var directory = new File(COMPONENTS_DIRECTORY, getId());
 		FileUtil.mkdirs(directory);
 		return directory;
 	}
