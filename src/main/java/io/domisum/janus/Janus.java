@@ -54,7 +54,7 @@ public class Janus
 		if(!configurationValid)
 			return;
 		readLatestBuilds();
-		deleteNoLongerUsedComponentDirs(configuration);
+		deleteNoLongerUsedComponentDirs();
 		
 		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
 		intercomServer.start();
@@ -113,7 +113,7 @@ public class Janus
 		logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
 	}
 	
-	private void deleteNoLongerUsedComponentDirs(Configuration configuration)
+	private void deleteNoLongerUsedComponentDirs()
 	{
 		var components = configuration.getComponentRegistry().getAll();
 		var currentComponentDirNames = components.stream()
