@@ -30,9 +30,6 @@ public class ProjectBuilder
 	private static final DateTimeFormatter BUILD_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS")
 			.withZone(ZoneId.systemDefault());
 	
-	// DEPENDENCIES
-	private final LatestBuildRegistry latestBuildRegistry;
-	
 	
 	// BUILD
 	public boolean build(Project project, Configuration configuration)
@@ -53,11 +50,11 @@ public class ProjectBuilder
 	private void buildRegular(Project project, Configuration configuration)
 	{
 		String buildName = createBuildName();
+		logger.info("Build name: {}", buildName);
 		
 		var buildDirectory = new File(project.getBuildRootDirectory(), buildName);
 		buildProjectTo(project, buildDirectory, configuration);
 		
-		latestBuildRegistry.set(project.getId(), buildName);
 		var latestBuildFile = new File(project.getBuildRootDirectory(), Project.LATEST_BUILD_FILE_NAME);
 		FileUtil.writeString(latestBuildFile, buildName);
 	}

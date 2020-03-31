@@ -2,7 +2,6 @@ package io.domisum.janus;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.janus.build.ProjectBuilder;
 import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
@@ -34,7 +33,6 @@ public class JanusTicker
 	// DEPENDENCIES
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	private final ProjectBuilder projectBuilder;
-	private final LatestBuildRegistry latestBuildRegistry;
 	
 	private final CommandExecutor commandExecutor;
 	private final ApplicationStopper applicationStopper;
@@ -128,9 +126,6 @@ public class JanusTicker
 				restartAfterBuilds = true;
 				break;
 			}
-		
-		if(projectsToBuild.size() > 0)
-			logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
 		
 		for(String command : commandsToExecute)
 			commandExecutor.executeCommand(command);

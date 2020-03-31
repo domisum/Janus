@@ -1,12 +1,9 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
-import io.domisum.janus.build.LatestBuildRegistry;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.component.Component;
-import io.domisum.janus.config.object.project.Project;
-import io.domisum.janus.intercom.IntercomServer;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
@@ -37,8 +34,6 @@ public class Janus
 	
 	// DEPENDENCIES
 	private final ConfigurationLoader configurationLoader;
-	private final LatestBuildRegistry latestBuildRegistry;
-	private final IntercomServer intercomServer;
 	private final JanusTicker janusTicker;
 	
 	// CONFIGURATION
@@ -48,16 +43,13 @@ public class Janus
 	// START
 	public void start()
 	{
-		logger.info("Starting...");
-		
 		boolean configurationValid = loadConfiguration();
 		if(!configurationValid)
 			return;
-		readLatestBuilds();
 		deleteNoLongerUsedComponentDirs();
 		
+		logger.info("Starting...");
 		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
-		intercomServer.start();
 		janusTicker.start();
 		
 		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
@@ -93,26 +85,6 @@ public class Janus
 		}
 	}
 	
-	private void readLatestBuilds()
-	{
-		var projects = configuration.getProjectRegistry().getAll();
-		for(var project : projects)
-		{
-			var buildRootDirectory = project.getBuildRootDirectory();
-			if(buildRootDirectory == null)
-				continue;
-			
-			var latestBuildFile = new File(buildRootDirectory, Project.LATEST_BUILD_FILE_NAME);
-			if(!latestBuildFile.exists())
-				continue;
-			
-			String latestBuildName = FileUtil.readString(latestBuildFile);
-			latestBuildRegistry.set(project.getId(), latestBuildName);
-		}
-		
-		logger.info("Latest builds: {}\n", latestBuildRegistry.getReport());
-	}
-	
 	private void deleteNoLongerUsedComponentDirs()
 	{
 		var components = configuration.getComponentRegistry().getAll();
@@ -139,7 +111,6 @@ public class Janus
 		logger.info("Initiating shutdown sequence...");
 		
 		janusTicker.stop();
-		intercomServer.stop();
 		
 		logger.info("...Shutdown sequence complete");
 	}

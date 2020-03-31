@@ -25,9 +25,6 @@ public class ProjectOldBuildsCleaner
 	private static final Duration MAX_BUILD_AGE = Duration.ofDays(7);
 	private static final int MAX_BUILD_COUNT = 10;
 	
-	// DEPENDENCIES
-	private final LatestBuildRegistry latestBuildRegistry;
-	
 	
 	// CLEAN
 	public void cleanOldBuilds(Project project)
@@ -42,7 +39,7 @@ public class ProjectOldBuildsCleaner
 	
 	private void deleteOldBuilds(Project project, String runningBuild)
 	{
-		String latestBuild = latestBuildRegistry.get(project.getId()).orElse(null);
+		String latestBuild = readLatestBuild(project);
 		
 		var buildDirectories = FileUtil.listFilesFlat(project.getBuildRootDirectory(), FileType.DIRECTORY);
 		for(var buildDirectory : buildDirectories)
@@ -97,6 +94,14 @@ public class ProjectOldBuildsCleaner
 		
 		logger.info("Deleting build '{}' of project '{}': Too many builds in directory", directoryOfOldestBuild.getName(), project.getId());
 		FileUtil.deleteDirectory(directoryOfOldestBuild);
+	}
+	
+	private String readLatestBuild(Project project)
+	{
+		var runningBuildFile = new File(project.getBuildRootDirectory(), Project.LATEST_BUILD_FILE_NAME);
+		if(!runningBuildFile.exists())
+			return null;
+		return FileUtil.readString(runningBuildFile);
 	}
 	
 	private String readRunningBuild(Project project)
