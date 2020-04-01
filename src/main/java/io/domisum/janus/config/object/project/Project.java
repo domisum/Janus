@@ -208,7 +208,7 @@ public class Project
 		else if(replacement != null)
 		{
 			replacement = replacement.replace('\\', '/');
-			path = path.replace(regex, replacement);
+			path = path.replaceFirst(regex, replacement);
 		}
 		
 		return path;
