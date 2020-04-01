@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -30,6 +32,10 @@ public class Janus
 	public static final File CONFIG_DIRECTORY = new File("config");
 	public static final File CONFIG_DIRECTORY_BACKUP = new File("config_backup");
 	private static final File CONFIG_DIRECTORY_INVALID = new File("config_invalid");
+	
+	private static final File LOG_DIRECTORY = new File("logs");
+	private static final int KEEP_LOG_FILES_NUMBER = 10;
+	
 	private static final Duration EMERGENCY_EXIT_DELAY = Duration.ofMinutes(10);
 	
 	// DEPENDENCIES
@@ -46,7 +52,8 @@ public class Janus
 		boolean configurationValid = loadConfiguration();
 		if(!configurationValid)
 			return;
-		deleteNoLongerUsedComponentDirs();
+		
+		cleanUp();
 		
 		logger.info("Starting...");
 		ThreadWatchdog.registerOnTerminationAction(Thread.currentThread(), this::stop);
@@ -85,6 +92,13 @@ public class Janus
 		}
 	}
 	
+	
+	private void cleanUp()
+	{
+		deleteNoLongerUsedComponentDirs();
+		deleteOldLogFiles();
+	}
+	
 	private void deleteNoLongerUsedComponentDirs()
 	{
 		var components = configuration.getComponentRegistry().getAll();
@@ -100,6 +114,20 @@ public class Janus
 				logger.info("Deleting no longer used component directory: {}", componentDir);
 				FileUtil.deleteDirectory(componentDir);
 			}
+	}
+	
+	private void deleteOldLogFiles()
+	{
+		var logFiles = FileUtil.listFilesRecursively(LOG_DIRECTORY, FileType.FILE);
+		var fileExtensions = new HashSet<String>();
+		for(var logFile : logFiles)
+			fileExtensions.add(FileUtil.getCompositeExtension(logFile));
+		
+		int numberOfCombinedLogFilesToKeep = KEEP_LOG_FILES_NUMBER*fileExtensions.size();
+		logFiles.stream()
+				.sorted(Comparator.comparingLong(File::lastModified))
+				.limit(logFiles.size()-numberOfCombinedLogFilesToKeep)
+				.forEach(FileUtil::deleteFile);
 	}
 	
 	
