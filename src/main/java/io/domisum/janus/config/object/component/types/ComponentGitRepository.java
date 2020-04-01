@@ -8,6 +8,7 @@ import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import io.domisum.lib.auxiliumlib.util.java.ExceptionUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -196,12 +197,11 @@ public class ComponentGitRepository
 		catch(GitAPIException e)
 		{
 			String exceptionSynopsis = ExceptionUtil.getSynopsis(e);
-			if(exceptionSynopsis.contains("Connection reset"))
-				return false;
-			if(exceptionSynopsis.contains("authentication not supported"))
+			if(StringUtils.containsAny(exceptionSynopsis,
+					"Connection reset", "authentication not supported", "time out", "timed out"))
 				return false;
 			
-			throw new IOException("failed to pull changes in "+this, e);
+			throw new IOException("Failed to pull changes in "+this, e);
 		}
 	}
 	
