@@ -137,7 +137,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("failed to update git remote url in component '"+getId()+"'", e);
+			throw new IOException("Gailed to update git remote url in component '"+getId()+"'", e);
 		}
 	}
 	
@@ -149,7 +149,7 @@ public class ComponentGitRepository
 		}
 		catch(URISyntaxException e)
 		{
-			throw new ShouldNeverHappenError("this should have been detected during validation", e);
+			throw new ShouldNeverHappenError("This should have been detected during validation", e);
 		}
 	}
 	
@@ -173,7 +173,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("failed to clone repository in "+this, e);
+			throw new IOException("Failed to clone repository in "+this, e);
 		}
 		
 		LOGGER.info("...Cloning done");
@@ -198,7 +198,7 @@ public class ComponentGitRepository
 		{
 			String exceptionSynopsis = ExceptionUtil.getSynopsis(e);
 			if(StringUtils.containsAny(exceptionSynopsis,
-					"Connection reset", "authentication not supported", "time out", "timed out"))
+					"Connection reset", "authentication not supported", "time out", "timed out", "Timeout"))
 				return false;
 			
 			throw new IOException("Failed to pull changes in "+this, e);
@@ -210,7 +210,7 @@ public class ComponentGitRepository
 	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
-			throw new IllegalArgumentException(PHR.r("git repository '{}' does not contain branch '{}'", getId(), branch));
+			throw new IllegalArgumentException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
 		
 		return branchRef.getObjectId().getName();
 	}
