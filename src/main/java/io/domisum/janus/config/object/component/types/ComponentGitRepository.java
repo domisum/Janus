@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
@@ -176,7 +177,10 @@ public class ComponentGitRepository
 			throw new IOException("Failed to clone repository in "+this, e);
 		}
 		
-		LOGGER.info("...Cloning done");
+		try(var git = Git.open(getDirectory()))
+		{
+			LOGGER.info("...Cloning complete. Latest commit: ({})", getLatestCommitDisplay(git));
+		}
 	}
 	
 	private boolean gitPull()
@@ -192,7 +196,11 @@ public class ComponentGitRepository
 			pullCommand.call();
 			
 			String latestCommitHashAfter = readLatestCommitHash(git);
-			return !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
+			boolean changed = !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
+			if(changed)
+				LOGGER.info("GitRepository component '{}' pulled changes. Last commit: ({})", getId(), getLatestCommitDisplay(git));
+			
+			return changed;
 		}
 		catch(GitAPIException e)
 		{
@@ -206,11 +214,26 @@ public class ComponentGitRepository
 	private String readLatestCommitHash(Git git)
 			throws IOException
 	{
+		var branchRef = findBranchRef(git);
+		return branchRef.getObjectId().getName();
+	}
+	
+	private String getLatestCommitDisplay(Git git)
+			throws IOException
+	{
+		var branchRef = findBranchRef(git);
+		var latestCommit = git.getRepository().parseCommit(branchRef.getObjectId());
+		
+		return branchRef.getObjectId().getName()+": '"+latestCommit.getShortMessage()+"'";
+	}
+	
+	private Ref findBranchRef(Git git)
+			throws IOException
+	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
 			throw new IllegalArgumentException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
-		
-		return branchRef.getObjectId().getName();
+		return branchRef;
 	}
 	
 	private void authorizeCommand(TransportCommand<?,?> transportCommand)
