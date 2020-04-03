@@ -179,7 +179,7 @@ public class ComponentMavenArtifactJar
 		var ioResponse = envoy.send();
 		String errorMessage = "failed to fetch string from "+url;
 		var response = ioResponse.getOrThrowWrapped(errorMessage);
-		String responseString = response.getSuccessBodyOrThrowHttpIoException(errorMessage);
+		String responseString = response.getSuccessBodyOrThrowHttpException(errorMessage);
 		
 		return responseString;
 	}
@@ -196,7 +196,7 @@ public class ComponentMavenArtifactJar
 		String errorMessage = "failed to fetch file from "+url;
 		var response = ioResponse.getOrThrowWrapped(errorMessage);
 		
-		return response.getSuccessBodyOrThrowHttpIoException(errorMessage);
+		return response.getSuccessBodyOrThrowHttpException(errorMessage);
 	}
 	
 	private void authorizeRequest(EzHttpRequest request)
