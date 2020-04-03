@@ -234,9 +234,9 @@ public class ComponentGitRepository
 	
 	
 	// UTIL
-	private boolean shouldUpdateExceptionBeIgnored(GitAPIException e)
+	private boolean shouldUpdateExceptionBeIgnored(GitAPIException gitApiException)
 	{
-		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(e).toLowerCase();
+		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(gitApiException).toLowerCase();
 		
 		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "connection reset", "authentication not supported"))
 			return true;
