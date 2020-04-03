@@ -196,9 +196,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			String exceptionSynopsis = ExceptionUtil.getSynopsis(e);
-			if(StringUtils.containsAny(exceptionSynopsis,
-					"Connection reset", "authentication not supported", "time out", "timed out", "Timeout"))
+			if(shouldUpdateExceptionBeIgnored(e))
 				return false;
 			
 			throw new IOException("Failed to pull changes in "+this, e);
@@ -232,6 +230,22 @@ public class ComponentGitRepository
 	{
 		var gitDirFilter = new FilterOutBaseDirectory(".git");
 		FileUtil.copyDirectory(getDirectory(), directoryInBuild, gitDirFilter);
+	}
+	
+	
+	// UTIL
+	private boolean shouldUpdateExceptionBeIgnored(GitAPIException e)
+	{
+		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(e).toLowerCase();
+		
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "connection reset", "authentication not supported"))
+			return true;
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "time out", "timed out", "timeout"))
+			return true;
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "internal server error"))
+			return true;
+		
+		return false;
 	}
 	
 }
