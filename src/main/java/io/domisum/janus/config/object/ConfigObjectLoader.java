@@ -3,16 +3,14 @@ package io.domisum.janus.config.object;
 import com.google.gson.JsonParseException;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
-import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
+import io.domisum.lib.auxiliumlib.util.java.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -84,11 +82,13 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 	private T createConfigObject(File file, String fileContent)
 			throws InvalidConfigurationException
 	{
-		String id = FileUtil.getNameWithoutCompositeExtension(file);
-		
 		var configObject = deserialize(fileContent);
-		injectId(configObject, id);
-		injectDependencies(configObject);
+		
+		String id = FileUtil.getNameWithoutCompositeExtension(file);
+		ReflectionUtil.injectValue(configObject, "id", id);
+		for(var dependency : getDependenciesToInject().entrySet())
+			ReflectionUtil.injectValue(configObject, dependency.getKey(), dependency.getValue());
+		
 		configObject.validate();
 		
 		logger.info("Loaded {} {}", OBJECT_NAME(), configObject);
@@ -101,68 +101,5 @@ public abstract class ConfigObjectLoader<T extends ConfigObject>
 			throws InvalidConfigurationException;
 	
 	protected abstract Map<Class<?>,Object> getDependenciesToInject();
-	
-	
-	// INJECTION
-	private void injectId(T component, String id)
-	{
-		try
-		{
-			injectIdUncaught(component, id);
-		}
-		catch(IllegalAccessException e)
-		{
-			throw new ShouldNeverHappenError(e);
-		}
-	}
-	
-	private void injectIdUncaught(T component, String id)
-			throws IllegalAccessException
-	{
-		var fields = getAllFields(component);
-		for(var field : fields)
-			if("id".equals(field.getName()))
-				field.set(component, id);
-	}
-	
-	private void injectDependencies(T component)
-	{
-		try
-		{
-			injectDependenciesUncaught(component);
-		}
-		catch(IllegalAccessException e)
-		{
-			throw new ShouldNeverHappenError(e);
-		}
-	}
-	
-	private void injectDependenciesUncaught(T component)
-			throws IllegalAccessException
-	{
-		var dependenciesToInject = getDependenciesToInject();
-		
-		var fields = getAllFields(component);
-		for(var field : fields)
-			for(var dependency : dependenciesToInject.entrySet())
-				if(field.getType() == dependency.getKey())
-					field.set(component, dependency.getValue());
-	}
-	
-	private HashSet<Field> getAllFields(T component)
-	{
-		var fields = new HashSet<Field>();
-		Class<?> clazz = component.getClass();
-		do
-		{
-			fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-			clazz = clazz.getSuperclass();
-		}
-		while(clazz != Object.class);
-		
-		fields.forEach(f->f.setAccessible(true));
-		
-		return fields;
-	}
 	
 }
