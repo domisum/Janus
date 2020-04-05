@@ -5,13 +5,16 @@ import com.google.inject.Singleton;
 import io.domisum.janus.build.ProjectBuilder;
 import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
+import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.project.Project;
-import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
+import io.domisum.lib.auxiliumlib.util.java.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,21 +84,29 @@ public class JanusTicker
 	private Set<String> updateComponents()
 	{
 		var changedComponentIds = new HashSet<String>();
-		
-		var components = configuration.getComponentRegistry().getAll();
-		for(var component : components)
-			try
-			{
-				boolean changed = component.update();
-				if(changed)
-					changedComponentIds.add(component.getId());
-			}
-			catch(IOException e)
-			{
-				logger.warn("Failed to update component '{}'", component.getId(), e);
-			}
+		for(var component : configuration.getComponentRegistry().getAll())
+		{
+			boolean changed = updateComponent(component);
+			if(changed)
+				changedComponentIds.add(component.getId());
+		}
 		
 		return changedComponentIds;
+	}
+	
+	private boolean updateComponent(Component component)
+	{
+		try
+		{
+			return component.update();
+		}
+		catch(IOException e)
+		{
+			if(!shouldUpdateExceptionBeIgnored(e))
+				logger.warn("Failed to update component '{}'", component.getId(), e);
+			
+			return false;
+		}
 	}
 	
 	
@@ -158,6 +169,22 @@ public class JanusTicker
 		}
 		
 		return projectsToBuild;
+	}
+	
+	
+	// UTIL
+	private boolean shouldUpdateExceptionBeIgnored(Exception updateException)
+	{
+		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(updateException).toLowerCase();
+		
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "connection reset", "authentication not supported"))
+			return true;
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "time out", "timed out", "timeout"))
+			return true;
+		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "internal server error"))
+			return true;
+		
+		return false;
 	}
 	
 }

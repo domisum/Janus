@@ -7,8 +7,6 @@ import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
-import io.domisum.lib.auxiliumlib.util.java.ExceptionUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -204,9 +202,6 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			if(shouldUpdateExceptionBeIgnored(e))
-				return false;
-			
 			throw new IOException("Failed to pull changes in "+this, e);
 		}
 	}
@@ -253,22 +248,6 @@ public class ComponentGitRepository
 	{
 		var gitDirFilter = new FilterOutBaseDirectory(".git");
 		FileUtil.copyDirectory(getDirectory(), directoryInBuild, gitDirFilter);
-	}
-	
-	
-	// UTIL
-	private boolean shouldUpdateExceptionBeIgnored(GitAPIException gitApiException)
-	{
-		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(gitApiException).toLowerCase();
-		
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "connection reset", "authentication not supported"))
-			return true;
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "time out", "timed out", "timeout"))
-			return true;
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "internal server error"))
-			return true;
-		
-		return false;
 	}
 	
 }
