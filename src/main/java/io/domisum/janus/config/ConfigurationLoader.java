@@ -6,7 +6,7 @@ import io.domisum.janus.config.object.component.ComponentLoader;
 import io.domisum.janus.config.object.credentials.CredentialLoader;
 import io.domisum.janus.config.object.project.ProjectDependencyFacade;
 import io.domisum.janus.config.object.project.ProjectLoader;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class ConfigurationLoader
 	
 	// LOAD
 	public Configuration load(File configDirectory)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		logger.info("Loading configuration from directory '{}'...", configDirectory);
 		

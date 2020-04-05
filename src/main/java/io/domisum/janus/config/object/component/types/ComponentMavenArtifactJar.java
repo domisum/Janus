@@ -3,7 +3,7 @@ package io.domisum.janus.config.object.component.types;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
 import io.domisum.lib.ezhttp.header.EzHttpHeaderBasicAuthentication;
@@ -57,12 +57,12 @@ public class ComponentMavenArtifactJar
 	
 	@Override
 	public void validateTypeSpecific()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");
-		InvalidConfigurationException.validateIsSet(groupId, "groupId");
-		InvalidConfigurationException.validateIsSet(artifactId, "artifactId");
-		InvalidConfigurationException.validateIsSet(version, "version");
+		InvalidConfigException.validateIsSet(repositoryUrl, "repositoryUrl");
+		InvalidConfigException.validateIsSet(groupId, "groupId");
+		InvalidConfigException.validateIsSet(artifactId, "artifactId");
+		InvalidConfigException.validateIsSet(version, "version");
 	}
 	
 	

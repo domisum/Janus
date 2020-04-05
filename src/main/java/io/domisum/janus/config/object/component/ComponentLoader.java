@@ -3,8 +3,8 @@ package io.domisum.janus.config.object.component;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import io.domisum.janus.config.object.ConfigObjectLoader;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.janus.config.object.JanusConfigObjectLoader;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.util.GsonUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ComponentLoader
-		extends ConfigObjectLoader<Component>
+		extends JanusConfigObjectLoader<Component>
 {
 	
 	// DEPENDENCIES
@@ -34,7 +34,7 @@ public class ComponentLoader
 	// DESERIALIZATION
 	@Override
 	protected Component deserialize(String json)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
@@ -44,18 +44,18 @@ public class ComponentLoader
 	}
 	
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		var typeJsonElement = jsonTree.get("type");
 		if(typeJsonElement == null)
-			throw new InvalidConfigurationException("no component type set");
+			throw new InvalidConfigException("no component type set");
 		String typeKey = typeJsonElement.getAsString();
 		
 		if(typeKey == null)
-			throw new InvalidConfigurationException("component config file does not specify type");
+			throw new InvalidConfigException("component config file does not specify type");
 		var componentClass = getBoundComponentClass(typeKey);
 		if(componentClass == null)
-			throw new InvalidConfigurationException("no component type bound for type '"+typeKey+"'");
+			throw new InvalidConfigException("no component type bound for type '"+typeKey+"'");
 		
 		return componentClass;
 	}

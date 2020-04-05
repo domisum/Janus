@@ -2,7 +2,7 @@ package io.domisum.janus._manualtest;
 
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.dependencyinjection.JanusInjector;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +13,7 @@ public final class ValidateConfig
 {
 	
 	public static void main(String[] args)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		var configDir = new File("C:\\Users\\domisum\\testChamber\\domisumReplay\\repos\\___dR-JanusConfig-VideoCreator");
 		

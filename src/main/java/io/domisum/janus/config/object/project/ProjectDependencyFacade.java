@@ -1,8 +1,8 @@
 package io.domisum.janus.config.object.project;
 
 import com.google.inject.Singleton;
-import io.domisum.janus.config.object.ConfigObjectRegistry;
 import io.domisum.janus.config.object.component.Component;
+import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
 import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 

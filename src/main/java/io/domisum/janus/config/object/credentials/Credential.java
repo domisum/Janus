@@ -1,15 +1,13 @@
 package io.domisum.janus.config.object.credentials;
 
-import io.domisum.janus.config.object.ConfigObject;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
-import lombok.EqualsAndHashCode;
+import io.domisum.lib.auxiliumlib.config.ConfigObject;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class Credential
-		implements ConfigObject
+		extends ConfigObject
 {
 	
 	@Getter
@@ -23,11 +21,11 @@ public class Credential
 	// INIT
 	@Override
 	public void validate()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsSet(id, "id");
-		InvalidConfigurationException.validateIsSet(username, "username");
-		InvalidConfigurationException.validateIsSet(password, "password");
+		InvalidConfigException.validateNotBlank(id, "id");
+		InvalidConfigException.validateNotBlank(username, "username");
+		InvalidConfigException.validateNotBlank(password, "password");
 	}
 	
 	

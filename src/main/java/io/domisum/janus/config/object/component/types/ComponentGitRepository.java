@@ -3,7 +3,7 @@ package io.domisum.janus.config.object.component.types;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
@@ -56,15 +56,15 @@ public class ComponentGitRepository
 	
 	@Override
 	public void validateTypeSpecific()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsSet(repositoryUrl, "repositoryUrl");
+		InvalidConfigException.validateIsSet(repositoryUrl, "repositoryUrl");
 		validateRepositoryUrl();
-		InvalidConfigurationException.validateIsSet(branch, "branch");
+		InvalidConfigException.validateIsSet(branch, "branch");
 	}
 	
 	private void validateRepositoryUrl()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		try
 		{
@@ -72,7 +72,7 @@ public class ComponentGitRepository
 		}
 		catch(URISyntaxException e)
 		{
-			throw new InvalidConfigurationException("Invalid repositoryUrl: '"+repositoryUrl+"'", e);
+			throw new InvalidConfigException("Invalid repositoryUrl: '"+repositoryUrl+"'", e);
 		}
 	}
 	

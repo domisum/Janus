@@ -1,7 +1,7 @@
 package io.domisum.janus.config.object.component;
 
-import io.domisum.janus.config.object.ConfigObject;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.ConfigObject;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public abstract class Component
-		implements ConfigObject
+		extends ConfigObject
 {
 	
 	// CONSTANTS
@@ -32,16 +32,16 @@ public abstract class Component
 	// INIT
 	@Override
 	public void validate()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsSet(id, "id can't be null");
+		InvalidConfigException.validateNotBlank(id, "id can't be null");
 		if(credentialId != null)
 			componentDependencyFacade.validateCredentialExists(credentialId);
 		validateTypeSpecific();
 	}
 	
 	protected abstract void validateTypeSpecific()
-			throws InvalidConfigurationException;
+			throws InvalidConfigException;
 	
 	
 	// OBJECT

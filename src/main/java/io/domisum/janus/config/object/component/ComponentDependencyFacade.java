@@ -1,9 +1,9 @@
 package io.domisum.janus.config.object.component;
 
 import com.google.inject.Singleton;
-import io.domisum.janus.config.object.ConfigObjectRegistry;
 import io.domisum.janus.config.object.credentials.Credential;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import lombok.Setter;
 
 @Singleton
@@ -17,9 +17,9 @@ public class ComponentDependencyFacade
 	
 	// CREDENTIAL
 	public void validateCredentialExists(String id)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
+		InvalidConfigException.validateIsTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
 	}
 	
 	public Credential getCredential(String id)

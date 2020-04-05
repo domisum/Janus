@@ -1,8 +1,8 @@
 package io.domisum.janus.config.object.project;
 
-import io.domisum.janus.config.object.ConfigObject;
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.exceptions.InvalidConfigurationException;
+import io.domisum.lib.auxiliumlib.config.ConfigObject;
+import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class Project
-		implements ConfigObject
+		extends ConfigObject
 {
 	
 	// CONSTANTS
@@ -41,24 +41,24 @@ public class Project
 	// INIT
 	@Override
 	public void validate()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
-		InvalidConfigurationException.validateIsSet(id, "id");
+		InvalidConfigException.validateIsSet(id, "id");
 		
 		if(isJanusJar())
-			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
+			InvalidConfigException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"'buildRootDirectory' and 'exportDirectory' can't be set for janus jar project");
 		else if(isJanusConfig())
-			InvalidConfigurationException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
+			InvalidConfigException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
 					"'buildRootDirectory' and 'exportDirectory' can't be set for janus config project");
 		else
-			InvalidConfigurationException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null),
+			InvalidConfigException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null),
 					"Either 'buildRootDirectory' or 'exportDirectory' has to be set");
 		
 		if(buildRootDirectory != null)
 		{
 			validatePath(buildRootDirectory, "buildRootDirectory");
-			InvalidConfigurationException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()),
+			InvalidConfigException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()),
 					"The name of 'buildRootDirectory' has to be the id of the project");
 		}
 		
@@ -66,14 +66,14 @@ public class Project
 			validatePath(exportDirectory, "exportDirectory");
 		
 		if(exportDirectory == null)
-			InvalidConfigurationException.validateIsTrue(keepOtherFilesOnExport == null,
+			InvalidConfigException.validateIsTrue(keepOtherFilesOnExport == null,
 					"'keepOtherFilesOnExport' is only supported for projects which define 'exportDirectory'");
 		
 		validateComponents();
 	}
 	
 	private void validatePath(String path, String pathName)
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		try
 		{
@@ -81,12 +81,12 @@ public class Project
 		}
 		catch(IllegalArgumentException e)
 		{
-			throw new InvalidConfigurationException("Invalid value for "+pathName, e);
+			throw new InvalidConfigException("Invalid value for "+pathName, e);
 		}
 	}
 	
 	private void validateComponents()
-			throws InvalidConfigurationException
+			throws InvalidConfigException
 	{
 		for(int i = 0; i < components.size(); i++)
 		{
@@ -96,9 +96,9 @@ public class Project
 				projectComponent.validate();
 				projectDependencyFacade.validateComponentExists(projectComponent.getComponentId());
 			}
-			catch(InvalidConfigurationException e)
+			catch(InvalidConfigException e)
 			{
-				throw new InvalidConfigurationException("configuration error in projectComponent at index "+i, e);
+				throw new InvalidConfigException("configuration error in projectComponent at index "+i, e);
 			}
 		}
 	}
@@ -174,9 +174,9 @@ public class Project
 		
 		// INIT
 		public void validate()
-				throws InvalidConfigurationException
+				throws InvalidConfigException
 		{
-			InvalidConfigurationException.validateIsSet(componentId, "componentId");
+			InvalidConfigException.validateIsSet(componentId, "componentId");
 		}
 		
 		

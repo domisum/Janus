@@ -1,9 +1,9 @@
 package io.domisum.janus.config;
 
-import io.domisum.janus.config.object.ConfigObjectRegistry;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.credentials.Credential;
 import io.domisum.janus.config.object.project.Project;
+import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
