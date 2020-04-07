@@ -32,7 +32,7 @@ public class ComponentGitRepository
 	
 	// CONSTANTS
 	private static final Duration GIT_CLONE_TIMEOUT = Duration.ofMinutes(5);
-	private static final Duration GIT_PULL_TIMEOUT = Duration.ofMinutes(1);
+	private static final Duration GIT_PULL_TIMEOUT = Duration.ofSeconds(30);
 	
 	// SETTINGS
 	private final String repositoryUrl;

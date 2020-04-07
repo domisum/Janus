@@ -34,7 +34,8 @@ public class ComponentMavenArtifactJar
 	
 	
 	// CONSTANTS
-	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(10);
+	private static final Duration UPDATE_CHECK_REQUEST_TIMEOUT = Duration.ofSeconds(30);
+	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(1);
 	
 	// SETTINGS
 	private final String repositoryUrl;
@@ -176,6 +177,7 @@ public class ComponentMavenArtifactJar
 		authorizeRequest(request);
 		
 		var envoy = new EzHttpRequestEnvoy<>(request, new EzHttpStringBodyReader());
+		envoy.setTimeout(UPDATE_CHECK_REQUEST_TIMEOUT);
 		var ioResponse = envoy.send();
 		String errorMessage = "failed to fetch string from "+url;
 		var response = ioResponse.getOrThrowWrapped(errorMessage);

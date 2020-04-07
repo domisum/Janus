@@ -33,6 +33,9 @@ public class JanusTicker
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	
+	// CONSTANTS
+	private static final Duration TIMEOUT = Duration.ofMinutes(10);
+	
 	// DEPENDENCIES
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	private final ProjectBuilder projectBuilder;
@@ -41,7 +44,7 @@ public class JanusTicker
 	private final ApplicationStopper applicationStopper;
 	
 	// REFERENCES
-	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), Duration.ofMinutes(10), this::tick);
+	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), TIMEOUT, this::tick);
 	
 	// CONFIG
 	@Setter
