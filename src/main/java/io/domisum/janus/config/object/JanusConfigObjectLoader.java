@@ -3,7 +3,7 @@ package io.domisum.janus.config.object;
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import io.domisum.lib.auxiliumlib.config.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 
 import java.io.File;
 
@@ -22,7 +22,7 @@ public abstract class JanusConfigObjectLoader<T extends ConfigObject>
 	// LOADING
 	@Override
 	public ConfigObjectRegistry<T> load(File configDirectory)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		var configSubDir = new File(configDirectory, OBJECT_NAME_PLURAL());
 		return super.load(configSubDir);

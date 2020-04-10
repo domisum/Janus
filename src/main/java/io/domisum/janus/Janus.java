@@ -5,7 +5,7 @@ import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
@@ -74,7 +74,7 @@ public class Janus
 			FileUtil.deleteDirectory(CONFIG_DIRECTORY_BACKUP);
 			return true;
 		}
-		catch(InvalidConfigException e)
+		catch(ConfigException e)
 		{
 			logger.error("Invalid configuration, trying to restore backup", e);
 			if(CONFIG_DIRECTORY_BACKUP.exists())

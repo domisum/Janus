@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import io.domisum.janus.config.object.JanusConfigObjectLoader;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.GsonUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class ComponentLoader
 	// DESERIALIZATION
 	@Override
 	protected Component deserialize(String json)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
@@ -44,18 +44,18 @@ public class ComponentLoader
 	}
 	
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		var typeJsonElement = jsonTree.get("type");
 		if(typeJsonElement == null)
-			throw new InvalidConfigException("no component type set");
+			throw new ConfigException("no component type set");
 		String typeKey = typeJsonElement.getAsString();
 		
 		if(typeKey == null)
-			throw new InvalidConfigException("component config file does not specify type");
+			throw new ConfigException("component config file does not specify type");
 		var componentClass = getBoundComponentClass(typeKey);
 		if(componentClass == null)
-			throw new InvalidConfigException("no component type bound for type '"+typeKey+"'");
+			throw new ConfigException("no component type bound for type '"+typeKey+"'");
 		
 		return componentClass;
 	}

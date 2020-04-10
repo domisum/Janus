@@ -1,7 +1,7 @@
 package io.domisum.janus.config.object.credentials;
 
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,11 +21,11 @@ public class Credential
 	// INIT
 	@Override
 	public void validate()
-			throws InvalidConfigException
+			throws ConfigException
 	{
-		InvalidConfigException.validateNotBlank(id, "id");
-		InvalidConfigException.validateNotBlank(username, "username");
-		InvalidConfigException.validateNotBlank(password, "password");
+		ConfigException.validateNotBlank(id, "id");
+		ConfigException.validateNotBlank(username, "username");
+		ConfigException.validateNotBlank(password, "password");
 	}
 	
 	

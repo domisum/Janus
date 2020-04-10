@@ -6,7 +6,7 @@ import io.domisum.janus.Janus;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ProjectBuilder
 	
 	// BUILD
 	public boolean build(Project project, Configuration configuration)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		logger.info("Building project '{}'...", project.getId());
 		
@@ -60,7 +60,7 @@ public class ProjectBuilder
 	}
 	
 	private boolean buildAndExport(Project project, Configuration configuration)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		var tempBuildDir = FileUtil.createTemporaryDirectory();
 		buildProjectTo(project, tempBuildDir, configuration);
@@ -84,7 +84,7 @@ public class ProjectBuilder
 	}
 	
 	private void exportJanusJar(Project project, File tempBuildDir)
-			throws InvalidConfigException
+			throws ConfigException
 	{
 		if(FileUtil.listFilesFlat(tempBuildDir, FileType.DIRECTORY).size() > 0)
 		{
@@ -128,9 +128,9 @@ public class ProjectBuilder
 	}
 	
 	private void failBuild(Project project, String reason)
-			throws InvalidConfigException
+			throws ConfigException
 	{
-		throw new InvalidConfigException(PHR.r("Build of project '{}' failed, reason: {}", project.getId(), reason));
+		throw new ConfigException(PHR.r("Build of project '{}' failed, reason: {}", project.getId(), reason));
 	}
 	
 	

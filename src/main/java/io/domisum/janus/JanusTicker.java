@@ -7,7 +7,7 @@ import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.project.Project;
-import io.domisum.lib.auxiliumlib.config.InvalidConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
@@ -134,7 +134,7 @@ public class JanusTicker
 					commandsToExecute.add(command);
 				}
 			}
-			catch(InvalidConfigException e)
+			catch(ConfigException e)
 			{
 				logger.error("Build failed, shutting down", e);
 				restartAfterBuilds = true;
