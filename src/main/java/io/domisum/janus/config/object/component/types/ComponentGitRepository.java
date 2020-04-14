@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -88,7 +87,7 @@ public class ComponentGitRepository
 	public boolean update()
 			throws IOException
 	{
-		updateRemoteUrlOncePerApplicationRun();
+		updateRemoteUrlIfNotDoneAlready();
 		
 		if(doesLocalRepoExist())
 			return gitPull();
@@ -100,14 +99,13 @@ public class ComponentGitRepository
 	}
 	
 	private boolean doesLocalRepoExist()
-			throws IOException
 	{
-		boolean componentDirectoryEmpty = Files.list(getDirectory().toPath()).findAny().isEmpty();
+		boolean componentDirectoryEmpty = FileUtil.isDirectoryEmpty(getDirectory());
 		return !componentDirectoryEmpty;
 	}
 	
 	
-	private void updateRemoteUrlOncePerApplicationRun()
+	private void updateRemoteUrlIfNotDoneAlready()
 			throws IOException
 	{
 		if(!doesLocalRepoExist())
