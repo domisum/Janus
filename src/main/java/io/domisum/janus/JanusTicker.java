@@ -11,7 +11,7 @@ import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
-import io.domisum.lib.auxiliumlib.util.java.ExceptionUtil;
+import io.domisum.lib.auxiliumlib.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;

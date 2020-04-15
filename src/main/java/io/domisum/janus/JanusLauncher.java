@@ -1,7 +1,7 @@
 package io.domisum.janus;
 
 import io.domisum.janus.dependencyinjection.JanusInjector;
-import io.domisum.lib.auxiliumlib.util.java.thread.ThreadUtil;
+import io.domisum.lib.auxiliumlib.util.thread.ThreadUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
