@@ -1,6 +1,7 @@
 package io.domisum.janus;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.component.Component;
@@ -20,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+@Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class Janus
 		implements ApplicationStopper
