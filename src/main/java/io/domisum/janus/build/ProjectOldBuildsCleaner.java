@@ -2,7 +2,7 @@ package io.domisum.janus.build;
 
 import com.google.inject.Inject;
 import io.domisum.janus.config.object.project.Project;
-import io.domisum.lib.auxiliumlib.util.DurationUtil;
+import io.domisum.lib.auxiliumlib.util.TimeUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public class ProjectOldBuildsCleaner
 			if(Objects.equals(buildName, latestBuild))
 				continue;
 			
-			if(DurationUtil.isOlderThan(buildTime, MAX_BUILD_AGE))
+			if(TimeUtil.isOlderThan(buildTime, MAX_BUILD_AGE))
 			{
 				logger.info("Deleting build '{}' of project '{}': Older than max build age", buildName, project.getId());
 				FileUtil.deleteDirectory(buildDirectory);
