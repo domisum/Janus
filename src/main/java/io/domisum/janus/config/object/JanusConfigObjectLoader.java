@@ -1,9 +1,9 @@
 package io.domisum.janus.config.object;
 
+import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import io.domisum.lib.auxiliumlib.config.ConfigObjectLoader;
 import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
-import io.domisum.lib.auxiliumlib.config.ConfigException;
 
 import java.io.File;
 

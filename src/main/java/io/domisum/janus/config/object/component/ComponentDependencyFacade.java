@@ -2,8 +2,8 @@ package io.domisum.janus.config.object.component;
 
 import com.google.inject.Singleton;
 import io.domisum.janus.config.object.credentials.Credential;
-import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
 import lombok.Setter;
 
 @Singleton

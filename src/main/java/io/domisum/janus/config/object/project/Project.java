@@ -1,8 +1,8 @@
 package io.domisum.janus.config.object.project;
 
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

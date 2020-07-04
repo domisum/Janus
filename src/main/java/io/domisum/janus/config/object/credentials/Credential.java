@@ -1,7 +1,7 @@
 package io.domisum.janus.config.object.credentials;
 
-import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
+import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
