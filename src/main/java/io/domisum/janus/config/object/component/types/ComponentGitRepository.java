@@ -4,7 +4,7 @@ import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
-import io.domisum.lib.auxiliumlib.exceptions.ShouldNeverHappenError;
+import io.domisum.lib.auxiliumlib.exceptions.ProgrammingError;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.filter.FilterOutBaseDirectory;
 import org.eclipse.jgit.api.Git;
@@ -146,7 +146,7 @@ public class ComponentGitRepository
 		}
 		catch(URISyntaxException e)
 		{
-			throw new ShouldNeverHappenError("This should have been detected during validation", e);
+			throw new ProgrammingError("This should have been detected during validation", e);
 		}
 	}
 	
