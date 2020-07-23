@@ -137,8 +137,8 @@ public class Janus
 	@Override
 	public void stop()
 	{
-		ThreadUtil.scheduleEmergencyExit(EMERGENCY_EXIT_DELAY);
 		logger.info("Initiating shutdown sequence...");
+		ThreadUtil.scheduleEmergencyExit(EMERGENCY_EXIT_DELAY);
 		
 		janusTicker.stop();
 		
