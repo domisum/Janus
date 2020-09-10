@@ -9,7 +9,7 @@ import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
-import io.domisum.lib.auxiliumlib.ticker.Ticker;
+import io.domisum.lib.auxiliumlib.thread.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.ExceptionUtil;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.RequiredArgsConstructor;
