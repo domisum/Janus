@@ -27,7 +27,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class ComponentMavenArtifactJar
-		extends Component
+	extends Component
 {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComponentMavenArtifactJar.class);
@@ -46,8 +46,8 @@ public class ComponentMavenArtifactJar
 	
 	// INIT
 	public ComponentMavenArtifactJar(
-			String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
-			String repositoryUrl, String groupId, String artifactId, String version)
+		String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
+		String repositoryUrl, String groupId, String artifactId, String version)
 	{
 		super(id, credentialId, componentDependencyFacade);
 		this.repositoryUrl = repositoryUrl;
@@ -58,7 +58,7 @@ public class ComponentMavenArtifactJar
 	
 	@Override
 	public void validateTypeSpecific()
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateIsSet(repositoryUrl, "repositoryUrl");
 		ConfigException.validateIsSet(groupId, "groupId");
@@ -78,7 +78,7 @@ public class ComponentMavenArtifactJar
 	// UPDATE
 	@Override
 	public boolean update()
-			throws IOException
+		throws IOException
 	{
 		if(version.toUpperCase().endsWith("SNAPSHOT"))
 			return updateSnapshot();
@@ -87,7 +87,7 @@ public class ComponentMavenArtifactJar
 	}
 	
 	private boolean updateSnapshot()
-			throws IOException
+		throws IOException
 	{
 		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
 		String artifactVersionDirPathExtension = PHR.r("{}/{}/{}", getGroupIdUrlExtension(), artifactId, version);
@@ -102,7 +102,7 @@ public class ComponentMavenArtifactJar
 	}
 	
 	private boolean updateRelease()
-			throws IOException
+		throws IOException
 	{
 		var repositoryUrl = EzUrl.parseUnescaped(this.repositoryUrl);
 		String jarPathExtension = PHR.r("{}/{}/{}/{}-{}.jar", getGroupIdUrlExtension(), artifactId, version, artifactId, version);
@@ -115,7 +115,7 @@ public class ComponentMavenArtifactJar
 	}
 	
 	private boolean downloadJarIfIdentifierChanged(EzUrl jarUrl, String newJarIdentifier)
-			throws IOException
+		throws IOException
 	{
 		String previousJarIdentifier = readJarIdentifier();
 		boolean newJar = !Objects.equals(previousJarIdentifier, newJarIdentifier);
@@ -135,7 +135,7 @@ public class ComponentMavenArtifactJar
 	
 	// parsing
 	private String parseLatestSnapshotBuild(String mavenMetadata)
-			throws IOException
+		throws IOException
 	{
 		var document = parseXmlDocument(mavenMetadata, "mavenMetadata");
 		var snapshotVersions = document.getElementsByTagName("snapshotVersion");
@@ -151,7 +151,7 @@ public class ComponentMavenArtifactJar
 	}
 	
 	private Document parseXmlDocument(String xmlString, String documentName)
-			throws IOException
+		throws IOException
 	{
 		try
 		{
@@ -171,7 +171,7 @@ public class ComponentMavenArtifactJar
 	
 	// fetch
 	private String fetchString(EzUrl url)
-			throws IOException
+		throws IOException
 	{
 		var request = EzHttpRequest.get(url);
 		authorizeRequest(request);
@@ -187,7 +187,7 @@ public class ComponentMavenArtifactJar
 	}
 	
 	private File fetchFile(EzUrl url)
-			throws IOException
+		throws IOException
 	{
 		var request = EzHttpRequest.get(url);
 		authorizeRequest(request);
@@ -209,6 +209,19 @@ public class ComponentMavenArtifactJar
 			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
 			request.addHeader(authHeader);
 		}
+	}
+	
+	
+	// FINGERPRINT
+	@Override
+	public String getFingerprint()
+	{
+		String jarIdentifier = readJarIdentifier();
+		
+		if(jarIdentifier == null)
+			throw new IllegalStateException("Can't get fingerprint if jarIdentifier hasn't been set");
+		else
+			return jarIdentifier;
 	}
 	
 	
@@ -241,9 +254,10 @@ public class ComponentMavenArtifactJar
 	{
 		File file = getJarIdentifierFile();
 		
-		if(!file.exists())
+		if(file.exists())
+			return FileUtil.readString(file);
+		else
 			return null;
-		return FileUtil.readString(file);
 	}
 	
 	

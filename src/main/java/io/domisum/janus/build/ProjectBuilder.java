@@ -3,10 +3,12 @@ package io.domisum.janus.build;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import io.domisum.janus.Janus;
+import io.domisum.janus.api.JanusApiUsingFiles;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
+import io.domisum.lib.auxiliumlib.util.StringUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectBuilder
@@ -28,12 +32,12 @@ public class ProjectBuilder
 	
 	// CONSTANTS
 	private static final DateTimeFormatter BUILD_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS")
-			.withZone(ZoneId.systemDefault());
+		.withZone(ZoneId.systemDefault());
 	
 	
 	// BUILD
 	public boolean build(Project project, Configuration configuration)
-			throws ConfigException
+		throws ConfigException
 	{
 		logger.info("Building project '{}'...", project.getId());
 		
@@ -60,7 +64,7 @@ public class ProjectBuilder
 	}
 	
 	private boolean buildAndExport(Project project, Configuration configuration)
-			throws ConfigException
+		throws ConfigException
 	{
 		var tempBuildDir = FileUtil.createTemporaryDirectory();
 		buildProjectTo(project, tempBuildDir, configuration);
@@ -84,7 +88,7 @@ public class ProjectBuilder
 	}
 	
 	private void exportJanusJar(Project project, File tempBuildDir)
-			throws ConfigException
+		throws ConfigException
 	{
 		if(FileUtil.listFilesFlat(tempBuildDir, FileType.DIRECTORY).size() > 0)
 		{
@@ -128,7 +132,7 @@ public class ProjectBuilder
 	}
 	
 	private void failBuild(Project project, String reason)
-			throws ConfigException
+		throws ConfigException
 	{
 		throw new ConfigException(PHR.r("Build of project '{}' failed, reason: {}", project.getId(), reason));
 	}
@@ -138,6 +142,7 @@ public class ProjectBuilder
 	{
 		var componentRegistry = configuration.getComponentRegistry();
 		
+		var buildFingerprintParts = new ArrayList<String>();
 		for(var projectComponent : project.getComponents())
 		{
 			var directoryInBuild = projectComponent.getDirectoryInBuild(buildDirectory);
@@ -145,7 +150,16 @@ public class ProjectBuilder
 			
 			var component = componentRegistry.get(projectComponent.getComponentId());
 			component.addToBuild(directoryInBuild);
+			
+			String buildFingerprintPart = component.getId()+":"+component.getFingerprint();
+			buildFingerprintParts.add(buildFingerprintPart);
 		}
+		
+		Collections.sort(buildFingerprintParts);
+		String buildFingerprint = StringUtil.listToString(buildFingerprintParts, "|");
+		
+		var buildFingerprintFile = new File(buildDirectory, JanusApiUsingFiles.BUILD_FINGERPRINT_FILE_NAME);
+		FileUtil.writeString(buildFingerprintFile, buildFingerprint);
 	}
 	
 	

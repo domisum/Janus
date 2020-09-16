@@ -1,5 +1,6 @@
 package io.domisum.janus.config.object.project;
 
+import io.domisum.janus.api.JanusApiUsingFiles;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
@@ -13,11 +14,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class Project
-		extends ConfigObject
+	extends ConfigObject
 {
 	
 	// CONSTANTS
-	public static final String LATEST_BUILD_FILE_NAME = "latestBuild.txt";
+	public static final String LATEST_BUILD_FILE_NAME = JanusApiUsingFiles.LATEST_BUILD_FILE_NAME;
 	public static final String RUNNINTG_BUILD_FILE_NAME = "runningBuild.txt";
 	
 	// ATTRIBUTES
@@ -41,25 +42,25 @@ public class Project
 	// INIT
 	@Override
 	public void validate()
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateIsSet(id, "id");
 		
 		if(isJanusJar())
 			ConfigException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
-					"'buildRootDirectory' and 'exportDirectory' can't be set for janus jar project");
+				"'buildRootDirectory' and 'exportDirectory' can't be set for janus jar project");
 		else if(isJanusConfig())
 			ConfigException.validateIsTrue(buildRootDirectory == null && exportDirectory == null,
-					"'buildRootDirectory' and 'exportDirectory' can't be set for janus config project");
+				"'buildRootDirectory' and 'exportDirectory' can't be set for janus config project");
 		else
 			ConfigException.validateIsTrue(!(buildRootDirectory == null && exportDirectory == null),
-					"Either 'buildRootDirectory' or 'exportDirectory' has to be set");
+				"Either 'buildRootDirectory' or 'exportDirectory' has to be set");
 		
 		if(buildRootDirectory != null)
 		{
 			validatePath(buildRootDirectory, "buildRootDirectory");
 			ConfigException.validateIsTrue(id.equalsIgnoreCase(getBuildRootDirectory().getName()),
-					"The name of 'buildRootDirectory' has to be the id of the project");
+				"The name of 'buildRootDirectory' has to be the id of the project");
 		}
 		
 		if(exportDirectory != null)
@@ -67,13 +68,13 @@ public class Project
 		
 		if(exportDirectory == null)
 			ConfigException.validateIsTrue(keepOtherFilesOnExport == null,
-					"'keepOtherFilesOnExport' is only supported for projects which define 'exportDirectory'");
+				"'keepOtherFilesOnExport' is only supported for projects which define 'exportDirectory'");
 		
 		validateComponents();
 	}
 	
 	private void validatePath(String path, String pathName)
-			throws ConfigException
+		throws ConfigException
 	{
 		try
 		{
@@ -86,7 +87,7 @@ public class Project
 	}
 	
 	private void validateComponents()
-			throws ConfigException
+		throws ConfigException
 	{
 		for(int i = 0; i < components.size(); i++)
 		{
@@ -174,7 +175,7 @@ public class Project
 		
 		// INIT
 		public void validate()
-				throws ConfigException
+			throws ConfigException
 		{
 			ConfigException.validateIsSet(componentId, "componentId");
 		}

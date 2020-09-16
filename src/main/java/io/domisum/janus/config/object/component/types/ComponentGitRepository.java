@@ -18,12 +18,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Objects;
 
 public class ComponentGitRepository
-		extends Component
+	extends Component
 {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComponentGitRepository.class);
@@ -43,8 +44,8 @@ public class ComponentGitRepository
 	
 	// INIT
 	public ComponentGitRepository(
-			String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
-			String repositoryUrl, String branch)
+		String id, String credentialId, ComponentDependencyFacade componentDependencyFacade,
+		String repositoryUrl, String branch)
 	{
 		super(id, credentialId, componentDependencyFacade);
 		this.repositoryUrl = repositoryUrl;
@@ -53,7 +54,7 @@ public class ComponentGitRepository
 	
 	@Override
 	public void validateTypeSpecific()
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateIsSet(repositoryUrl, "repositoryUrl");
 		validateRepositoryUrl();
@@ -61,7 +62,7 @@ public class ComponentGitRepository
 	}
 	
 	private void validateRepositoryUrl()
-			throws ConfigException
+		throws ConfigException
 	{
 		try
 		{
@@ -85,7 +86,7 @@ public class ComponentGitRepository
 	// UPDATE
 	@Override
 	public boolean update()
-			throws IOException
+		throws IOException
 	{
 		updateRemoteUrlIfNotDoneAlready();
 		
@@ -106,7 +107,7 @@ public class ComponentGitRepository
 	
 	
 	private void updateRemoteUrlIfNotDoneAlready()
-			throws IOException
+		throws IOException
 	{
 		if(!doesLocalRepoExist())
 			return;
@@ -119,7 +120,7 @@ public class ComponentGitRepository
 	}
 	
 	private void updateRemoteUrl()
-			throws IOException
+		throws IOException
 	{
 		try(var git = Git.open(getDirectory()))
 		{
@@ -153,7 +154,7 @@ public class ComponentGitRepository
 	
 	// GIT
 	private void gitClone()
-			throws IOException
+		throws IOException
 	{
 		LOGGER.info("Cloning {}...", this);
 		
@@ -180,7 +181,7 @@ public class ComponentGitRepository
 	}
 	
 	private boolean gitPull()
-			throws IOException
+		throws IOException
 	{
 		try(var git = Git.open(getDirectory()))
 		{
@@ -205,14 +206,14 @@ public class ComponentGitRepository
 	}
 	
 	private String readLatestCommitHash(Git git)
-			throws IOException
+		throws IOException
 	{
 		var branchRef = findBranchRef(git);
 		return branchRef.getObjectId().getName();
 	}
 	
 	private String getLatestCommitDisplay(Git git)
-			throws IOException
+		throws IOException
 	{
 		var branchRef = findBranchRef(git);
 		var latestCommit = git.getRepository().parseCommit(branchRef.getObjectId());
@@ -221,7 +222,7 @@ public class ComponentGitRepository
 	}
 	
 	private Ref findBranchRef(Git git)
-			throws IOException
+		throws IOException
 	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
@@ -229,13 +230,29 @@ public class ComponentGitRepository
 		return branchRef;
 	}
 	
-	private void authorizeCommand(TransportCommand<?,?> transportCommand)
+	private void authorizeCommand(TransportCommand<?, ?> transportCommand)
 	{
 		if(getCredentialId() != null)
 		{
 			var credential = getComponentDependencyFacade().getCredential(getCredentialId());
 			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
+		}
+	}
+	
+	
+	// FINGERPRINT
+	@Override
+	public String getFingerprint()
+	{
+		try(var git = Git.open(getDirectory()))
+		{
+			String latestCommitHash = readLatestCommitHash(git);
+			return latestCommitHash;
+		}
+		catch(IOException e)
+		{
+			throw new UncheckedIOException(e);
 		}
 	}
 	

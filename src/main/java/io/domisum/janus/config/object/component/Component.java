@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public abstract class Component
-		extends ConfigObject
+	extends ConfigObject
 {
 	
 	// CONSTANTS
@@ -32,7 +32,7 @@ public abstract class Component
 	// INIT
 	@Override
 	public void validate()
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateNotBlank(id, "id can't be null");
 		if(credentialId != null)
@@ -41,7 +41,7 @@ public abstract class Component
 	}
 	
 	protected abstract void validateTypeSpecific()
-			throws ConfigException;
+		throws ConfigException;
 	
 	
 	// OBJECT
@@ -56,7 +56,9 @@ public abstract class Component
 	
 	// COMPONENT
 	public abstract boolean update()
-			throws IOException;
+		throws IOException;
+	
+	public abstract String getFingerprint();
 	
 	public abstract void addToBuild(File directoryInBuild);
 	
