@@ -7,10 +7,11 @@ import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
+import io.domisum.lib.auxiliumlib.input.StopOnCliEnterPress;
+import io.domisum.lib.auxiliumlib.thread.ThreadWatchdog;
+import io.domisum.lib.auxiliumlib.util.ThreadUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
-import io.domisum.lib.auxiliumlib.util.ThreadUtil;
-import io.domisum.lib.auxiliumlib.thread.ThreadWatchdog;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class Janus
-		implements ApplicationStopper
+	implements ApplicationStopper
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -62,6 +63,7 @@ public class Janus
 		janusTicker.start();
 		
 		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
+		StopOnCliEnterPress.stopOnPress(this);
 		logger.info("...Startup complete\n");
 	}
 	
@@ -105,9 +107,9 @@ public class Janus
 	{
 		var components = configuration.getComponentRegistry().getAll();
 		var currentComponentDirNames = components.stream()
-				.map(Component::getDirectory)
-				.map(File::getName)
-				.collect(Collectors.toSet());
+			.map(Component::getDirectory)
+			.map(File::getName)
+			.collect(Collectors.toSet());
 		
 		var componentDirs = FileUtil.listFilesFlat(Component.COMPONENTS_DIRECTORY, FileType.DIRECTORY);
 		for(var componentDir : componentDirs)
@@ -127,9 +129,9 @@ public class Janus
 		
 		int numberOfCombinedLogFilesToKeep = KEEP_LOG_FILES_NUMBER*fileExtensions.size();
 		logFiles.stream()
-				.sorted(Comparator.comparingLong(File::lastModified))
-				.limit(logFiles.size()-numberOfCombinedLogFilesToKeep)
-				.forEach(FileUtil::deleteFile);
+			.sorted(Comparator.comparingLong(File::lastModified))
+			.limit(logFiles.size()-numberOfCombinedLogFilesToKeep)
+			.forEach(FileUtil::deleteFile);
 	}
 	
 	
