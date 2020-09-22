@@ -155,11 +155,14 @@ public class ProjectBuilder
 			buildFingerprintParts.add(buildFingerprintPart);
 		}
 		
-		Collections.sort(buildFingerprintParts);
-		String buildFingerprint = StringUtil.listToString(buildFingerprintParts, "|");
-		
-		var buildFingerprintFile = new File(buildDirectory, JanusApiUsingFiles.BUILD_FINGERPRINT_FILE_NAME);
-		FileUtil.writeString(buildFingerprintFile, buildFingerprint);
+		if(!project.isJanusConfig() && !project.isJanusJar())
+		{
+			Collections.sort(buildFingerprintParts);
+			String buildFingerprint = StringUtil.listToString(buildFingerprintParts, "|");
+			
+			var buildFingerprintFile = new File(buildDirectory, JanusApiUsingFiles.BUILD_FINGERPRINT_FILE_NAME);
+			FileUtil.writeString(buildFingerprintFile, buildFingerprint);
+		}
 	}
 	
 	
