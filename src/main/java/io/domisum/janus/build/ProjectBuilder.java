@@ -92,26 +92,26 @@ public class ProjectBuilder
 	{
 		if(FileUtil.listFilesFlat(tempBuildDir, FileType.DIRECTORY).size() > 0)
 		{
-			failBuild(project, "build shouldn't contain any directories");
+			failBuild(project, "Build shouldn't contain any directories");
 			return;
 		}
 		
 		var buildFiles = FileUtil.listFilesFlat(tempBuildDir, FileType.FILE);
 		if(buildFiles.isEmpty())
 		{
-			failBuild(project, "build didn't contain a file");
+			failBuild(project, "Build didn't contain a file");
 			return;
 		}
 		if(buildFiles.size() > 1)
 		{
-			failBuild(project, "build should not contain more than one file");
+			failBuild(project, "Build should not contain more than one file");
 			return;
 		}
 		
 		var buildJarFile = Iterables.getOnlyElement(buildFiles);
 		if(!"jar".equals(FileUtil.getExtension(buildJarFile)))
 		{
-			failBuild(project, "file in build is not a jar file");
+			failBuild(project, "File in build is not a jar file");
 			return;
 		}
 		
