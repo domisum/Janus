@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CredentialLoader
-		extends JanusConfigObjectLoader<Credential>
+	extends JanusConfigObjectLoader<Credential>
 {
 	
 	// CONSTANT METHODS
@@ -26,7 +26,7 @@ public class CredentialLoader
 	}
 	
 	@Override
-	protected Map<Class<?>,Object> getDependenciesToInject()
+	protected Map<Class<?>, Object> getDependenciesToInject()
 	{
 		return new HashMap<>();
 	}

@@ -166,7 +166,7 @@ public class JanusTicker
 			if(changedProjectComponentIds.size() > 0)
 			{
 				logger.info("Scheduling build of project '{}'. Changed project components: [{}]",
-						project.getId(), StringUtil.listToString(changedProjectComponentIds, ", "));
+					project.getId(), StringUtil.listToString(changedProjectComponentIds, ", "));
 				projectsToBuild.add(project);
 			}
 		}

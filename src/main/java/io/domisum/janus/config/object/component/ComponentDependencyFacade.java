@@ -17,7 +17,7 @@ public class ComponentDependencyFacade
 	
 	// CREDENTIAL
 	public void validateCredentialExists(String id)
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateIsTrue(getCredentialRegistry().contains(id), "there is no credential with id "+id);
 	}

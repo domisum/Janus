@@ -8,7 +8,7 @@ import io.domisum.lib.auxiliumlib.config.ConfigObjectRegistry;
 import java.io.File;
 
 public abstract class JanusConfigObjectLoader<T extends ConfigObject>
-		extends ConfigObjectLoader<T>
+	extends ConfigObjectLoader<T>
 {
 	
 	// CONSTANT METHODS
@@ -22,7 +22,7 @@ public abstract class JanusConfigObjectLoader<T extends ConfigObject>
 	// LOADING
 	@Override
 	public ConfigObjectRegistry<T> load(File configDirectory)
-			throws ConfigException
+		throws ConfigException
 	{
 		var configSubDir = new File(configDirectory, OBJECT_NAME_PLURAL());
 		return super.load(configSubDir);

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Credential
-		extends ConfigObject
+	extends ConfigObject
 {
 	
 	@Getter
@@ -21,7 +21,7 @@ public class Credential
 	// INIT
 	@Override
 	public void validate()
-			throws ConfigException
+		throws ConfigException
 	{
 		ConfigException.validateNotBlank(id, "id");
 		ConfigException.validateNotBlank(username, "username");

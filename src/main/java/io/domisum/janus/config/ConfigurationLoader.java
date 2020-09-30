@@ -32,7 +32,7 @@ public class ConfigurationLoader
 	
 	// LOAD
 	public Configuration load(File configDirectory)
-			throws ConfigException
+		throws ConfigException
 	{
 		logger.info("Loading configuration from directory '{}'...", configDirectory);
 		

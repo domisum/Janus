@@ -15,7 +15,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ComponentLoader
-		extends JanusConfigObjectLoader<Component>
+	extends JanusConfigObjectLoader<Component>
 {
 	
 	// DEPENDENCIES
@@ -34,7 +34,7 @@ public class ComponentLoader
 	// DESERIALIZATION
 	@Override
 	protected Component deserialize(String json)
-			throws ConfigException
+		throws ConfigException
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
@@ -44,7 +44,7 @@ public class ComponentLoader
 	}
 	
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
-			throws ConfigException
+		throws ConfigException
 	{
 		var typeJsonElement = jsonTree.get("type");
 		if(typeJsonElement == null)
@@ -72,7 +72,7 @@ public class ComponentLoader
 	
 	// DEPENDENCIES
 	@Override
-	protected Map<Class<?>,Object> getDependenciesToInject()
+	protected Map<Class<?>, Object> getDependenciesToInject()
 	{
 		return Map.of(ComponentDependencyFacade.class, componentDependencyFacade);
 	}

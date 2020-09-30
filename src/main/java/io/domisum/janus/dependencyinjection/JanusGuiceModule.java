@@ -9,15 +9,15 @@ import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.guiceutils.GuiceMultibinder;
 
 public class JanusGuiceModule
-		extends AbstractModule
+	extends AbstractModule
 {
 	
 	@Override
 	protected void configure()
 	{
 		GuiceMultibinder.multibindInstances(binder(), Binding.class,
-				new Binding("gitRepository", ComponentGitRepository.class),
-				new Binding("mavenArtifactJar", ComponentMavenArtifactJar.class)
+			new Binding("gitRepository", ComponentGitRepository.class),
+			new Binding("mavenArtifactJar", ComponentMavenArtifactJar.class)
 		);
 		
 		bind(ApplicationStopper.class).to(Janus.class);

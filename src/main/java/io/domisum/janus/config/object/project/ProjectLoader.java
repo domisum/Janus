@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectLoader
-		extends JanusConfigObjectLoader<Project>
+	extends JanusConfigObjectLoader<Project>
 {
 	
 	// DEPENDENCIES
@@ -32,7 +32,7 @@ public class ProjectLoader
 	}
 	
 	@Override
-	protected Map<Class<?>,Object> getDependenciesToInject()
+	protected Map<Class<?>, Object> getDependenciesToInject()
 	{
 		return Map.of(ProjectDependencyFacade.class, projectDependencyFacade);
 	}

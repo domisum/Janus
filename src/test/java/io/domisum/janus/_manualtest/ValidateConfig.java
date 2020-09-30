@@ -13,7 +13,7 @@ public final class ValidateConfig
 {
 	
 	public static void main(String[] args)
-			throws ConfigException
+		throws ConfigException
 	{
 		var configDir = new File("C:\\Users\\domisum\\testChamber\\domisumReplay\\repos\\___dR-JanusConfig-VideoCreator");
 		
