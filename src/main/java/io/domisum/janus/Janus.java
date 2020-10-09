@@ -20,6 +20,7 @@ import java.io.File;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -123,19 +124,17 @@ public class Janus
 	private void deleteOldLogFiles()
 	{
 		var logFiles = FileUtil.listFilesRecursively(LOG_DIRECTORY, FileType.FILE);
-		if(logFiles.size() < KEEP_LOG_FILES_NUMBER)
-			return;
 		
 		var fileExtensions = new HashSet<String>();
 		for(var logFile : logFiles)
 			fileExtensions.add(FileUtil.getCompositeExtension(logFile));
-		int numberOfLogFileTypes = fileExtensions.size();
 		
-		int numberOfMultiTypeLogFilesToKeep = KEEP_LOG_FILES_NUMBER*numberOfLogFileTypes;
-		logFiles.stream()
-			.sorted(Comparator.comparingLong(File::lastModified))
-			.limit(logFiles.size()-numberOfMultiTypeLogFilesToKeep)
-			.forEach(FileUtil::deleteFile);
+		for(String fileExtension : fileExtensions)
+			logFiles.stream()
+				.filter(f->Objects.equals(fileExtension, FileUtil.getCompositeExtension(f)))
+				.sorted(Comparator.comparingLong(File::lastModified).reversed())
+				.skip(KEEP_LOG_FILES_NUMBER)
+				.forEach(FileUtil::deleteFile);
 	}
 	
 	
