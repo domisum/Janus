@@ -11,12 +11,14 @@ import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.thread.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.ExceptionUtil;
+import io.domisum.lib.auxiliumlib.util.LoggerUtil;
 import io.domisum.lib.auxiliumlib.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -105,8 +107,8 @@ public class JanusTicker
 		}
 		catch(IOException e)
 		{
-			if(!shouldUpdateExceptionBeIgnored(e))
-				logger.warn("Failed to update component '{}'", component.getId(), e);
+			var level = shouldUpdateExceptionBeDowngraded(e) ? Level.INFO : Level.WARN;
+			LoggerUtil.log(logger, level, "Failed to update component '{}'", component.getId(), e);
 			
 			return false;
 		}
@@ -176,7 +178,7 @@ public class JanusTicker
 	
 	
 	// UTIL
-	private boolean shouldUpdateExceptionBeIgnored(Exception updateException)
+	private boolean shouldUpdateExceptionBeDowngraded(Exception updateException)
 	{
 		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(updateException).toLowerCase();
 		
