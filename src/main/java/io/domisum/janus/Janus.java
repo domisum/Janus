@@ -123,14 +123,18 @@ public class Janus
 	private void deleteOldLogFiles()
 	{
 		var logFiles = FileUtil.listFilesRecursively(LOG_DIRECTORY, FileType.FILE);
+		if(logFiles.size() < KEEP_LOG_FILES_NUMBER)
+			return;
+		
 		var fileExtensions = new HashSet<String>();
 		for(var logFile : logFiles)
 			fileExtensions.add(FileUtil.getCompositeExtension(logFile));
+		int numberOfLogFileTypes = fileExtensions.size();
 		
-		int numberOfCombinedLogFilesToKeep = KEEP_LOG_FILES_NUMBER*fileExtensions.size();
+		int numberOfMultiTypeLogFilesToKeep = KEEP_LOG_FILES_NUMBER*numberOfLogFileTypes;
 		logFiles.stream()
 			.sorted(Comparator.comparingLong(File::lastModified))
-			.limit(logFiles.size()-numberOfCombinedLogFilesToKeep)
+			.limit(logFiles.size()-numberOfMultiTypeLogFilesToKeep)
 			.forEach(FileUtil::deleteFile);
 	}
 	
