@@ -4,7 +4,7 @@ import io.domisum.janus.api.JanusApiUsingFiles;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
-import io.domisum.lib.auxiliumlib.util.StringUtil;
+import io.domisum.lib.auxiliumlib.util.StringListUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -112,7 +112,7 @@ public class Project
 		var componentIds = new ArrayList<>();
 		for(var component : components)
 			componentIds.add(component.getComponentId());
-		String componentDisplay = StringUtil.listToString(componentIds, ", ");
+		String componentDisplay = StringListUtil.listHorizontally(componentIds);
 		
 		return PHR.r("Project({}: components=({}))", id, componentDisplay);
 	}

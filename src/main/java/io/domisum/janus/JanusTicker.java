@@ -12,7 +12,7 @@ import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.thread.ticker.Ticker;
 import io.domisum.lib.auxiliumlib.util.ExceptionUtil;
 import io.domisum.lib.auxiliumlib.util.LoggerUtil;
-import io.domisum.lib.auxiliumlib.util.StringUtil;
+import io.domisum.lib.auxiliumlib.util.StringListUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +72,7 @@ public class JanusTicker
 		
 		var updatedComponentIds = updateComponents();
 		if(updatedComponentIds.size() > 0)
-			logger.info("Detected update in components: [{}]", StringUtil.collectionToString(updatedComponentIds, ", "));
+			logger.info("Detected update in components: [{}]", StringListUtil.listHorizontally(updatedComponentIds));
 		
 		runBuilds(updatedComponentIds);
 	}
@@ -168,7 +168,7 @@ public class JanusTicker
 			if(changedProjectComponentIds.size() > 0)
 			{
 				logger.info("Scheduling build of project '{}'. Changed project components: [{}]",
-					project.getId(), StringUtil.listToString(changedProjectComponentIds, ", "));
+					project.getId(), StringListUtil.listHorizontally(changedProjectComponentIds));
 				projectsToBuild.add(project);
 			}
 		}

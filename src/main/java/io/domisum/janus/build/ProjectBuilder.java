@@ -8,7 +8,7 @@ import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
-import io.domisum.lib.auxiliumlib.util.StringUtil;
+import io.domisum.lib.auxiliumlib.util.StringListUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
 import lombok.RequiredArgsConstructor;
@@ -158,7 +158,7 @@ public class ProjectBuilder
 		if(!project.isJanusConfig() && !project.isJanusJar())
 		{
 			Collections.sort(buildFingerprintParts);
-			String buildFingerprint = StringUtil.listToString(buildFingerprintParts, "|");
+			String buildFingerprint = StringListUtil.listHorizontally(buildFingerprintParts, "|");
 			
 			var buildFingerprintFile = new File(buildDirectory, JanusApiUsingFiles.BUILD_FINGERPRINT_FILE_NAME);
 			FileUtil.writeString(buildFingerprintFile, buildFingerprint);
