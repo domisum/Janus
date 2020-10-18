@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -31,8 +30,7 @@ public class ProjectBuilder
 	
 	
 	// CONSTANTS
-	private static final DateTimeFormatter BUILD_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS")
-		.withZone(ZoneId.systemDefault());
+	private static final DateTimeFormatter BUILD_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
 	
 	
 	// BUILD
