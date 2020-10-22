@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class CommandExecutor
+public class RuntimeCommandExecutor
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());

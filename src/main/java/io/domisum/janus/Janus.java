@@ -33,6 +33,7 @@ public class Janus
 	
 	
 	// CONSTANTS
+	public static final File FULL_REBUILD_INDICATOR = new File("fullRebuild");
 	public static final File CONFIG_DIRECTORY = new File("config");
 	public static final File CONFIG_DIRECTORY_BACKUP = new File("config_backup");
 	private static final File CONFIG_DIRECTORY_INVALID = new File("config_invalid");

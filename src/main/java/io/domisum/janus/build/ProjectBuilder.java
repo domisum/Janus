@@ -78,6 +78,7 @@ public class ProjectBuilder
 		{
 			FileUtil.moveDirectory(Janus.CONFIG_DIRECTORY, Janus.CONFIG_DIRECTORY_BACKUP);
 			exportBuild(tempBuildDir, Janus.CONFIG_DIRECTORY, false);
+			FileUtil.writeString(Janus.FULL_REBUILD_INDICATOR, "");
 			return true;
 		}
 		else

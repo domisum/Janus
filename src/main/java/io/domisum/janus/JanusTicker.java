@@ -23,6 +23,7 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -42,7 +43,7 @@ public class JanusTicker
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
 	private final ProjectBuilder projectBuilder;
 	
-	private final CommandExecutor commandExecutor;
+	private final RuntimeCommandExecutor runtimeCommandExecutor;
 	private final ApplicationStopper applicationStopper;
 	
 	// REFERENCES
@@ -74,7 +75,18 @@ public class JanusTicker
 		if(updatedComponentIds.size() > 0)
 			logger.info("Detected update in components: [{}]", StringListUtil.listHorizontally(updatedComponentIds));
 		
-		runBuilds(updatedComponentIds);
+		if(Janus.FULL_REBUILD_INDICATOR.exists())
+		{
+			Janus.FULL_REBUILD_INDICATOR.delete();
+			
+			var projects = configuration.getProjectRegistry().getAll();
+			projects.removeIf(Project::isJanusConfig);
+			projects.removeIf(Project::isJanusJar);
+			runBuilds(projects);
+			return;
+		}
+		
+		runBuildsOfComponents(updatedComponentIds);
 	}
 	
 	private void cleanOldBuilds()
@@ -116,12 +128,16 @@ public class JanusTicker
 	
 	
 	// BUILD
-	private void runBuilds(Set<String> changedComponentIds)
+	private void runBuildsOfComponents(Set<String> changedComponentIds)
+	{
+		var projectsToBuild = getProjectsToBuild(changedComponentIds);
+		runBuilds(projectsToBuild);
+	}
+	
+	private void runBuilds(Collection<Project> projectsToBuild)
 	{
 		boolean restartAfterBuilds = false;
 		var commandsToExecute = new HashSet<String>();
-		
-		var projectsToBuild = getProjectsToBuild(changedComponentIds);
 		for(var project : projectsToBuild)
 			try
 			{
@@ -144,7 +160,7 @@ public class JanusTicker
 			}
 		
 		for(String command : commandsToExecute)
-			commandExecutor.executeCommand(command);
+			runtimeCommandExecutor.executeCommand(command);
 		
 		if(restartAfterBuilds)
 		{
