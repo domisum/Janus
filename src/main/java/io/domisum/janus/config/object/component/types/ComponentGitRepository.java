@@ -226,7 +226,7 @@ public class ComponentGitRepository
 	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
-			throw new IllegalArgumentException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
+			throw new IOException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
 		return branchRef;
 	}
 	
