@@ -151,4 +151,10 @@ public class Janus
 		logger.info("...Shutdown sequence complete");
 	}
 	
+	@Override
+	public boolean isStopping()
+	{
+		throw new UnsupportedOperationException();
+	}
+	
 }
