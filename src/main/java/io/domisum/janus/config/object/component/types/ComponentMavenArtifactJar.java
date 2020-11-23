@@ -5,12 +5,10 @@ import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
-import io.domisum.lib.ezhttp.EzHttpRequestEnvoy;
+import io.domisum.lib.ezhttp.TurboEz;
+import io.domisum.lib.ezhttp.header.EzHttpHeader;
 import io.domisum.lib.ezhttp.header.EzHttpHeaderBasicAuthentication;
-import io.domisum.lib.ezhttp.request.EzHttpRequest;
 import io.domisum.lib.ezhttp.request.url.EzUrl;
-import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpStringBodyReader;
-import io.domisum.lib.ezhttp.response.bodyreaders.EzHttpWriteToTempFileBodyReader;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ComponentMavenArtifactJar
 	extends Component
@@ -173,42 +172,37 @@ public class ComponentMavenArtifactJar
 	private String fetchString(EzUrl url)
 		throws IOException
 	{
-		var request = EzHttpRequest.get(url);
-		authorizeRequest(request);
-		
-		var envoy = new EzHttpRequestEnvoy<>(request, new EzHttpStringBodyReader());
-		envoy.setTimeout(UPDATE_CHECK_REQUEST_TIMEOUT);
-		var ioResponse = envoy.send();
-		String errorMessage = "failed to fetch string from "+url;
-		var response = ioResponse.getOrThrowWrapped(errorMessage);
-		String responseString = response.getSuccessBodyOrThrowHttpException(errorMessage);
-		
-		return responseString;
+		var turbo = TurboEz.get(url);
+		configureTurbo(turbo);
+		return turbo.receiveString();
 	}
 	
 	private File fetchFile(EzUrl url)
 		throws IOException
 	{
-		var request = EzHttpRequest.get(url);
-		authorizeRequest(request);
+		var file = FileUtil.getNonExistentTemporaryFile();
 		
-		var envoy = new EzHttpRequestEnvoy<>(request, new EzHttpWriteToTempFileBodyReader());
-		envoy.setTimeout(DOWNLOAD_TIMEOUT);
-		var ioResponse = envoy.send();
-		String errorMessage = "failed to fetch file from "+url;
-		var response = ioResponse.getOrThrowWrapped(errorMessage);
+		var turbo = TurboEz.get(url);
+		configureTurbo(turbo);
 		
-		return response.getSuccessBodyOrThrowHttpException(errorMessage);
+		turbo.receiveToFile(file);
+		return file;
 	}
 	
-	private void authorizeRequest(EzHttpRequest request)
+	private void configureTurbo(TurboEz turbo)
 	{
-		if(getCredentialId() != null)
-		{
-			var credential = getComponentDependencyFacade().getCredential(getCredentialId());
-			var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
-			request.addHeader(authHeader);
-		}
+		turbo.configure(e->e.setTimeout(UPDATE_CHECK_REQUEST_TIMEOUT));
+		getAuthorizationHeader().ifPresent(h->turbo.addHeader(h));
+	}
+	
+	private Optional<EzHttpHeader> getAuthorizationHeader()
+	{
+		if(getCredentialId() == null)
+			return Optional.empty();
+		
+		var credential = getComponentDependencyFacade().getCredential(getCredentialId());
+		var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
+		return Optional.of(authHeader);
 	}
 	
 	
