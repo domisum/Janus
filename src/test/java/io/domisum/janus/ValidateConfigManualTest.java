@@ -1,4 +1,4 @@
-package io.domisum.janus._manualtest;
+package io.domisum.janus;
 
 import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.dependencyinjection.JanusInjector;
@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ValidateConfig
+public final class ValidateConfigManualTest
 {
 	
 	public static void main(String[] args)
 		throws ConfigException
 	{
-		var configDir = new File("C:\\Users\\domisum\\testChamber\\domisumReplay\\repos\\___dR-JanusConfig-VideoCreator");
-		
+		var configDir = new File(System.getProperty("user.home")+"/");
 		var configLoader = JanusInjector.create().getInstance(ConfigurationLoader.class);
 		configLoader.load(configDir);
 	}

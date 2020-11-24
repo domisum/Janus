@@ -17,8 +17,7 @@ public class JanusGuiceModule
 	{
 		GuiceMultibinder.multibindInstances(binder(), Binding.class,
 			new Binding("gitRepository", ComponentGitRepository.class),
-			new Binding("mavenArtifactJar", ComponentMavenArtifactJar.class)
-		);
+			new Binding("mavenArtifactJar", ComponentMavenArtifactJar.class));
 		
 		bind(ApplicationStopper.class).to(Janus.class);
 	}
