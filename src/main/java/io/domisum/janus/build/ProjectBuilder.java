@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ProjectBuilder
@@ -173,16 +174,17 @@ public class ProjectBuilder
 		return BUILD_NAME_DATE_TIME_FORMATTER.format(Instant.now());
 	}
 	
-	public static Instant parseBuildTimeFromBuildDirectory(File buildDirectory)
+	public static Optional<Instant> parseBuildInstantFromBuildDirectory(File buildDirectory)
 	{
 		try
 		{
 			var parsed = BUILD_NAME_DATE_TIME_FORMATTER.parse(buildDirectory.getName());
-			return Instant.from(parsed);
+			var buildInstant = Instant.from(parsed);
+			return Optional.of(buildInstant);
 		}
 		catch(DateTimeParseException ignored)
 		{
-			return null;
+			return Optional.empty();
 		}
 	}
 	

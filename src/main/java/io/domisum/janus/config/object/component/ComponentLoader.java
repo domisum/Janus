@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -38,9 +39,7 @@ public class ComponentLoader
 	{
 		var jsonTree = JsonParser.parseString(json).getAsJsonObject();
 		var componentClass = determineComponentClass(jsonTree);
-		var janusComponent = GsonUtil.get().fromJson(jsonTree, componentClass);
-		
-		return janusComponent;
+		return GsonUtil.get().fromJson(jsonTree, componentClass);
 	}
 	
 	private Class<? extends Component> determineComponentClass(JsonObject jsonTree)
@@ -48,25 +47,25 @@ public class ComponentLoader
 	{
 		var typeJsonElement = jsonTree.get("type");
 		if(typeJsonElement == null)
-			throw new ConfigException("no component type set");
+			throw new ConfigException("No component type set");
 		String typeKey = typeJsonElement.getAsString();
 		
 		if(typeKey == null)
-			throw new ConfigException("component config file does not specify type");
-		var componentClass = getBoundComponentClass(typeKey);
-		if(componentClass == null)
-			throw new ConfigException("no component type bound for type '"+typeKey+"'");
+			throw new ConfigException("Component config file does not specify type");
+		var componentClassOptional = getBoundComponentClass(typeKey);
+		if(componentClassOptional.isEmpty())
+			throw new ConfigException("No component type bound for type '"+typeKey+"'");
 		
-		return componentClass;
+		return componentClassOptional.get();
 	}
 	
-	private Class<? extends Component> getBoundComponentClass(String typeId)
+	private Optional<Class<? extends Component>> getBoundComponentClass(String typeId)
 	{
 		for(var binding : bindings)
 			if(binding.getTypeKey().equals(typeId))
-				return binding.getComponentClass();
+				return Optional.of(binding.getComponentClass());
 		
-		return null;
+		return Optional.empty();
 	}
 	
 	

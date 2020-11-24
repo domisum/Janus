@@ -148,7 +148,7 @@ public class Project
 		if(exportDirectory == null)
 			throw new UnsupportedOperationException("This method only works if this is an export project");
 		
-		return keepOtherFilesOnExport == null ? false : keepOtherFilesOnExport;
+		return keepOtherFilesOnExport != null && keepOtherFilesOnExport;
 	}
 	
 	public String getCommandToExecuteAfterBuild()

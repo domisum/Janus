@@ -2,6 +2,7 @@ package io.domisum.janus.build;
 
 import com.google.inject.Inject;
 import io.domisum.janus.config.object.project.Project;
+import io.domisum.lib.auxiliumlib.util.Compare;
 import io.domisum.lib.auxiliumlib.util.TimeUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil;
 import io.domisum.lib.auxiliumlib.util.file.FileUtil.FileType;
@@ -45,19 +46,20 @@ public class ProjectOldBuildsCleaner
 		for(var buildDirectory : buildDirectories)
 		{
 			String buildName = buildDirectory.getName();
-			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
-			if(buildTime == null)
+			var buildInstantOptional = ProjectBuilder.parseBuildInstantFromBuildDirectory(buildDirectory);
+			if(buildInstantOptional.isEmpty())
 			{
 				logger.warn("Failed to parse build time of directory in build root directory: {}", buildDirectory);
 				continue;
 			}
+			var buildInstant = buildInstantOptional.get();
 			
 			if(Objects.equals(buildName, runningBuild))
 				continue;
 			if(Objects.equals(buildName, latestBuild))
 				continue;
 			
-			if(TimeUtil.isOlderThan(buildTime, MAX_BUILD_AGE))
+			if(TimeUtil.isOlderThan(buildInstant, MAX_BUILD_AGE))
 			{
 				logger.info("Deleting build '{}' of project '{}': Older than max build age", buildName, project.getId());
 				FileUtil.deleteDirectory(buildDirectory);
@@ -72,23 +74,24 @@ public class ProjectOldBuildsCleaner
 			return;
 		
 		File directoryOfOldestBuild = null;
-		var oldestBuildTime = Instant.now();
+		var oldestBuildInstant = Instant.now();
 		for(var buildDirectory : buildDirectories)
 		{
 			if(Objects.equals(buildDirectory.getName(), runningBuild))
 				continue;
 			
-			var buildTime = ProjectBuilder.parseBuildTimeFromBuildDirectory(buildDirectory);
-			if(buildTime == null)
+			var buildInstantOptional = ProjectBuilder.parseBuildInstantFromBuildDirectory(buildDirectory);
+			if(buildInstantOptional.isEmpty())
 			{
 				logger.warn("Failed to parse build time of directory in build root directory: {}", buildDirectory);
 				continue;
 			}
+			var buildInstant = buildInstantOptional.get();
 			
-			if(buildTime.compareTo(oldestBuildTime) < 0)
+			if(Compare.lessThan(buildInstant, oldestBuildInstant))
 			{
 				directoryOfOldestBuild = buildDirectory;
-				oldestBuildTime = buildTime;
+				oldestBuildInstant = buildInstant;
 			}
 		}
 		
