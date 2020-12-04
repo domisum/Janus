@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -67,7 +66,7 @@ public class JanusTicker
 	
 	
 	// TICK
-	private void tick(Supplier<Boolean> shouldStop)
+	private void tick()
 	{
 		cleanOldBuilds();
 		
