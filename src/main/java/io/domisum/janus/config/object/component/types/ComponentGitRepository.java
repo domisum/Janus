@@ -5,7 +5,7 @@ import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.exceptions.ProgrammingError;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.FileUtil;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;

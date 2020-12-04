@@ -4,7 +4,7 @@ import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
 import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
-import io.domisum.lib.auxiliumlib.util.file.FileUtil;
+import io.domisum.lib.auxiliumlib.util.FileUtil;
 import io.domisum.lib.ezhttp.TurboEz;
 import io.domisum.lib.ezhttp.header.EzHttpHeader;
 import io.domisum.lib.ezhttp.header.EzHttpHeaderBasicAuthentication;
