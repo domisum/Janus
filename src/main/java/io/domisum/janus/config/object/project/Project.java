@@ -112,7 +112,7 @@ public class Project
 		var componentIds = new ArrayList<>();
 		for(var component : components)
 			componentIds.add(component.getComponentId());
-		String componentDisplay = StringListUtil.listHorizontally(componentIds);
+		String componentDisplay = StringListUtil.list(componentIds);
 		
 		return PHR.r("Project({}: components=({}))", id, componentDisplay);
 	}

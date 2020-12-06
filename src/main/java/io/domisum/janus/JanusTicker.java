@@ -72,7 +72,7 @@ public class JanusTicker
 		
 		var updatedComponentIds = updateComponents();
 		if(updatedComponentIds.size() > 0)
-			logger.info("Detected update in components: [{}]", StringListUtil.listHorizontally(updatedComponentIds));
+			logger.info("Detected update in components: [{}]", StringListUtil.list(updatedComponentIds));
 		
 		if(Janus.FULL_REBUILD_INDICATOR.exists())
 		{
@@ -183,7 +183,7 @@ public class JanusTicker
 			if(changedProjectComponentIds.size() > 0)
 			{
 				logger.info("Scheduling build of project '{}'. Changed project components: [{}]",
-					project.getId(), StringListUtil.listHorizontally(changedProjectComponentIds));
+					project.getId(), StringListUtil.list(changedProjectComponentIds));
 				projectsToBuild.add(project);
 			}
 		}

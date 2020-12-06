@@ -160,7 +160,7 @@ public class ProjectBuilder
 		if(!project.isJanusConfig() && !project.isJanusJar())
 		{
 			Collections.sort(buildFingerprintParts);
-			String buildFingerprint = StringListUtil.listHorizontally(buildFingerprintParts, "|");
+			String buildFingerprint = StringListUtil.list(buildFingerprintParts, "|");
 			
 			var buildFingerprintFile = new File(buildDirectory, JanusApiUsingFiles.BUILD_FINGERPRINT_FILE_NAME);
 			FileUtil.writeString(buildFingerprintFile, buildFingerprint);
