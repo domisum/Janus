@@ -113,9 +113,9 @@ public class ComponentGitRepository
 		
 		if(remoteUrlUpdated)
 			return;
-		remoteUrlUpdated = true;
 		
 		updateRemoteUrl();
+		remoteUrlUpdated = true;
 	}
 	
 	private void updateRemoteUrl()
@@ -134,7 +134,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("Gailed to update git remote url in component '"+getId()+"'", e);
+			throw new IOException("Failed to update git remote url in component '"+getId()+"'", e);
 		}
 	}
 	
@@ -231,10 +231,14 @@ public class ComponentGitRepository
 	
 	private void authorizeCommand(TransportCommand<?, ?> transportCommand)
 	{
-		if(getCredentialId() != null)
+		String credentialId = getCredentialId();
+		if(credentialId != null)
 		{
-			var credential = getComponentDependencyFacade().getCredential(getCredentialId());
-			var gitCredentialsProvider = new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
+			var credential = getComponentDependencyFacade().getCredential(credentialId);
+			
+			var gitCredentialsProvider = credential.getUsername() == null ?
+				new UsernamePasswordCredentialsProvider(credential.getPassword(), "") :
+				new UsernamePasswordCredentialsProvider(credential.getUsername(), credential.getPassword());
 			transportCommand.setCredentialsProvider(gitCredentialsProvider);
 		}
 	}

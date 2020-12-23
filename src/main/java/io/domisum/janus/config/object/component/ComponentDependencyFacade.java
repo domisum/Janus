@@ -30,7 +30,7 @@ public class ComponentDependencyFacade
 	private ConfigObjectRegistry<Credential> getCredentialRegistry()
 	{
 		if(credentialRegistry == null)
-			throw new IllegalStateException("can't get credential registry if it hasn't been set");
+			throw new IllegalStateException("Can't get credential registry if it hasn't been set");
 		return credentialRegistry;
 	}
 	

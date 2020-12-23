@@ -1,5 +1,6 @@
 package io.domisum.janus.config.object.credentials;
 
+import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.config.ConfigObject;
 import lombok.Getter;
@@ -24,7 +25,6 @@ public class Credential
 		throws ConfigException
 	{
 		ConfigException.validateNotBlank(id, "id");
-		ConfigException.validateNotBlank(username, "username");
 		ConfigException.validateNotBlank(password, "password");
 	}
 	
@@ -33,7 +33,8 @@ public class Credential
 	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName()+"("+id+": '"+username+"')";
+		String usernameDisplay = username == null ? "(no username)" : PHR.r("'{}'", username);
+		return PHR.r("{}({})", getClass().getSimpleName(), usernameDisplay);
 	}
 	
 }
