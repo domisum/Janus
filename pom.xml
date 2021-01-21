@@ -64,8 +64,7 @@
 		<dependency> <!-- https://mvnrepository.com/artifact/io.sentry/sentry-logback -->
 			<groupId>io.sentry</groupId>
 			<artifactId>sentry-logback</artifactId>
-			<!-- updating this causes it to ignore the sentry.properties file, so just keep this version -->
-			<version>1.7.30</version>
+			<version>4.0.0-alpha.3</version>
 		</dependency>
 
 		<dependency> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
