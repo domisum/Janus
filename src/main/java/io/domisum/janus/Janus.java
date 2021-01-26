@@ -7,6 +7,7 @@ import io.domisum.janus.config.ConfigurationLoader;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
+import io.domisum.lib.auxiliumlib.exceptions.PreviousCrashWarner;
 import io.domisum.lib.auxiliumlib.input.StopOnCliEnterPress;
 import io.domisum.lib.auxiliumlib.thread.ThreadWatchdog;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
@@ -66,6 +67,7 @@ public class Janus
 		
 		ThreadWatchdog.unregisterOnTerminationActions(Thread.currentThread());
 		StopOnCliEnterPress.stopOnPress(this);
+		PreviousCrashWarner.warnAboutPreviousCrashes();
 		logger.info("...Startup complete\n");
 	}
 	
