@@ -1,16 +1,16 @@
 <configuration>
-	<timestamp key="bySecond" datePattern="z_yyyy-MM-dd_HH-mm-ss_SSS"/>
+	<timestamp key="bySecond" datePattern="Z_yyyy-MM-dd_HH-mm-ss_SSS"/>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>[%d{z yyyy-MM-dd HH:mm:ss.SSS} %level] [%thread] %msg%n</pattern>
+			<pattern>[%d{Z yyyy-MM-dd HH:mm:ss.SSS} %level] [%thread] %msg%n</pattern>
 		</encoder>
 	</appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>logs/${bySecond}.log</file>
 		<encoder>
-			<pattern>[%d{z yyyy-MM-dd HH:mm:ss.SSS} %level] [%thread] %msg%n</pattern>
+			<pattern>[%d{Z yyyy-MM-dd HH:mm:ss.SSS} %level] [%thread] %msg%n</pattern>
 		</encoder>
 	</appender>
 
