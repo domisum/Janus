@@ -7,7 +7,7 @@ import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
 import io.domisum.lib.ezhttp.TurboEz;
 import io.domisum.lib.ezhttp.header.EzHttpHeader;
-import io.domisum.lib.ezhttp.header.EzHttpHeaderBasicAuthentication;
+import io.domisum.lib.ezhttp.header.s.EzHttpHeader_BasicAuthentication;
 import io.domisum.lib.ezhttp.request.url.EzUrl;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -201,7 +201,7 @@ public class ComponentMavenArtifactJar
 			return Optional.empty();
 		
 		var credential = getComponentDependencyFacade().getCredential(getCredentialId());
-		var authHeader = new EzHttpHeaderBasicAuthentication(credential.getUsername(), credential.getPassword());
+		var authHeader = new EzHttpHeader_BasicAuthentication(credential.getUsername(), credential.getPassword());
 		return Optional.of(authHeader);
 	}
 	
