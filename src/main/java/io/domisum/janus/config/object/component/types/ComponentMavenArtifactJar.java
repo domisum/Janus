@@ -34,7 +34,7 @@ public class ComponentMavenArtifactJar
 	
 	// CONSTANTS
 	private static final Duration UPDATE_CHECK_REQUEST_TIMEOUT = Duration.ofSeconds(30);
-	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(1);
+	private static final Duration DOWNLOAD_TIMEOUT = Duration.ofMinutes(3);
 	
 	// SETTINGS
 	private final String repositoryUrl;
@@ -122,7 +122,7 @@ public class ComponentMavenArtifactJar
 		if(newJar)
 		{
 			LOGGER.info("Detected change in component '{}', downloading jar...", getId());
-			var fetchedFile = fetchFile(jarUrl);
+			var fetchedFile = downloadFile(jarUrl);
 			FileUtil.moveFile(fetchedFile, getJarFile());
 			writeJarIdentifier(newJarIdentifier);
 			LOGGER.info("...jar download complete");
@@ -173,25 +173,24 @@ public class ComponentMavenArtifactJar
 		throws IOException
 	{
 		var turbo = TurboEz.get(url);
-		configureTurbo(turbo);
+		configureTurbo(turbo, UPDATE_CHECK_REQUEST_TIMEOUT);
 		return turbo.receiveString();
 	}
 	
-	private File fetchFile(EzUrl url)
+	private File downloadFile(EzUrl url)
 		throws IOException
 	{
-		var file = FileUtil.getNonExistentTemporaryFile();
-		
 		var turbo = TurboEz.get(url);
-		configureTurbo(turbo);
+		configureTurbo(turbo, DOWNLOAD_TIMEOUT);
 		
+		var file = FileUtil.getNonExistentTemporaryFile();
 		turbo.receiveToFile(file);
 		return file;
 	}
 	
-	private void configureTurbo(TurboEz turbo)
+	private void configureTurbo(TurboEz turbo, Duration timeout)
 	{
-		turbo.configure(e->e.setTimeout(UPDATE_CHECK_REQUEST_TIMEOUT));
+		turbo.configure(e->e.setTimeout(timeout));
 		getAuthorizationHeader().ifPresent(h->turbo.addHeader(h));
 	}
 	
