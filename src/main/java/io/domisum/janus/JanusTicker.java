@@ -36,7 +36,7 @@ public class JanusTicker
 	
 	
 	// CONSTANTS
-	private static final Duration TIMEOUT = Duration.ofMinutes(10);
+	private static final Duration TIMEOUT = Duration.ofMinutes(20);
 	
 	// DEPENDENCIES
 	private final ProjectOldBuildsCleaner projectOldBuildsCleaner;
