@@ -127,7 +127,7 @@ public class ProjectBuilder
 		logger.info("Exporting build to dir '{}', keeping other files: {}", exportDirectory, keepOtherFiles);
 		
 		boolean clearOtherFiles = !keepOtherFiles;
-		if(clearOtherFiles)
+		if(clearOtherFiles && exportDirectory.exists())
 			FileUtil.deleteDirectoryContents(exportDirectory);
 		
 		FileUtil.moveDirectory(tempBuildDir, exportDirectory);
