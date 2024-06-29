@@ -7,6 +7,7 @@ import io.domisum.janus.build.ProjectOldBuildsCleaner;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.project.Project;
+import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.contracts.ApplicationStopper;
 import io.domisum.lib.auxiliumlib.thread.ticker.Ticker;
@@ -15,17 +16,13 @@ import io.domisum.lib.auxiliumlib.util.LoggerUtil;
 import io.domisum.lib.auxiliumlib.util.StringListUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -118,9 +115,12 @@ public class JanusTicker
 		}
 		catch(IOException e)
 		{
-			var level = shouldUpdateExceptionBeDowngraded(e) ? Level.INFO : Level.WARN;
-			LoggerUtil.log(logger, level, "Failed to update component '{}'", component.getId(), e);
-			
+			var routineFailReason = getRoutineFailReason(e);
+			String message = PHR.r("Failed to update component '{}'", component.getId());
+			if(routineFailReason.isPresent())
+				LoggerUtil.log(logger, Level.INFO, message + ": " + routineFailReason.get());
+			else
+				LoggerUtil.log(logger, Level.WARN, message, e);
 			return false;
 		}
 	}
@@ -193,18 +193,32 @@ public class JanusTicker
 	
 	
 	// UTIL
-	private boolean shouldUpdateExceptionBeDowngraded(Exception updateException)
+	private Optional<String> getRoutineFailReason(Throwable t)
 	{
-		String exceptionSynopsisLowerCase = ExceptionUtil.getSynopsis(updateException).toLowerCase();
+		String exceptionAsString = ExceptionUtil.convertToString(t);
+		for(var entry : ROUTINE_FAIL_REASONS().entrySet())
+			if(exceptionAsString.toLowerCase().contains(entry.getKey().toLowerCase()))
+				return Optional.of(entry.getValue() == null ? entry.getKey() : entry.getValue());
 		
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "connection reset", "authentication not supported"))
-			return true;
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "time out", "timed out", "timeout"))
-			return true;
-		if(StringUtils.containsAny(exceptionSynopsisLowerCase, "internal server error"))
-			return true;
+		return Optional.empty();
+	}
+	
+	private Map<String, String> ROUTINE_FAIL_REASONS()
+	{
+		var reasons = new HashMap<String, String>();
 		
-		return false;
+		reasons.put("Internal Server Error", null);
+		reasons.put("Authentication not supported", null);
+		
+		reasons.put("Connection reset", null);
+		reasons.put("Timeout", null);
+		reasons.put("time out", null);
+		reasons.put("timed out", null);
+		reasons.put("Socket closed", null);
+		reasons.put("failed to respond", null);
+		reasons.put("No route to host", null);
+		
+		return reasons;
 	}
 	
 }
