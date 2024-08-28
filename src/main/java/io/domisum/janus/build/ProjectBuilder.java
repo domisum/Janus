@@ -7,6 +7,7 @@ import io.domisum.janus.api.JanusApiUsingFiles;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.PHR;
+import io.domisum.lib.auxiliumlib.SafeTimestamper;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
 import io.domisum.lib.auxiliumlib.util.FileUtil.FileType;
@@ -17,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,11 +28,6 @@ public class ProjectBuilder
 {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	
-	
-	// CONSTANTS
-	private static final DateTimeFormatter BUILD_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS")
-		.withZone(ZoneId.systemDefault());
 	
 	
 	// BUILD
@@ -153,7 +147,7 @@ public class ProjectBuilder
 			var component = componentRegistry.get(projectComponent.getComponentId());
 			component.addToBuild(directoryInBuild);
 			
-			String buildFingerprintPart = component.getId()+":"+component.getFingerprint();
+			String buildFingerprintPart = component.getId() + ":" + component.getFingerprint();
 			buildFingerprintParts.add(buildFingerprintPart);
 		}
 		
@@ -171,15 +165,14 @@ public class ProjectBuilder
 	// NAME
 	private static String createBuildName()
 	{
-		return BUILD_NAME_DATE_TIME_FORMATTER.format(Instant.now());
+		return SafeTimestamper.stampSystemTimezone(Instant.now());
 	}
 	
 	public static Optional<Instant> parseBuildInstantFromBuildDirectory(File buildDirectory)
 	{
 		try
 		{
-			var parsed = BUILD_NAME_DATE_TIME_FORMATTER.parse(buildDirectory.getName());
-			var buildInstant = Instant.from(parsed);
+			var buildInstant = SafeTimestamper.parseSystemTimeZone(buildDirectory.getName());
 			return Optional.of(buildInstant);
 		}
 		catch(DateTimeParseException ignored)
