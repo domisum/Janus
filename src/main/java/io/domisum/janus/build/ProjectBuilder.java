@@ -7,7 +7,7 @@ import io.domisum.janus.api.JanusApiUsingFiles;
 import io.domisum.janus.config.Configuration;
 import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.PHR;
-import io.domisum.lib.auxiliumlib.SafeTimestamper;
+import io.domisum.lib.auxiliumlib.time.SafeTimestamper;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
 import io.domisum.lib.auxiliumlib.util.FileUtil.FileType;

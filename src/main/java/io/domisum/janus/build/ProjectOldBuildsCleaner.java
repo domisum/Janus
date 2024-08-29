@@ -5,7 +5,7 @@ import io.domisum.janus.config.object.project.Project;
 import io.domisum.lib.auxiliumlib.util.Compare;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
 import io.domisum.lib.auxiliumlib.util.FileUtil.FileType;
-import io.domisum.lib.auxiliumlib.util.TimeUtil;
+import io.domisum.lib.auxiliumlib.time.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
