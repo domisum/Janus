@@ -195,7 +195,7 @@ public class ComponentGitRepository
 			
 			var reset = git.reset();
 			reset.setMode(ResetCommand.ResetType.HARD);
-			reset.setRef("refs/remote/origin/" + branch);
+			reset.setRef("refs/remotes/origin/" + branch);
 			reset.call();
 			
 			String latestCommitHashAfter = readLatestCommitHash(git);
