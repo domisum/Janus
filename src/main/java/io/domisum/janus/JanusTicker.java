@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
@@ -113,7 +112,7 @@ public class JanusTicker
 		{
 			return component.update();
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
 			var routineFailReason = getRoutineFailReason(e);
 			String message = PHR.r("Failed to update component '{}'", component.getId());
