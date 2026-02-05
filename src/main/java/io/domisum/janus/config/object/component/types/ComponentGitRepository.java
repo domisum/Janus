@@ -7,6 +7,7 @@ import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.exceptions.ProgrammingError;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
@@ -69,7 +70,7 @@ public class ComponentGitRepository
 		}
 		catch(URISyntaxException e)
 		{
-			throw new ConfigException("Invalid repositoryUrl: '"+repositoryUrl+"'", e);
+			throw new ConfigException("Invalid repositoryUrl: '" + repositoryUrl + "'", e);
 		}
 	}
 	
@@ -78,7 +79,7 @@ public class ComponentGitRepository
 	@Override
 	protected String getToStringInfos()
 	{
-		return "'"+repositoryUrl+"':"+branch;
+		return "'" + repositoryUrl + "':" + branch;
 	}
 	
 	
@@ -134,7 +135,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("Failed to update git remote url in component '"+getId()+"'", e);
+			throw new IOException("Failed to update git remote url in component '" + getId() + "'", e);
 		}
 	}
 	
@@ -170,7 +171,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("Failed to clone repository in "+this, e);
+			throw new IOException("Failed to clone repository in " + this, e);
 		}
 		
 		try(var git = Git.open(getDirectory()))
@@ -186,10 +187,16 @@ public class ComponentGitRepository
 		{
 			String latestCommitHashBefore = readLatestCommitHash(git);
 			
-			var pullCommand = git.pull();
-			pullCommand.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
-			authorizeCommand(pullCommand);
-			pullCommand.call();
+			var fetch = git.fetch();
+			fetch.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
+			fetch.setRemoveDeletedRefs(true);
+			authorizeCommand(fetch);
+			fetch.call();
+			
+			var reset = git.reset();
+			reset.setMode(ResetCommand.ResetType.HARD);
+			reset.setRef("refs/remote/origin/" + branch);
+			reset.call();
 			
 			String latestCommitHashAfter = readLatestCommitHash(git);
 			boolean changed = !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
@@ -200,7 +207,7 @@ public class ComponentGitRepository
 		}
 		catch(GitAPIException e)
 		{
-			throw new IOException("Failed to pull changes in "+this, e);
+			throw new IOException("Failed to pull changes in " + this, e);
 		}
 	}
 	
@@ -217,7 +224,7 @@ public class ComponentGitRepository
 		var branchRef = findBranchRef(git);
 		var latestCommit = git.getRepository().parseCommit(branchRef.getObjectId());
 		
-		return branchRef.getObjectId().getName()+": '"+latestCommit.getShortMessage()+"'";
+		return branchRef.getObjectId().getName() + ": '" + latestCommit.getShortMessage() + "'";
 	}
 	
 	private Ref findBranchRef(Git git)
@@ -265,7 +272,7 @@ public class ComponentGitRepository
 	public void addToBuild(File directoryInBuild)
 	{
 		var gitDir = new File(getDirectory(), ".git");
-		FileUtil.copyDirectory(getDirectory(), directoryInBuild, f->!FileUtil.isInDirectory(gitDir, f));
+		FileUtil.copyDirectory(getDirectory(), directoryInBuild, f -> !FileUtil.isInDirectory(gitDir, f));
 	}
 	
 }
