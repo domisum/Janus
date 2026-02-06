@@ -32,6 +32,7 @@ public class JanusTicker
 	
 	
 	// CONSTANTS
+	private static final Duration TICK_INTERVAL = Duration.ofSeconds(30);
 	private static final Duration TIMEOUT = Duration.ofMinutes(20);
 	
 	// DEPENDENCIES
@@ -42,7 +43,7 @@ public class JanusTicker
 	private final ApplicationStopper applicationStopper;
 	
 	// REFERENCES
-	private final Ticker ticker = Ticker.create("ticker", Duration.ofSeconds(5), TIMEOUT, this::tick);
+	private final Ticker ticker = Ticker.create("ticker", TICK_INTERVAL, TIMEOUT, this::tick);
 	
 	// CONFIG
 	@Setter
