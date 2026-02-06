@@ -2,15 +2,14 @@ package io.domisum.janus.config.object.component.types;
 
 import io.domisum.janus.config.object.component.Component;
 import io.domisum.janus.config.object.component.ComponentDependencyFacade;
-import io.domisum.lib.auxiliumlib.PHR;
 import io.domisum.lib.auxiliumlib.config.ConfigException;
 import io.domisum.lib.auxiliumlib.exceptions.ProgrammingError;
 import io.domisum.lib.auxiliumlib.util.FileUtil;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
@@ -187,7 +186,23 @@ public class ComponentGitRepository
 		{
 			String latestCommitHashBefore = readLatestCommitHash(git);
 			
-			gitFetch(git);
+			var fetch = git.fetch();
+			fetch.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
+			fetch.setRemoveDeletedRefs(true);
+			authorizeCommand(fetch);
+			fetch.call();
+			
+			var repo = git.getRepository();
+			var localBranchRef = repo.findRef("refs/heads/" + branch);
+			if(!branch.equals(repo.getBranch()))
+			{
+				var checkout = git.checkout().setName(branch);
+				if(localBranchRef == null)
+					checkout.setCreateBranch(true)
+						.setStartPoint("origin/" + branch)
+						.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM);
+				checkout.call();
+			}
 			
 			var reset = git.reset();
 			reset.setMode(ResetCommand.ResetType.HARD);
@@ -207,48 +222,23 @@ public class ComponentGitRepository
 		}
 	}
 	
-	private void gitFetch(Git git)
-		throws GitAPIException
-	{
-		var fetch = git.fetch();
-		fetch.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
-		fetch.setRemoveDeletedRefs(true);
-		authorizeCommand(fetch);
-		fetch.call();
-	}
-	
 	private String readLatestCommitHash(Git git)
 		throws IOException
 	{
-		var branchRef = findBranchRef(git);
+		var branchRef = git.getRepository().findRef(branch);
+		if(branchRef == null)
+			return null;
 		return branchRef.getObjectId().getName();
 	}
 	
 	private String getLatestCommitDisplay(Git git)
 		throws IOException
 	{
-		var branchRef = findBranchRef(git);
-		var latestCommit = git.getRepository().parseCommit(branchRef.getObjectId());
-		
-		return branchRef.getObjectId().getName() + ": '" + latestCommit.getShortMessage() + "'";
-	}
-	
-	private Ref findBranchRef(Git git)
-		throws IOException
-	{
 		var branchRef = git.getRepository().findRef(branch);
 		if(branchRef == null)
-			try
-			{
-				gitFetch(git);
-			}
-			catch(GitAPIException e)
-			{
-				LOGGER.warn("Failed to fetch missing ref", e);
-			}
-		if(branchRef == null)
-			throw new IOException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
-		return branchRef;
+			return null;
+		var latestCommit = git.getRepository().parseCommit(branchRef.getObjectId());
+		return branchRef.getObjectId().getName() + ": '" + latestCommit.getShortMessage() + "'";
 	}
 	
 	private void authorizeCommand(TransportCommand<?, ?> transportCommand)
@@ -272,8 +262,7 @@ public class ComponentGitRepository
 	{
 		try(var git = Git.open(getDirectory()))
 		{
-			String latestCommitHash = readLatestCommitHash(git);
-			return latestCommitHash;
+			return readLatestCommitHash(git);
 		}
 		catch(IOException e)
 		{
