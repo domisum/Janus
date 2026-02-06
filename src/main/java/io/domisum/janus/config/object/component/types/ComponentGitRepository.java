@@ -187,11 +187,7 @@ public class ComponentGitRepository
 		{
 			String latestCommitHashBefore = readLatestCommitHash(git);
 			
-			var fetch = git.fetch();
-			fetch.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
-			fetch.setRemoveDeletedRefs(true);
-			authorizeCommand(fetch);
-			fetch.call();
+			gitFetch(git);
 			
 			var reset = git.reset();
 			reset.setMode(ResetCommand.ResetType.HARD);
@@ -209,6 +205,16 @@ public class ComponentGitRepository
 		{
 			throw new IOException("Failed to pull changes in " + this, e);
 		}
+	}
+	
+	private void gitFetch(Git git)
+		throws GitAPIException
+	{
+		var fetch = git.fetch();
+		fetch.setTimeout((int) GIT_PULL_TIMEOUT.getSeconds());
+		fetch.setRemoveDeletedRefs(true);
+		authorizeCommand(fetch);
+		fetch.call();
 	}
 	
 	private String readLatestCommitHash(Git git)
@@ -231,6 +237,15 @@ public class ComponentGitRepository
 		throws IOException
 	{
 		var branchRef = git.getRepository().findRef(branch);
+		if(branchRef == null)
+			try
+			{
+				gitFetch(git);
+			}
+			catch(GitAPIException e)
+			{
+				LOGGER.warn("Failed to fetch missing ref", e);
+			}
 		if(branchRef == null)
 			throw new IOException(PHR.r("Git repository '{}' does not contain branch '{}'", getId(), branch));
 		return branchRef;
