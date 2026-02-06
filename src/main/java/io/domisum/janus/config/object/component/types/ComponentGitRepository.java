@@ -207,7 +207,10 @@ public class ComponentGitRepository
 			String latestCommitHashAfter = readLatestCommitHash(git);
 			boolean changed = !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
 			if(changed)
+			{
 				LOGGER.info("GitRepository component '{}' pulled changes. Last commit: ({})", getId(), getLatestCommitDisplay(git));
+				cleanRepository(git);
+			}
 			
 			return changed;
 		}
@@ -256,15 +259,33 @@ public class ComponentGitRepository
 			if(remoteRef == null)
 				toDelete.add(name);
 		}
+		if(toDelete.isEmpty())
+			return;
 		
-		if(!toDelete.isEmpty())
-		{
-			LOGGER.info("Deleting local branches: {}", toDelete);
-			git.branchDelete()
-				.setBranchNames(toDelete.toArray(String[]::new))
-				.setForce(true)
-				.call();
-		}
+		LOGGER.info("Deleting local branches: {}", toDelete);
+		git.branchDelete()
+			.setBranchNames(toDelete.toArray(String[]::new))
+			.setForce(true)
+			.call();
+		cleanRepository(git);
+	}
+	
+	private void cleanRepository(Git git)
+		throws IOException, GitAPIException
+	{
+		var cfg = git.getRepository().getConfig();
+		cfg.setString("gc", null, "reflogExpire", "0");
+		cfg.setString("gc", null, "reflogExpireUnreachable", "0");
+		cfg.setString("gc", null, "rerereResolved", "0");
+		cfg.setString("gc", null, "rerereUnresolved", "0");
+		cfg.setString("gc", null, "pruneExpire", "now");
+		cfg.save();
+		
+		var gc = git.gc();
+		gc.setAggressive(true);
+		gc.setPreserveOldPacks(false);
+		gc.setPrunePreserved(true);
+		gc.call();
 	}
 	
 	private String readLatestCommitHash(Git git)
