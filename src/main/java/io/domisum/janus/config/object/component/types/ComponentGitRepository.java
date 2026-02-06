@@ -10,6 +10,8 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ComponentGitRepository
@@ -159,14 +162,14 @@ public class ComponentGitRepository
 		
 		try
 		{
-			var cloneCommand = Git.cloneRepository();
-			cloneCommand.setURI(repositoryUrl);
-			cloneCommand.setDirectory(getDirectory());
-			cloneCommand.setBranch(branch);
-			cloneCommand.setTimeout((int) GIT_CLONE_TIMEOUT.getSeconds());
-			authorizeCommand(cloneCommand);
+			var clone = Git.cloneRepository();
+			clone.setURI(repositoryUrl);
+			clone.setDirectory(getDirectory());
+			clone.setBranch(branch);
+			clone.setTimeout((int) GIT_CLONE_TIMEOUT.getSeconds());
+			authorizeCommand(clone);
 			
-			cloneCommand.call();
+			clone.call().close();
 		}
 		catch(GitAPIException e)
 		{
@@ -192,22 +195,14 @@ public class ComponentGitRepository
 			authorizeCommand(fetch);
 			fetch.call();
 			
-			var repo = git.getRepository();
-			var localBranchRef = repo.findRef("refs/heads/" + branch);
-			if(!branch.equals(repo.getBranch()))
-			{
-				var checkout = git.checkout().setName(branch);
-				if(localBranchRef == null)
-					checkout.setCreateBranch(true)
-						.setStartPoint("origin/" + branch)
-						.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM);
-				checkout.call();
-			}
+			checkoutRightBranch(git);
 			
 			var reset = git.reset();
 			reset.setMode(ResetCommand.ResetType.HARD);
 			reset.setRef("refs/remotes/origin/" + branch);
 			reset.call();
+			
+			deleteLocalBranchesMissingOnRemote(git);
 			
 			String latestCommitHashAfter = readLatestCommitHash(git);
 			boolean changed = !Objects.equals(latestCommitHashBefore, latestCommitHashAfter);
@@ -219,6 +214,56 @@ public class ComponentGitRepository
 		catch(GitAPIException e)
 		{
 			throw new IOException("Failed to pull changes in " + this, e);
+		}
+	}
+	
+	private void checkoutRightBranch(Git git)
+		throws IOException, GitAPIException
+	{
+		var repo = git.getRepository();
+		var localBranchRef = repo.findRef("refs/heads/" + branch);
+		if(branch.equals(repo.getBranch()))
+			return;
+		
+		LOGGER.info("Checking out branch '{}'", branch);
+		var checkout = git.checkout().setName(branch);
+		if(localBranchRef == null)
+			checkout.setCreateBranch(true)
+				.setStartPoint("origin/" + branch)
+				.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM);
+		checkout.call();
+	}
+	
+	private void deleteLocalBranchesMissingOnRemote(Git git)
+		throws IOException, GitAPIException
+	{
+		var repo = git.getRepository();
+		String current = repo.getBranch();
+		
+		var locals = git.branchList().call();
+		var toDelete = new ArrayList<String>();
+		for(var localRef : locals)
+		{
+			String full = localRef.getName();
+			if(!full.startsWith(Constants.R_HEADS))
+				continue;
+			String name = Repository.shortenRefName(full);
+			if(name.equals(current))
+				continue;
+			
+			String remoteTracking = "refs/remotes/origin/" + name;
+			var remoteRef = repo.findRef(remoteTracking);
+			if(remoteRef == null)
+				toDelete.add(name);
+		}
+		
+		if(!toDelete.isEmpty())
+		{
+			LOGGER.info("Deleting local branches: {}", toDelete);
+			git.branchDelete()
+				.setBranchNames(toDelete.toArray(String[]::new))
+				.setForce(true)
+				.call();
 		}
 	}
 	
